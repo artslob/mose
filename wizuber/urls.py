@@ -2,6 +2,7 @@ from django.urls import path
 
 from . import views
 
+app_name = 'wizuber'
 urlpatterns = [
     path('', views.index, name='index'),
     path('wizards/', views.wizards, name='wizards'),
