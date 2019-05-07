@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render
 from django.views import generic
 
 from wizuber.models import Wizard
@@ -16,5 +16,6 @@ class WizardsView(generic.ListView):
         return Wizard.objects.all()
 
 
-def wizard_detail(request, wizard_id):
-    return render(request, 'wizuber/wizard_detail.html', dict(question=get_object_or_404(Wizard, pk=wizard_id)))
+class WizardDetail(generic.DetailView):
+    model = Wizard
+    template_name = 'wizuber/wizard_detail.html'

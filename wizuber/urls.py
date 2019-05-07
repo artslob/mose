@@ -6,5 +6,5 @@ app_name = 'wizuber'
 urlpatterns = [
     path('', views.index, name='index'),
     path('wizards/', views.WizardsView.as_view(), name='wizards'),
-    path('wizards/<int:wizard_id>/', views.wizard_detail, name='wizard_detail'),
+    path('wizards/<int:pk>/', views.WizardDetail.as_view(), name='wizard_detail'),
 ]
