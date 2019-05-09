@@ -1,18 +1,17 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Wizuber</title>
-</head>
-<body>
-{% if wizards %}
-    <ul>
-        {% for wizard in wizards %}
-            <li><a href="{% url 'wizuber:wizard_detail' wizard.id %}">{{ wizard }}</a></li>
-        {% endfor %}
-    </ul>
-{% else %}
-    <p>No wizards are available</p>
-{% endif %}
-</body>
-</html>
+{% extends 'wizuber/base.html' %}
+
+{% block title %}
+    All wizards
+{% endblock %}
+
+{% block content %}
+    {% if wizards %}
+        <ul>
+            {% for wizard in wizards %}
+                <li><a href="{% url 'wizuber:wizard_detail' wizard.id %}">{{ wizard }}</a></li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No wizards are available</p>
+    {% endif %}
+{% endblock %}

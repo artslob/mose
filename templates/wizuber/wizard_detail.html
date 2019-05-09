@@ -1,11 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Wizuber</title>
-</head>
-<body>
-<p>This is wizard detail page:</p>
-<p>{{ wizard }}</p>
-</body>
-</html>
+{% extends 'wizuber/base.html' %}
+
+{% block title %}
+    Wizard Details
+{% endblock %}
+
+{% block content %}
+    <p>This is wizard detail page:</p>
+    <p>{{ wizard }}</p>
+{% endblock %}
