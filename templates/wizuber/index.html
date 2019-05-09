@@ -3,7 +3,7 @@
 {% block content %}
     You're at the wizuber index.
     {% if user.is_authenticated %}
-        <p>Hello, {{ user.username }}</p>
+        <p>Hello, <a href="{% url 'wizuber:account' %}">{{ user.username }}</a></p>
         <p><a href="{% url 'wizuber:logout' %}">logout</a></p>
     {% else %}
         <p>You are not logged in: <a href="{% url 'wizuber:login' %}">login</a>
