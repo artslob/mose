@@ -2,5 +2,10 @@
 
 {% block content %}
     You're at the wizuber index.
+    {% if user.is_authenticated %}
+        <p>Hello, {{ user.username }}</p>
+    {% else %}
+        <p>You can login here: <a href="{% url 'wizuber:login' %}">login page</a></p>
+    {% endif %}
     <p><a href="{% url 'wizuber:wizards' %}">View all wizards</a></p>
 {% endblock %}
