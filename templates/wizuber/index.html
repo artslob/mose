@@ -4,8 +4,9 @@
     You're at the wizuber index.
     {% if user.is_authenticated %}
         <p>Hello, {{ user.username }}</p>
+        <p><a href="{% url 'wizuber:logout' %}">logout</a></p>
     {% else %}
-        <p>You can login here: <a href="{% url 'wizuber:login' %}">login page</a></p>
+        <p>You are not logged in: <a href="{% url 'wizuber:login' %}">login</a></p>
     {% endif %}
     <p><a href="{% url 'wizuber:wizards' %}">View all wizards</a></p>
 {% endblock %}
