@@ -8,7 +8,7 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('accounts/login/', auth_views.LoginView.as_view(template_name='wizuber/login.html'), name='login'),
     path('accounts/logout/', auth_views.LogoutView.as_view(), name='logout'),
-    path('customer/signup/', views.CustomerSignUp.as_view(), name='customer_signup'),
+    path('accounts/signup/', views.CustomerSignUp.as_view(), name='signup'),
     path('wizards/', views.WizardsView.as_view(), name='wizards'),
     path('wizards/<int:pk>/', views.WizardDetail.as_view(), name='wizard_detail'),
 ]
