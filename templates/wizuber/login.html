@@ -18,6 +18,8 @@
         {% endif %}
     {% endif %}
 
+    <p><a href="{% url 'wizuber:signup' %}">Register</a></p>
+
     <form method="post" action="{% url 'wizuber:login' %}">
         {% csrf_token %}
         <table>

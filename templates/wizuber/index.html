@@ -6,7 +6,8 @@
         <p>Hello, {{ user.username }}</p>
         <p><a href="{% url 'wizuber:logout' %}">logout</a></p>
     {% else %}
-        <p>You are not logged in: <a href="{% url 'wizuber:login' %}">login</a></p>
+        <p>You are not logged in: <a href="{% url 'wizuber:login' %}">login</a>
+            or <a href="{% url 'wizuber:signup' %}">register</a></p>
     {% endif %}
     <p><a href="{% url 'wizuber:wizards' %}">View all wizards</a></p>
 {% endblock %}
