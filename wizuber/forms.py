@@ -1,4 +1,5 @@
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
+from django.contrib.auth.models import Group
 
 from wizuber.models import WizuberUser, Customer
 
@@ -23,4 +24,5 @@ class CustomerSignUpForm(UserCreationForm):
     def save(self, commit=True):
         user = super().save(commit=True)
         Customer.objects.create(profile=user)
+        user.groups.add(Group.objects.get(name='customer'))
         return user
