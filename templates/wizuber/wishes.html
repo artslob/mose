@@ -1,0 +1,15 @@
+{% extends 'wizuber/base.html' %}
+
+{% block title %}
+    Wishes
+{% endblock %}
+
+{% block content %}
+    {% if wishes %}
+        {% for wish in wishes %}
+            <p><a href="{% url 'wizuber:wish_detail' wish.pk %}">{{ wish.description }}</a></p>
+        {% endfor %}
+    {% else %}
+        <p>You have no wishes</p>
+    {% endif %}
+{% endblock %}

@@ -14,4 +14,7 @@ urlpatterns = [
     path('account/signup/', views.CustomerSignUp.as_view(), name='signup'),
     path('wizards/', views.WizardsView.as_view(), name='wizards'),
     path('wizards/<int:pk>/', views.WizardDetail.as_view(), name='wizard_detail'),
+    path('wishes/', views.WishesList.as_view(), name='wishes'),
+    path('wishes/new/', views.CreateWish.as_view(), name='create_wish'),
+    path('wishes/<int:pk>/', views.WishDetail.as_view(), name='wish_detail'),
 ]
