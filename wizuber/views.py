@@ -1,8 +1,8 @@
-from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views import generic
 
+from wizuber.forms import CustomerSignUpForm
 from wizuber.models import Wizard
 
 
@@ -11,7 +11,7 @@ def index(request):
 
 
 class CustomerSignUp(generic.CreateView):
-    form_class = UserCreationForm
+    form_class = CustomerSignUpForm
     success_url = reverse_lazy('wizuber:index')
     template_name = 'wizuber/signup.html'
 
