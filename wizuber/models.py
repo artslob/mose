@@ -25,3 +25,13 @@ class Wishes(models.Model):
     creator = models.ForeignKey(Customer, on_delete=models.CASCADE)
     description = models.TextField()
     owner = models.ForeignKey(Wizard, on_delete=models.CASCADE, null=True, blank=True)
+
+
+class RightsSupport(models.Model):
+    class Meta:
+        # No database table creation or deletion operations will be performed for this model.
+        managed = False
+        permissions = (
+            ('customer_rights', 'Global customer rights'),
+            ('wizard_rights', 'Global wizard rights'),
+        )
