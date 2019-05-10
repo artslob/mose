@@ -1,6 +1,6 @@
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 
-from .models import WizuberUser
+from wizuber.models import WizuberUser, Customer
 
 
 class WizuberUserCreationForm(UserCreationForm):
@@ -19,3 +19,8 @@ class CustomerSignUpForm(UserCreationForm):
     class Meta(UserCreationForm.Meta):
         model = WizuberUser
         fields = ('username', 'email', 'first_name', 'last_name', 'middle_name', 'password1', 'password2')
+
+    def save(self, commit=True):
+        user = super().save(commit=True)
+        Customer.objects.create(profile=user)
+        return user
