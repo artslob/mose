@@ -2,9 +2,13 @@ version: '3.7'
 
 services:
   pg:
-    image: postgres:11.2
+    build:
+      dockerfile: Dockerfile
+      context: .
     ports:
       - "5432:5432"
+    volumes:
+      - ./scripts:/scripts
     environment:
       POSTGRES_DB: "wizuber"
       POSTGRES_USER: "user"
