@@ -42,7 +42,7 @@ class WishesList(generic.ListView):
         if user.is_customer():
             return self.model.objects.filter(creator=user.customer)
         if user.is_wizard():
-            return self.model.objects.filter(creator=user.wizard)
+            return self.model.objects.filter(owner=user.wizard)
         return self.model.objects.none()
 
 
