@@ -1,3 +1,5 @@
+from enum import Enum
+
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.db import models
@@ -35,10 +37,33 @@ class Customer(models.Model):
         return self.profile.username
 
 
+class WishStatus(Enum):
+    NEW = 'New'
+    ACTIVE = 'Active'
+    WORK = 'Work'
+    READY = 'Ready'
+    CLOSED = 'Closed'
+    CANCELED = 'Canceled'
+
+    @classmethod
+    def choices(cls):
+        return tuple((i.name, i.value) for i in cls)
+
+    @classmethod
+    def max_length(cls):
+        return max(len(i.name) for i in cls)
+
+    @classmethod
+    def default(cls):
+        return cls.NEW.name
+
+
 class Wishes(models.Model):
     creator = models.ForeignKey(Customer, on_delete=models.CASCADE)
     description = models.TextField()
     owner = models.ForeignKey(Wizard, on_delete=models.CASCADE, null=True, blank=True)
+    STATUSES = WishStatus
+    status = models.CharField(max_length=STATUSES.max_length(), choices=STATUSES.choices(), default=STATUSES.default())
 
 
 class RightsSupport(models.Model):

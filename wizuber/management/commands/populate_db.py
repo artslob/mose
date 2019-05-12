@@ -30,8 +30,11 @@ class Command(BaseCommand):
 
     @staticmethod
     def _create_wish(creator, description, owner=None):
-        wish, _ = Wishes.objects.get_or_create(creator=creator.customer, description=description,
-                                               owner=owner.wizard if owner else None)
+        wish, _ = Wishes.objects.get_or_create(
+            creator=creator.customer, description=description, owner=owner.wizard if owner else None,
+            status=Wishes.STATUSES.WORK.name if owner else Wishes.STATUSES.NEW.name
+
+        )
         return wish
 
     @staticmethod
