@@ -1,5 +1,7 @@
+from django.contrib.auth.decorators import permission_required
 from django.shortcuts import render
 from django.urls import reverse_lazy, reverse
+from django.utils.decorators import method_decorator
 from django.views import generic
 
 from wizuber.forms import CustomerSignUpForm
@@ -29,12 +31,14 @@ class WizardDetail(generic.DetailView):
     template_name = 'wizuber/wizard_detail.html'
 
 
+@method_decorator(permission_required('wizuber.view_wishes'), name='dispatch')
 class WishesList(generic.ListView):
     model = Wishes
     context_object_name = 'wishes'
     template_name = 'wizuber/wishes.html'
 
 
+@method_decorator(permission_required('wizuber.add_wishes'), name='dispatch')
 class CreateWish(generic.CreateView):
     # TODO provide wish creator by yourself
     model = Wishes
