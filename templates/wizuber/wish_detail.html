@@ -6,5 +6,12 @@
 
 {% block content %}
     <p>This is wish details page:</p>
-    <p>{{ wish.description }}</p>
+    <p>Description: {{ wish.description }}</p>
+    <p>Status: {{ wish.status }}</p>
+    {% if user.is_wizard %}
+        <form action="{% url 'wizuber:fulfill_wish' wish.pk %}" method="POST">
+            {% csrf_token %}
+            <button type="submit" >Fulfill wish</button>
+        </form>
+    {% endif %}
 {% endblock %}

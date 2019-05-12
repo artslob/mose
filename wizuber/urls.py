@@ -17,4 +17,5 @@ urlpatterns = [
     path('wishes/', views.WishesList.as_view(), name='wishes'),
     path('wishes/new/', views.CreateWish.as_view(), name='create_wish'),
     path('wishes/<int:pk>/', views.WishDetail.as_view(), name='wish_detail'),
+    path('wishes/<int:pk>/fulfill', views.FulfillWish.as_view(), name='fulfill_wish'),
 ]

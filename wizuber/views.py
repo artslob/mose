@@ -1,5 +1,6 @@
 from django.contrib.auth.decorators import permission_required
-from django.shortcuts import render
+from django.http import HttpResponseForbidden
+from django.shortcuts import render, redirect
 from django.urls import reverse_lazy, reverse
 from django.utils.decorators import method_decorator
 from django.views import generic
@@ -61,3 +62,19 @@ class WishDetail(generic.DetailView):
     model = Wishes
     context_object_name = 'wish'
     template_name = 'wizuber/wish_detail.html'
+
+
+@method_decorator(permission_required('wizuber.change_wishes'), name='dispatch')
+class FulfillWish(generic.View, generic.detail.SingleObjectMixin):
+    model = Wishes
+
+    def post(self, request, pk):
+        user = self.request.user
+        if not user.is_wizard():
+            return HttpResponseForbidden()
+        wish = self.get_object()
+        if wish.owner != user.wizard:
+            return HttpResponseForbidden()
+        wish.status = wish.STATUSES.READY.name
+        wish.save()
+        return redirect('wizuber:wish_detail', pk=pk)
