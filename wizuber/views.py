@@ -37,6 +37,14 @@ class WishesList(generic.ListView):
     context_object_name = 'wishes'
     template_name = 'wizuber/wishes.html'
 
+    def get_queryset(self):
+        user = self.request.user
+        if user.is_customer():
+            return self.model.objects.filter(creator=user.customer)
+        if user.is_wizard():
+            return self.model.objects.filter(creator=user.wizard)
+        return self.model.objects.none()
+
 
 @method_decorator(permission_required('wizuber.add_wishes'), name='dispatch')
 class CreateWish(generic.CreateView):

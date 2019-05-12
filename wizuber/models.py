@@ -12,13 +12,27 @@ class WizuberUser(AbstractUser):
 
     REQUIRED_FIELDS = ['first_name', 'last_name', 'email']
 
+    def is_customer(self):
+        return hasattr(self, 'customer')
+
+    def is_wizard(self):
+        return hasattr(self, 'wizard')
+
 
 class Wizard(models.Model):
     profile = models.OneToOneField(settings.AUTH_USER_MODEL, primary_key=True, on_delete=models.CASCADE)
 
+    def __str__(self):
+        self.profile: WizuberUser
+        return self.profile.username
+
 
 class Customer(models.Model):
     profile = models.OneToOneField(settings.AUTH_USER_MODEL, primary_key=True, on_delete=models.CASCADE)
+
+    def __str__(self):
+        self.profile: WizuberUser
+        return self.profile.username
 
 
 class Wishes(models.Model):
