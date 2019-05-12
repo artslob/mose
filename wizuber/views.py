@@ -58,6 +58,7 @@ class CreateWish(generic.CreateView):
         return reverse('wizuber:wish_detail', kwargs=dict(pk=self.object.pk))
 
 
+@method_decorator(permission_required('wizuber.view_wishes'), name='dispatch')
 class WishDetail(generic.DetailView):
     model = Wishes
     context_object_name = 'wish'
