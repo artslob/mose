@@ -19,7 +19,7 @@ def populate_models(sender, **kwargs):
 
     customer_group, created = Group.objects.get_or_create(name='customer')
     customer_group.permissions.add(
-        Permission.objects.get(codename='customer_rights', **app, **rights),
+        Permission.objects.get(codename='customer', **app, **rights),
         Permission.objects.get(codename='view_wishes', **app, **wishes),
         Permission.objects.get(codename='add_wishes', **app, **wishes),
         Permission.objects.get(codename='change_wishes', **app, **wishes),
@@ -27,7 +27,7 @@ def populate_models(sender, **kwargs):
 
     wizard_group, created = Group.objects.get_or_create(name='wizard')
     wizard_group.permissions.add(
-        Permission.objects.get(codename='wizard_rights', **app, **rights),
+        Permission.objects.get(codename='wizard', **app, **rights),
         Permission.objects.get(codename='view_wishes', **app, **wishes),
         Permission.objects.get(codename='change_wishes', **app, **wishes),
     )

@@ -46,6 +46,6 @@ class RightsSupport(models.Model):
         # No database table creation or deletion operations will be performed for this model.
         managed = False
         permissions = (
-            ('customer_rights', 'Global customer rights'),
-            ('wizard_rights', 'Global wizard rights'),
+            ('customer', 'Global customer rights'),
+            ('wizard', 'Global wizard rights'),
         )
