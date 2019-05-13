@@ -76,7 +76,7 @@ DATABASES = {
         'NAME': 'wizuber',
         'USER': 'user',
         'PASSWORD': 'secret_pass',
-        'HOST': '127.0.0.1',
+        'HOST': os.environ.get('DATABASE_HOST', 'localhost'),
         'PORT': '5432',
     }
 }

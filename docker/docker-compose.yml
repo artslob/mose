@@ -1,6 +1,20 @@
 version: '3.7'
 
 services:
+  web:
+    build:
+      dockerfile: docker/Web.dockerfile
+      context: ..
+    command: python3.6 /code/manage.py runserver 0.0.0.0:8000
+    environment:
+      - DATABASE_HOST=pg
+    volumes:
+      - ..:/code
+    ports:
+      - 8000:8000
+    depends_on:
+      - pg
+
   pg:
     build:
       dockerfile: Database.dockerfile
