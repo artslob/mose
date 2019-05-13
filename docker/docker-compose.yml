@@ -3,12 +3,12 @@ version: '3.7'
 services:
   pg:
     build:
-      dockerfile: Dockerfile
+      dockerfile: Database.dockerfile
       context: .
     ports:
       - "5432:5432"
     volumes:
-      - ./scripts:/scripts
+      - ./db-scripts:/scripts
     environment:
       POSTGRES_DB: "wizuber"
       POSTGRES_USER: "user"

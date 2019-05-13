@@ -8,4 +8,4 @@ ENV scripts /scripts/
 
 WORKDIR $scripts
 
-COPY ./scripts/recreate-db.sh $scripts
+COPY db-scripts/recreate-db.sh $scripts
