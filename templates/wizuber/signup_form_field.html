@@ -1,12 +1,19 @@
+{% load widget_tweaks %}
 {% with widget=field.field.widget form=field.form %}
-    <label for="{{ field.auto_id }}">{{ field.label }}{{ form.label_suffix }}</label>
-    <input type="{{ widget.input_type }}" name="{{ field.html_name }}" id="{{ field.auto_id }}"
-           class="form-control" aria-describedby="{{ field.auto_id }}_help"
-            {% if field.field.required %} required {% endif %}
-            {% if field.value != None %} value="{{ field.value|stringformat:'s' }}"{% endif %}
-           {% if field.field.max_length %}maxlength="{{ field.field.max_length }}"{% endif %}
-           {% if autofocus %}autofocus{% endif %} placeholder="{{ placeholder }}">
+    {{ field.label_tag }}
+    {% if form.is_bound %}
+        {% if field.errors %}
+            {% render_field field class="form-control is-invalid" placeholder=placeholder %}
+            {% for error in field.errors %}
+                <div class="invalid-feedback">{{ error }}</div>
+            {% endfor %}
+        {% else %}
+            {% render_field field class="form-control is-valid" placeholder=placeholder %}
+        {% endif %}
+    {% else %}
+        {% render_field field class="form-control" placeholder=placeholder %}
+    {% endif %}
     {% if field.help_text %}
-        <small id="{{ field.auto_id }}_help" class="form-text text-muted">{{ field.help_text }}</small>
+        <small class="form-text text-muted">{{ field.help_text }}</small>
     {% endif %}
 {% endwith %}
