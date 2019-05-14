@@ -1,9 +1,9 @@
-{% with widget=field.field.widget %}
+{% with widget=field.field.widget form=field.form %}
     <label for="{{ field.auto_id }}">{{ field.label }}{{ form.label_suffix }}</label>
     <input type="{{ widget.input_type }}" name="{{ field.html_name }}" id="{{ field.auto_id }}"
            class="form-control" aria-describedby="{{ field.auto_id }}_help"
             {% if field.field.required %} required {% endif %}
-            {% if widget.value != None %} value="{{ widget.value|stringformat:'s' }}"{% endif %}
+            {% if field.value != None %} value="{{ field.value|stringformat:'s' }}"{% endif %}
            {% if field.field.max_length %}maxlength="{{ field.field.max_length }}"{% endif %}
            {% if autofocus %}autofocus{% endif %} placeholder="{{ placeholder }}">
     {% if field.help_text %}
