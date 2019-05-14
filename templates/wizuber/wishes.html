@@ -6,10 +6,29 @@
 
 {% block content %}
     {% if wishes %}
-        {% for wish in wishes %}
-            <p><a href="{% url 'wizuber:wish_detail' wish.pk %}">{{ wish.description }}</a></p>
-        {% endfor %}
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Wish description</th>
+                <th scope="col">Wizard</th>
+                <th scope="col">Status</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for wish in wishes %}
+                <tr>
+                    <th scope="row"><a href="{% url 'wizuber:wish_detail' wish.pk %}">{{ forloop.counter }}</a></th>
+                    <td>{{ wish.description | truncatechars:90 }}</td>
+                    <td>{{ wish.owner | default_if_none:"----" }}</td>
+                    <td>{{ wish.status }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
     {% else %}
-        <p>You have no wishes</p>
+        <div class="alert alert-dark" role="alert">
+            You have no wishes yet.
+        </div>
     {% endif %}
 {% endblock %}
