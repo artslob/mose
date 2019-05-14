@@ -2,16 +2,4 @@
 
 {% block content %}
     You're at the wizuber index.
-    {% if user.is_authenticated %}
-        <p>Logged as <a href="{% url 'wizuber:account' %}">{{ user.username }}</a>:
-            you can <a href="{% url 'wizuber:logout' %}">logout</a>
-        </p>
-    {% else %}
-        <p>You are not logged in: <a href="{% url 'wizuber:login' %}">login</a>
-            or <a href="{% url 'wizuber:signup' %}">register</a></p>
-    {% endif %}
-    {% if perms.wizuber.view_wishes %}
-        <p><a href="{% url 'wizuber:wishes' %}">Wishes</a></p>
-    {% endif %}
-    <p><a href="{% url 'wizuber:wizards' %}">View all wizards</a></p>
 {% endblock %}

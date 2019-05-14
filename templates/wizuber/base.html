@@ -9,8 +9,53 @@
     <title>{% block title %}Wizuber{% endblock %}</title>
 </head>
 <body>
-{% block content %}
-{% endblock %}
+<div class="container mb-4">
+    <nav class="navbar navbar-expand-sm navbar-light bg-light">
+        <a class="navbar-brand" href="{% url 'wizuber:index' %}">Home</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navBarToggler"
+                aria-controls="navBarToggler" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navBarToggler">
+            <ul class="navbar-nav mr-auto">
+                {% if perms.wizuber.view_wishes %}
+                    <li class="nav-item active">
+                        <a class="nav-link" href="{% url 'wizuber:wishes' %}">My wishes</a>
+                    </li>
+                {% endif %}
+                <li class="nav-item active">
+                    <a class="nav-link" href="{% url 'wizuber:wizards' %}">Wizards</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav">
+                {% if user.is_authenticated %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navBarDropdownMenuLink" role="button"
+                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            {{ user.username }}
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navBarDropdownMenuLink">
+                            <a class="dropdown-item" href="{% url 'wizuber:account' %}">Account</a>
+                            <a class="dropdown-item" href="{% url 'wizuber:logout' %}">Logout</a>
+                        </div>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'wizuber:login' %}">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'wizuber:signup' %}">Register</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+</div>
+
+<div class="container">
+    {% block content %}
+    {% endblock %}
+</div>
 
 <!-- Bootstrap JS -->
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
