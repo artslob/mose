@@ -13,99 +13,115 @@
 
         <div class="form-row">
             <div class="form-group col-lg-6">
-                <label for="{{ form.username.auto_id }}">{{ form.username.label }}{{ form.label_suffix }}</label>
-                <input type="text" name="{{ form.username.html_name }}" class="form-control"
-                       id="{{ form.username.auto_id }}" aria-describedby="{{ form.username.auto_id }}_help"
-                        {% if form.username.field.required %} required {% endif %}
-                       {% if form.username.field.max_length %}maxlength="{{ form.username.field.max_length }}"{% endif %}
-                       autofocus placeholder="Enter username">
-                {% if form.username.help_text %}
-                    <small id="{{ form.username.auto_id }}_help"
-                           class="form-text text-muted">{{ form.username.help_text|safe }}</small>
-                {% endif %}
+                {% with field=form.username %}
+                    <label for="{{ field.auto_id }}">{{ field.label }}{{ form.label_suffix }}</label>
+                    <input type="text" name="{{ field.html_name }}" class="form-control"
+                           id="{{ field.auto_id }}" aria-describedby="{{ field.auto_id }}_help"
+                            {% if field.field.required %} required {% endif %}
+                           {% if field.field.max_length %}maxlength="{{ field.field.max_length }}"{% endif %}
+                           autofocus placeholder="Enter username">
+                    {% if field.help_text %}
+                        <small id="{{ field.auto_id }}_help"
+                               class="form-text text-muted">{{ field.help_text | safe }}</small>
+                    {% endif %}
+                {% endwith %}
             </div>
             <div class="form-group col-lg-6">
-                <label for="{{ form.email.auto_id }}">{{ form.email.label }}{{ form.label_suffix }}</label>
-                <div class="input-group mb-2">
-                    <div class="input-group-prepend">
-                        <div class="input-group-text">@</div>
+                {% with field=form.email %}
+                    <label for="{{ field.auto_id }}">{{ field.label }}{{ form.label_suffix }}</label>
+                    <div class="input-group mb-2">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">@</div>
+                        </div>
+                        <input type="email" name="{{ field.html_name }}" class="form-control"
+                               id="{{ field.auto_id }}" aria-describedby="{{ field.auto_id }}_help"
+                                {% if field.field.required %} required {% endif %}
+                               {% if field.field.max_length %}maxlength="{{ field.field.max_length }}"{% endif %}
+                               placeholder="Enter email">
                     </div>
-                    <input type="email" name="{{ form.email.html_name }}" class="form-control"
-                           id="{{ form.email.auto_id }}" aria-describedby="{{ form.email.auto_id }}_help"
-                            {% if form.email.field.required %} required {% endif %}
-                           {% if form.email.field.max_length %}maxlength="{{ form.email.field.max_length }}"{% endif %}
-                           placeholder="Enter email">
-                </div>
-                {% if form.email.help_text %}
-                    <small id="{{ form.email.auto_id }}_help"
-                           class="form-text text-muted">{{ form.email.help_text|safe }}</small>
-                {% endif %}
+                    {% if field.help_text %}
+                        <small id="{{ field.auto_id }}_help"
+                               class="form-text text-muted">{{ field.help_text | safe }}</small>
+                    {% endif %}
+                {% endwith %}
             </div>
         </div>
         <div class="form-row">
             <div class="form-group col-md-6">
-                <label for="{{ form.first_name.auto_id }}">{{ form.first_name.label }}{{ form.label_suffix }}</label>
-                <input type="text" name="{{ form.first_name.html_name }}" class="form-control"
-                       id="{{ form.first_name.auto_id }}" aria-describedby="{{ form.first_name.auto_id }}_help"
-                        {% if form.first_name.field.required %} required {% endif %}
-                       {% if form.first_name.field.max_length %}maxlength="{{ form.first_name.field.max_length }}"{% endif %}
-                       autofocus placeholder="Enter first name">
-                {% if form.first_name.help_text %}
-                    <small id="{{ form.first_name.auto_id }}_help"
-                           class="form-text text-muted">{{ form.first_name.help_text|safe }}</small>
-                {% endif %}
+                {% with field=form.first_name %}
+                    <label for="{{ field.auto_id }}">
+                        {{ field.label }}{{ form.label_suffix }}</label>
+                    <input type="text" name="{{ field.html_name }}" class="form-control"
+                           id="{{ field.auto_id }}" aria-describedby="{{ field.auto_id }}_help"
+                            {% if field.field.required %} required {% endif %}
+                           {% if field.field.max_length %}maxlength="{{ field.field.max_length }}"{% endif %}
+                           autofocus placeholder="Enter first name">
+                    {% if field.help_text %}
+                        <small id="{{ field.auto_id }}_help"
+                               class="form-text text-muted">{{ field.help_text | safe }}</small>
+                    {% endif %}
+                {% endwith %}
             </div>
             <div class="form-group col-md-6">
-                <label for="{{ form.last_name.auto_id }}">{{ form.last_name.label }}{{ form.label_suffix }}</label>
-                <input type="text" name="{{ form.last_name.html_name }}" class="form-control"
-                       id="{{ form.last_name.auto_id }}" aria-describedby="{{ form.last_name.auto_id }}_help"
-                        {% if form.last_name.field.required %} required {% endif %}
-                       {% if form.last_name.field.max_length %}maxlength="{{ form.last_name.field.max_length }}"{% endif %}
-                       autofocus placeholder="Enter last name">
-                {% if form.last_name.help_text %}
-                    <small id="{{ form.last_name.auto_id }}_help"
-                           class="form-text text-muted">{{ form.last_name.help_text|safe }}</small>
-                {% endif %}
-            </div>
-        </div>
-        <div class="form-row">
-            <div class="form-group col-md-6">
-                <label for="{{ form.middle_name.auto_id }}">{{ form.middle_name.label }}{{ form.label_suffix }}</label>
-                <input type="text" name="{{ form.middle_name.html_name }}" class="form-control"
-                       id="{{ form.middle_name.auto_id }}" aria-describedby="{{ form.middle_name.auto_id }}_help"
-                        {% if form.middle_name.field.required %} required {% endif %}
-                       {% if form.middle_name.field.max_length %}maxlength="{{ form.middle_name.field.max_length }}"{% endif %}
-                       autofocus placeholder="Enter middle name">
-                {% if form.middle_name.help_text %}
-                    <small id="{{ form.middle_name.auto_id }}_help"
-                           class="form-text text-muted">{{ form.middle_name.help_text|safe }}</small>
-                {% endif %}
+                {% with field=form.last_name %}
+                    <label for="{{ field.auto_id }}">{{ field.label }}{{ form.label_suffix }}</label>
+                    <input type="text" name="{{ field.html_name }}" class="form-control"
+                           id="{{ field.auto_id }}" aria-describedby="{{ field.auto_id }}_help"
+                            {% if field.field.required %} required {% endif %}
+                           {% if field.field.max_length %}maxlength="{{ field.field.max_length }}"{% endif %}
+                           autofocus placeholder="Enter last name">
+                    {% if field.help_text %}
+                        <small id="{{ field.auto_id }}_help"
+                               class="form-text text-muted">{{ field.help_text | safe }}</small>
+                    {% endif %}
+                {% endwith %}
             </div>
         </div>
         <div class="form-row">
             <div class="form-group col-md-6">
-                <label for="{{ form.password1.auto_id }}">{{ form.password1.label }}{{ form.label_suffix }}</label>
-                <input type="password" name="{{ form.password1.html_name }}" class="form-control"
-                       id="{{ form.password1.auto_id }}" aria-describedby="{{ form.password1.auto_id }}_help"
-                        {% if form.password1.field.required %} required {% endif %}
-                       {% if form.password1.field.max_length %}maxlength="{{ form.password1.field.max_length }}"{% endif %}
-                       autofocus placeholder="password">
-                {% if form.password1.help_text %}
-                    <small id="{{ form.password1.auto_id }}_help"
-                           class="form-text text-muted">{{ form.password1.help_text|safe }}</small>
-                {% endif %}
+                {% with field=form.middle_name %}
+                    <label for="{{ field.auto_id }}">
+                        {{ field.label }}{{ form.label_suffix }}</label>
+                    <input type="text" name="{{ field.html_name }}" class="form-control"
+                           id="{{ field.auto_id }}" aria-describedby="{{ field.auto_id }}_help"
+                            {% if field.field.required %} required {% endif %}
+                           {% if field.field.max_length %}maxlength="{{ field.field.max_length }}"{% endif %}
+                           autofocus placeholder="Enter middle name">
+                    {% if field.help_text %}
+                        <small id="{{ field.auto_id }}_help"
+                               class="form-text text-muted">{{ field.help_text | safe }}</small>
+                    {% endif %}
+                {% endwith %}
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                {% with field=form.password1 %}
+                    <label for="{{ field.auto_id }}">{{ field.label }}{{ form.label_suffix }}</label>
+                    <input type="password" name="{{ field.html_name }}" class="form-control"
+                           id="{{ field.auto_id }}" aria-describedby="{{ field.auto_id }}_help"
+                            {% if field.field.required %} required {% endif %}
+                           {% if field.field.max_length %}maxlength="{{ field.field.max_length }}"{% endif %}
+                           autofocus placeholder="password">
+                    {% if field.help_text %}
+                        <small id="{{ field.auto_id }}_help"
+                               class="form-text text-muted">{{ field.help_text | safe }}</small>
+                    {% endif %}
+                {% endwith %}
             </div>
             <div class="form-group col-md-6">
-                <label for="{{ form.password2.auto_id }}">{{ form.password2.label }}{{ form.label_suffix }}</label>
-                <input type="password" name="{{ form.password2.html_name }}" class="form-control"
-                       id="{{ form.password2.auto_id }}" aria-describedby="{{ form.password2.auto_id }}_help"
-                        {% if form.password2.field.required %} required {% endif %}
-                       {% if form.password2.field.max_length %}maxlength="{{ form.password2.field.max_length }}"{% endif %}
-                       autofocus placeholder="password">
-                {% if form.password2.help_text %}
-                    <small id="{{ form.password2.auto_id }}_help"
-                           class="form-text text-muted">{{ form.password2.help_text|safe }}</small>
-                {% endif %}
+                {% with field=form.password2 %}
+                    <label for="{{ field.auto_id }}">{{ field.label }}{{ form.label_suffix }}</label>
+                    <input type="password" name="{{ field.html_name }}" class="form-control"
+                           id="{{ field.auto_id }}" aria-describedby="{{ field.auto_id }}_help"
+                            {% if field.field.required %} required {% endif %}
+                           {% if field.field.max_length %}maxlength="{{ field.field.max_length }}"{% endif %}
+                           autofocus placeholder="password">
+                    {% if field.help_text %}
+                        <small id="{{ field.auto_id }}_help"
+                               class="form-text text-muted">{{ field.help_text | safe }}</small>
+                    {% endif %}
+                {% endwith %}
             </div>
         </div>
         <button type="submit" class="btn btn-primary">Sign up</button>
