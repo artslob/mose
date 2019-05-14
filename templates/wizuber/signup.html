@@ -11,6 +11,11 @@
         {% csrf_token %}
         {{ form.non_field_errors }}
 
+        {% for hidden_field in form.hidden_fields %}
+            {{ hidden_field.errors }}
+            {{ hidden_field }}
+        {% endfor %}
+
         <div class="form-row">
             <div class="form-group col-lg-6">
                 {% include 'wizuber/signup_form_field.html' with field=form.username placeholder="Enter username" autofocus=True %}
