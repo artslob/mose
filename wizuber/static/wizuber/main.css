@@ -1,0 +1,4 @@
+.required-label-asterisk::after {
+    content: "*";
+    color: red;
+}

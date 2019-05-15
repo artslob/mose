@@ -17,6 +17,8 @@ class WizuberUserChangeForm(UserChangeForm):
 
 
 class CustomerSignUpForm(UserCreationForm):
+    required_css_class = 'required-label-asterisk'
+
     class Meta(UserCreationForm.Meta):
         model = WizuberUser
         fields = ('username', 'email', 'first_name', 'last_name', 'middle_name', 'password1', 'password2')
