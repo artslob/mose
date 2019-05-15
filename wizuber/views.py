@@ -70,7 +70,7 @@ class FulfillWish(generic.View, generic.detail.SingleObjectMixin):
     model = Wishes
 
     def post(self, request, pk):
-        user = self.request.user
+        user = request.user
         if not user.is_wizard():
             return HttpResponseForbidden()
         wish = self.get_object()

@@ -65,6 +65,9 @@ class Wishes(models.Model):
     STATUSES = WishStatus
     status = models.CharField(max_length=STATUSES.max_length(), choices=STATUSES.choices(), default=STATUSES.default())
 
+    def get_statuses(self):
+        return self.STATUSES
+
 
 class RightsSupport(models.Model):
     class Meta:

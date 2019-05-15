@@ -38,7 +38,7 @@
         </div>
     </div>
 
-    {% if user.is_wizard %}
+    {% if user.is_wizard and user.wizard == wish.owner and wish.status != wish.get_statuses.READY.name %}
         <div class="row py-2">
             <div class="col">
                 <form action="{% url 'wizuber:fulfill_wish' wish.pk %}" method="POST">
