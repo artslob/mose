@@ -5,13 +5,47 @@
 {% endblock %}
 
 {% block content %}
-    <p>This is wish details page:</p>
-    <p>Description: {{ wish.description }}</p>
-    <p>Status: {{ wish.status }}</p>
+    <h3>This is wish details page:</h3>
+
+    <div class="row py-2">
+        <div class="col">
+            <h5>Creator: {{ wish.creator.profile }}</h5>
+        </div>
+    </div>
+
+    <div class="row py-2">
+        <div class="col">
+            <h5>Wizard:
+                {% if wish.owner %}
+                    <a href="{% url 'wizuber:wizard_detail' wish.owner.pk %}">{{ wish.owner.profile }}</a>
+                {% else %}
+                    <span class="badge badge-secondary">Sorry, the wizard is not assigned yet.</span>
+                {% endif %}
+            </h5>
+        </div>
+    </div>
+
+    <div class="row py-2">
+        <div class="col">
+            <h5>Description:</h5>
+            <p class="border rounded-lg py-3 px-2">{{ wish.description }}</p>
+        </div>
+    </div>
+
+    <div class="row py-2">
+        <div class="col">
+            <h5>Status: <span class="badge badge-success">{{ wish.status }}</span></h5>
+        </div>
+    </div>
+
     {% if user.is_wizard %}
-        <form action="{% url 'wizuber:fulfill_wish' wish.pk %}" method="POST">
-            {% csrf_token %}
-            <button type="submit" >Fulfill wish</button>
-        </form>
+        <div class="row py-2">
+            <div class="col">
+                <form action="{% url 'wizuber:fulfill_wish' wish.pk %}" method="POST">
+                    {% csrf_token %}
+                    <button type="submit" class="btn badge-warning float-right">Fulfill wish</button>
+                </form>
+            </div>
+        </div>
     {% endif %}
 {% endblock %}
