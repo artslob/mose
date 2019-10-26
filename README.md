@@ -10,10 +10,10 @@ Dependencies:
 To run project execute following commands:
 ```bash
 cd <project-dir>/docker
-docker-compose up --build  # add -d flag to run in detached mode
-docker-compose run --rm web ./manage.py migrate
-# optional: populate database with initial data
-docker-compose run --rm web ./manage.py populate_db
+# build images and run in detached mode
+docker-compose up --build -d
+# run django migrations and (optional step) populate database with initial data
+docker-compose exec web bash -c "./manage.py migrate && ./manage.py populate_db"
 ```
 
 Now you can access these endpoints:
