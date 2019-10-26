@@ -15,3 +15,7 @@ docker-compose run --rm web ./manage.py migrate
 # optional: populate database with initial data
 docker-compose run --rm web ./manage.py populate_db
 ```
+
+Now you can access these endpoints:
+* http://127.0.0.1:8000/wizuber
+* http://127.0.0.1:8000/admin
