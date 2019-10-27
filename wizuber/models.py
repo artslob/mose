@@ -22,18 +22,16 @@ class WizuberUser(AbstractUser):
 
 
 class Wizard(models.Model):
-    profile = models.OneToOneField(settings.AUTH_USER_MODEL, primary_key=True, on_delete=models.CASCADE)
+    profile: WizuberUser = models.OneToOneField(settings.AUTH_USER_MODEL, primary_key=True, on_delete=models.CASCADE)
 
     def __str__(self):
-        self.profile: WizuberUser
         return self.profile.username
 
 
 class Customer(models.Model):
-    profile = models.OneToOneField(settings.AUTH_USER_MODEL, primary_key=True, on_delete=models.CASCADE)
+    profile: WizuberUser = models.OneToOneField(settings.AUTH_USER_MODEL, primary_key=True, on_delete=models.CASCADE)
 
     def __str__(self):
-        self.profile: WizuberUser
         return self.profile.username
 
 
