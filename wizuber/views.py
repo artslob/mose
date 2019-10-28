@@ -49,13 +49,17 @@ class WishesList(generic.ListView):
 
 @method_decorator(permission_required('wizuber.add_wishes'), name='dispatch')
 class CreateWish(generic.CreateView):
-    # TODO provide wish creator by yourself
     model = Wishes
-    fields = ['description', 'creator']
+    fields = ['description']
     template_name = 'wizuber/create_wish.html'
 
     def get_success_url(self):
         return reverse('wizuber:wish_detail', kwargs=dict(pk=self.object.pk))
+
+    def form_valid(self, form):
+        # TODO check user is customer
+        form.instance.creator = self.request.user.customer
+        return super().form_valid(form)
 
 
 @method_decorator(permission_required('wizuber.view_wishes'), name='dispatch')
