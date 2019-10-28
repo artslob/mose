@@ -1,13 +1,34 @@
 {% extends 'wizuber/base.html' %}
 
 {% block title %}
-    New Wish
+    Create new wish
 {% endblock %}
 
 {% block content %}
-    <form method="post">
+    <h2>Create new wish</h2>
+
+    <hr>
+
+    {% if form.non_field_errors %}
+        <div class="alert alert-danger" role="alert">
+            <b>While processing your input these errors occurred:</b>
+            {% for error in form.non_field_errors %}
+                <br/>{{ error }}
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <form method="post" action="{% url 'wizuber:create_wish' %}">
         {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Save</button>
+
+        <div class="form-row">
+            <div class="form-group col-12">
+                {% include 'wizuber/signup_form_field.html' with field=form.description placeholder="Enter description" %}
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-success">Create</button>
+        <a class="btn btn-outline-dark" href="{% url 'wizuber:wishes' %}" role="button">Cancel</a>
+        <input type="hidden" name="next" value="{{ next }}"/>
     </form>
 {% endblock %}
