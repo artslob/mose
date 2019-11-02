@@ -1,8 +1,7 @@
-from django.contrib.auth.decorators import permission_required
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.http import HttpResponseForbidden
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy, reverse
-from django.utils.decorators import method_decorator
 from django.views import generic
 
 from wizuber.forms import CustomerSignUpForm
@@ -32,8 +31,9 @@ class WizardDetail(generic.DetailView):
     template_name = 'wizuber/wizard_detail.html'
 
 
-@method_decorator(permission_required('wizuber.view_wishes'), name='dispatch')
-class WishesList(generic.ListView):
+class WishesList(PermissionRequiredMixin, generic.ListView):
+    permission_required = 'wizuber.view_wishes'
+
     model = Wishes
     context_object_name = 'wishes'
     template_name = 'wizuber/wishes.html'
@@ -47,8 +47,9 @@ class WishesList(generic.ListView):
         return self.model.objects.none()
 
 
-@method_decorator(permission_required('wizuber.add_wishes'), name='dispatch')
-class CreateWish(generic.CreateView):
+class CreateWish(PermissionRequiredMixin, generic.CreateView):
+    permission_required = 'wizuber.add_wishes'
+
     model = Wishes
     fields = ['description']
     template_name = 'wizuber/create_wish.html'
@@ -62,15 +63,17 @@ class CreateWish(generic.CreateView):
         return super().form_valid(form)
 
 
-@method_decorator(permission_required('wizuber.view_wishes'), name='dispatch')
-class WishDetail(generic.DetailView):
+class WishDetail(PermissionRequiredMixin, generic.DetailView):
+    permission_required = 'wizuber.view_wishes'
+
     model = Wishes
     context_object_name = 'wish'
     template_name = 'wizuber/wish_detail.html'
 
 
-@method_decorator(permission_required('wizuber.change_wishes'), name='dispatch')
-class FulfillWish(generic.View, generic.detail.SingleObjectMixin):
+class FulfillWish(PermissionRequiredMixin, generic.View, generic.detail.SingleObjectMixin):
+    permission_required = 'wizuber.change_wishes'
+
     model = Wishes
 
     def post(self, request, pk):

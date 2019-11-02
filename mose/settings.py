@@ -105,8 +105,8 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-LOGIN_REDIRECT_URL = 'wizuber:index'
 LOGIN_URL = 'wizuber:login'
+LOGIN_REDIRECT_URL = 'wizuber:index'
 LOGOUT_REDIRECT_URL = 'wizuber:index'
 
 AUTH_USER_MODEL = 'wizuber.WizuberUser'
