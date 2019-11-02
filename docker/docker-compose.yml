@@ -6,15 +6,19 @@ services:
       dockerfile: docker/web.dockerfile
       context: ..
     environment:
-      - DATABASE_HOST=pg
+      MOSE_DATABASE_NAME: "wizuber_db"
+      MOSE_DATABASE_USER: "wizuber_user"
+      MOSE_DATABASE_PASSWORD: "wizuber_pass"
+      MOSE_DATABASE_HOST: "db"
+      MOSE_DATABASE_PORT: "5432"
     volumes:
       - ..:/code
     ports:
       - 8000:8000
     depends_on:
-      - pg
+      - db
 
-  pg:
+  db:
     build:
       dockerfile: database.dockerfile
       context: .
@@ -23,7 +27,7 @@ services:
     volumes:
       - ./db-scripts:/scripts
     environment:
-      POSTGRES_DB: "wizuber"
-      POSTGRES_USER: "user"
-      POSTGRES_PASSWORD: "secret_pass"
+      POSTGRES_DB: "wizuber_db"
+      POSTGRES_USER: "wizuber_user"
+      POSTGRES_PASSWORD: "wizuber_pass"
     restart: on-failure

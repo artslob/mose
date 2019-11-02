@@ -1,4 +1,4 @@
-FROM postgres:11.2
+FROM postgres:11.5
 
 ENV entrypoint /docker-entrypoint-initdb.d/
 
