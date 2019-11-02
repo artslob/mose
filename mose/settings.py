@@ -74,11 +74,11 @@ WSGI_APPLICATION = 'mose.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'wizuber',
-        'USER': 'user',
-        'PASSWORD': 'secret_pass',
-        'HOST': os.environ.get('DATABASE_HOST', 'localhost'),
-        'PORT': '5432',
+        'NAME': os.environ.get('MOSE_DATABASE_NAME', 'wizuber'),
+        'USER': os.environ.get('MOSE_DATABASE_USER', 'user'),
+        'PASSWORD': os.environ.get('MOSE_DATABASE_PASSWORD', 'secret_pass'),
+        'HOST': os.environ.get('MOSE_DATABASE_HOST', 'localhost'),
+        'PORT': os.environ.get('MOSE_DATABASE_PORT', '5432'),
     }
 }
 
