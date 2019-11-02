@@ -1,0 +1,7 @@
+image: 'python:3.6.9-buster'
+
+flake8:
+  before_script:
+    - pip install flake8==3.7.9
+  script:
+    - flake8
