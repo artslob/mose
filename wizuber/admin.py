@@ -1,9 +1,8 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
-from .forms import WizuberUserCreationForm, WizuberUserChangeForm
-from .models import Wizard
-from .models import WizuberUser
+from wizuber.forms import WizuberUserCreationForm, WizuberUserChangeForm
+from wizuber.models import Wizard, WizuberUser
 
 
 class CustomUserAdmin(UserAdmin):
