@@ -35,7 +35,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'wizuber.apps.WizuberConfig',
-    'widget_tweaks'
+    'widget_tweaks',
+    'polymorphic',
 ]
 
 MIDDLEWARE = [

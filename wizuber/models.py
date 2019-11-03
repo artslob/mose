@@ -1,18 +1,25 @@
 from enum import Enum
 
-from django.conf import settings
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, UserManager
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from polymorphic.managers import PolymorphicManager
+from polymorphic.models import PolymorphicModel
 
 
-class WizuberUser(AbstractUser):
+class PolymorphicUserManager(PolymorphicManager, UserManager):
+    pass
+
+
+class WizuberUser(PolymorphicModel, AbstractUser):
     first_name = models.CharField(_('first name'), max_length=30, blank=False)
     last_name = models.CharField(_('last name'), max_length=30, blank=False)
     middle_name = models.CharField(_('middle name'), max_length=30, null=True, blank=True)
     email = models.EmailField(_('email address'), blank=False, unique=True)
 
     REQUIRED_FIELDS = ['first_name', 'last_name', 'email']
+
+    objects = PolymorphicUserManager()
 
     def is_customer(self):
         return hasattr(self, 'customer')
@@ -21,18 +28,12 @@ class WizuberUser(AbstractUser):
         return hasattr(self, 'wizard')
 
 
-class Wizard(models.Model):
-    profile: WizuberUser = models.OneToOneField(settings.AUTH_USER_MODEL, primary_key=True, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return self.profile.username
+class Wizard(WizuberUser):
+    pass
 
 
-class Customer(models.Model):
-    profile: WizuberUser = models.OneToOneField(settings.AUTH_USER_MODEL, primary_key=True, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return self.profile.username
+class Customer(WizuberUser):
+    pass
 
 
 class WishStatus(Enum):
