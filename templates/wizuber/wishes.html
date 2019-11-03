@@ -1,10 +1,16 @@
 {% extends 'wizuber/base.html' %}
 
 {% block title %}
-    Wishes
+    Wishes List
 {% endblock %}
 
 {% block content %}
+    {% if user.is_authenticated and user.is_customer %}
+        <a class="btn btn-outline-success" href="{% url 'wizuber:create_wish' %}" role="button">Create new wish</a>
+    {% endif %}
+
+    <hr class="pb-2">
+
     {% if wishes %}
         <table class="table table-striped">
             <thead>
