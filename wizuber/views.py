@@ -39,12 +39,7 @@ class WishesList(PermissionRequiredMixin, generic.ListView):
     template_name = 'wizuber/wishes.html'
 
     def get_queryset(self):
-        user = self.request.user
-        if user.is_customer():
-            return self.model.objects.filter(creator=user.customer)
-        if user.is_wizard():
-            return self.model.objects.filter(owner=user.wizard)
-        return self.model.objects.none()
+        return self.request.user.get_queryset_for_wish_list(self.model)
 
 
 class CreateWish(LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin, generic.CreateView):

@@ -21,19 +21,18 @@ class WizuberUser(PolymorphicModel, AbstractUser):
 
     objects = PolymorphicUserManager()
 
-    def is_customer(self):
-        return hasattr(self, 'customer')
-
-    def is_wizard(self):
-        return hasattr(self, 'wizard')
+    def get_queryset_for_wish_list(self, model):
+        return model.objects.none()
 
 
 class Wizard(WizuberUser):
-    pass
+    def get_queryset_for_wish_list(self, model):
+        return model.objects.filter(owner=self)
 
 
 class Customer(WizuberUser):
-    pass
+    def get_queryset_for_wish_list(self, model):
+        return model.objects.filter(creator=self)
 
 
 class WishStatus(Enum):
