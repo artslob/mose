@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 
-PGPASSWORD=secret_pass psql -U user -d postgres -c 'DROP DATABASE "wizuber";';
-PGPASSWORD=secret_pass psql -U user -d postgres -c 'CREATE DATABASE "wizuber";';
+PGPASSWORD=wizuber_pass psql -U wizuber_user -d postgres -c 'DROP DATABASE "wizuber_db";';
+PGPASSWORD=wizuber_pass psql -U wizuber_user -d postgres -c 'CREATE DATABASE "wizuber_db";';
