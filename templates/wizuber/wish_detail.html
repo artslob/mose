@@ -5,7 +5,9 @@
 {% endblock %}
 
 {% block content %}
-    <h3>This is wish details page:</h3>
+    <h2>Wish Details</h2>
+
+    <hr>
 
     <div class="row py-2">
         <div class="col">
@@ -27,8 +29,12 @@
 
     <div class="row py-2">
         <div class="col">
-            <h5>Description:</h5>
-            <p class="border rounded-lg py-3 px-2">{{ wish.description }}</p>
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Description:</h5>
+                    {{ wish.description|linebreaks }}
+                </div>
+            </div>
         </div>
     </div>
 
