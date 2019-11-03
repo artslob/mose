@@ -30,34 +30,38 @@ class Command(BaseCommand):
 
     @staticmethod
     def _create_wish(creator, description, owner=None):
-        wish, _ = Wishes.objects.get_or_create(
-            creator=creator.customer, description=description, owner=owner.wizard if owner else None,
-            status=Wishes.STATUSES.WORK.name if owner else Wishes.STATUSES.NEW.name
-
-        )
+        status = Wishes.STATUSES.WORK.name if owner else Wishes.STATUSES.NEW.name
+        wish, _ = Wishes.objects.get_or_create(creator=creator, description=description, owner=owner, status=status)
         return wish
 
     @staticmethod
     def _create_user(username):
         user, _ = get_user_model().objects.get_or_create(
             username=username, first_name=f'{username} name', last_name=f'{username} last name',
-            email=f'{username}@mail.com')
+            email=f'{username}@mail.com'
+        )
         user.set_password('123')
         user.save()
         return user
 
     @classmethod
     def _create_wizard(cls, username):
-        wizard = cls._create_user(username)
-        if not wizard.is_wizard():
-            Wizard.objects.create(profile=wizard)
-            wizard.groups.add(Group.objects.get(name='wizard'))
+        wizard, _ = Wizard.objects.get_or_create(
+            username=username, first_name=f'{username} name', last_name=f'{username} last name',
+            email=f'{username}@mail.com'
+        )
+        wizard.set_password('123')
+        wizard.groups.add(Group.objects.get(name='wizard'))
+        wizard.save()
         return wizard
 
     @classmethod
     def _create_customer(cls, username):
-        customer = cls._create_user(username)
-        if not customer.is_customer():
-            Customer.objects.create(profile=customer)
-            customer.groups.add(Group.objects.get(name='customer'))
+        customer, _ = Customer.objects.get_or_create(
+            username=username, first_name=f'{username} name', last_name=f'{username} last name',
+            email=f'{username}@mail.com'
+        )
+        customer.set_password('123')
+        customer.groups.add(Group.objects.get(name='customer'))
+        customer.save()
         return customer
