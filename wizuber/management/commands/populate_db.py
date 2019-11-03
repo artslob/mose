@@ -35,33 +35,20 @@ class Command(BaseCommand):
         return wish
 
     @staticmethod
-    def _create_user(username):
-        user, _ = get_user_model().objects.get_or_create(
+    def _create_user(username, model, group_name, **kwargs):
+        user, _ = model.objects.get_or_create(
             username=username, first_name=f'{username} name', last_name=f'{username} last name',
-            email=f'{username}@mail.com'
+            email=f'{username}@mail.com', **kwargs
         )
         user.set_password('123')
+        user.groups.add(Group.objects.get(name=group_name))
         user.save()
         return user
 
     @classmethod
     def _create_wizard(cls, username):
-        wizard, _ = Wizard.objects.get_or_create(
-            username=username, first_name=f'{username} name', last_name=f'{username} last name',
-            email=f'{username}@mail.com'
-        )
-        wizard.set_password('123')
-        wizard.groups.add(Group.objects.get(name='wizard'))
-        wizard.save()
-        return wizard
+        return cls._create_user(username, Wizard, 'wizard')
 
     @classmethod
     def _create_customer(cls, username):
-        customer, _ = Customer.objects.get_or_create(
-            username=username, first_name=f'{username} name', last_name=f'{username} last name',
-            email=f'{username}@mail.com'
-        )
-        customer.set_password('123')
-        customer.groups.add(Group.objects.get(name='customer'))
-        customer.save()
-        return customer
+        return cls._create_user(username, Customer, 'customer')
