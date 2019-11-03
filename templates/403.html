@@ -1,0 +1,14 @@
+{% extends 'wizuber/base.html' %}
+
+{% block title %}Access Denied{% endblock %}
+
+{% block content %}
+    <div class="alert alert-danger" role="alert">
+        <h4 class="alert-heading">Access Denied!</h4>
+        <p>You dont have access to view this page.</p>
+        <hr>
+        <p class="mb-0">
+            You can try to <a href="{% url 'wizuber:login' %}" class="alert-link">login</a> to another account.
+        </p>
+    </div>
+{% endblock %}

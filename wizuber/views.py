@@ -1,4 +1,4 @@
-from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.contrib.auth.mixins import PermissionRequiredMixin, UserPassesTestMixin, LoginRequiredMixin
 from django.http import HttpResponseForbidden
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy, reverse
@@ -47,18 +47,20 @@ class WishesList(PermissionRequiredMixin, generic.ListView):
         return self.model.objects.none()
 
 
-class CreateWish(PermissionRequiredMixin, generic.CreateView):
+class CreateWish(LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin, generic.CreateView):
     permission_required = 'wizuber.add_wishes'
 
     model = Wishes
     fields = ['description']
     template_name = 'wizuber/create_wish.html'
 
+    def test_func(self):
+        return self.request.user.is_customer()
+
     def get_success_url(self):
         return reverse('wizuber:wish_detail', kwargs=dict(pk=self.object.pk))
 
     def form_valid(self, form):
-        # TODO check user is customer
         form.instance.creator = self.request.user.customer
         return super().form_valid(form)
 
