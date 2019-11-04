@@ -15,7 +15,7 @@ def index(request):
 class CustomerSignUp(generic.CreateView):
     form_class = CustomerSignUpForm
     success_url = reverse_lazy('wizuber:index')
-    template_name = 'wizuber/signup.html'
+    template_name = 'wizuber/account/signup.html'
 
 
 class WizardsView(generic.ListView):

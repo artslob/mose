@@ -10,8 +10,8 @@ app_name = 'wizuber'
 urlpatterns = [
     path('', views.index, name='index'),
 
-    path('account/', login_required(TemplateView.as_view(template_name='wizuber/account.html')), name='account'),
-    path('account/login/', auth_views.LoginView.as_view(template_name='wizuber/login.html'), name='login'),
+    path('account/', login_required(TemplateView.as_view(template_name='wizuber/account/view.html')), name='account'),
+    path('account/login/', auth_views.LoginView.as_view(template_name='wizuber/account/login.html'), name='login'),
     path('account/logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('account/signup/', views.CustomerSignUp.as_view(), name='signup'),
 
