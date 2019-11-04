@@ -1,10 +1,10 @@
-from enum import Enum
-
 from django.contrib.auth.models import AbstractUser, UserManager
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from polymorphic.managers import PolymorphicManager
 from polymorphic.models import PolymorphicModel
+
+from wizuber.helpers import ChoicesEnum
 
 
 class PolymorphicUserManager(PolymorphicManager, UserManager):
@@ -44,7 +44,7 @@ class Student(WizuberUser):
         return model.objects.none()  # TODO
 
 
-class SpiritGrades(Enum):
+class SpiritGrades(ChoicesEnum):
     IMP = 'Imp'
     FOLIOT = 'Foliot'
     DJINNI = 'Djinni'
@@ -52,16 +52,8 @@ class SpiritGrades(Enum):
     MARID = 'Marid'
 
     @classmethod
-    def choices(cls):
-        return tuple((i.name, i.value) for i in cls)
-
-    @classmethod
-    def max_length(cls):
-        return max(len(i.name) for i in cls)
-
-    @classmethod
     def default(cls):
-        return cls.NEW.name
+        return super().default()
 
 
 class Spirit(WizuberUser):
@@ -72,21 +64,13 @@ class Spirit(WizuberUser):
         return model.objects.none()  # TODO
 
 
-class WishStatus(Enum):
+class WishStatus(ChoicesEnum):
     NEW = 'New'
     ACTIVE = 'Active'
     WORK = 'Work'
     READY = 'Ready'
     CLOSED = 'Closed'
     CANCELED = 'Canceled'
-
-    @classmethod
-    def choices(cls):
-        return tuple((i.name, i.value) for i in cls)
-
-    @classmethod
-    def max_length(cls):
-        return max(len(i.name) for i in cls)
 
     @classmethod
     def default(cls):
