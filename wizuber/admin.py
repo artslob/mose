@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 
-from wizuber.models import WizuberUser, Wizard
+from wizuber.models import WizuberUser, Wizard, Student, Spirit
 
 
 def create_user_admin_form(form_model, base_class, model_fields='__all__'):
@@ -29,5 +29,17 @@ class WizardModelAdmin(WizuberUserModelAdmin):
     form = create_user_admin_form(Wizard, UserCreationForm)
 
 
+class StudentModelAdmin(WizuberUserModelAdmin):
+    add_form = create_user_admin_form(Student, UserCreationForm)
+    form = create_user_admin_form(Student, UserCreationForm)
+
+
+class SpiritModelAdmin(WizuberUserModelAdmin):
+    add_form = create_user_admin_form(Spirit, UserCreationForm)
+    form = create_user_admin_form(Spirit, UserCreationForm)
+
+
 admin.site.register(WizuberUser, WizuberUserModelAdmin)
 admin.site.register(Wizard, WizardModelAdmin)
+admin.site.register(Student, StudentModelAdmin)
+admin.site.register(Spirit, SpiritModelAdmin)
