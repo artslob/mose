@@ -24,9 +24,7 @@ class WizuberUser(PolymorphicModel, AbstractUser):
     def get_queryset_for_wish_list(self, model):
         return model.objects.none()
 
-    @staticmethod
-    def can_create_wish() -> bool:
-        return False
+    can_create_wish = False
 
 
 class Wizard(WizuberUser):
@@ -38,9 +36,7 @@ class Customer(WizuberUser):
     def get_queryset_for_wish_list(self, model):
         return model.objects.filter(creator=self)
 
-    @staticmethod
-    def can_create_wish() -> bool:
-        return True
+    can_create_wish = True
 
 
 class WishStatus(Enum):
