@@ -43,6 +43,9 @@ Now you can access these endpoints:
 - [ ] 14\. Закрытие желания
 - [ ] 15\. Обработка желания
 
+## Links to docs:
+1. [django-polymorphic](https://django-polymorphic.readthedocs.io)
+
 ## Useful links:
 1. [How to add permission to user on his creation](https://stackoverflow.com/questions/31334332/giving-default-permissions-or-a-default-group-to-new-users).
 2. [Right way to query for Permission objects](https://stackoverflow.com/questions/46560651/django-why-is-a-permissions-code-name-different-from-checking-if-it-has-a-permis).
