@@ -36,7 +36,7 @@ class WishesList(PermissionRequiredMixin, generic.ListView):
 
     model = Wishes
     context_object_name = 'wishes'
-    template_name = 'wizuber/wishes.html'
+    template_name = 'wizuber/wish/list.html'
 
     def get_queryset(self):
         return self.request.user.get_queryset_for_wish_list(self.model)
@@ -47,7 +47,7 @@ class CreateWish(LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixi
 
     model = Wishes
     fields = ['description']
-    template_name = 'wizuber/create_wish.html'
+    template_name = 'wizuber/wish/create.html'
 
     def test_func(self):
         return self.request.user.can_create_wish
@@ -65,7 +65,7 @@ class WishDetail(PermissionRequiredMixin, generic.DetailView):
 
     model = Wishes
     context_object_name = 'wish'
-    template_name = 'wizuber/wish_detail.html'
+    template_name = 'wizuber/wish/detail.html'
 
 
 class FulfillWish(PermissionRequiredMixin, generic.View, generic.detail.SingleObjectMixin):
