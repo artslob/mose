@@ -4,6 +4,7 @@ from django.utils.translation import gettext_lazy as _
 from polymorphic.managers import PolymorphicManager
 from polymorphic.models import PolymorphicModel
 
+from wizuber.const import CUSTOMER_PERM, WIZARD_PERM, STUDENT_PERM, SPIRIT_PERM
 from wizuber.helpers import ChoicesEnum
 
 
@@ -93,6 +94,8 @@ class RightsSupport(models.Model):
         # No database table creation or deletion operations will be performed for this model.
         managed = False
         permissions = (
-            ('customer', 'Global customer rights'),
-            ('wizard', 'Global wizard rights'),
+            (CUSTOMER_PERM, 'Global customer rights'),
+            (WIZARD_PERM, 'Global wizard rights'),
+            (STUDENT_PERM, 'Global student rights'),
+            (SPIRIT_PERM, 'Global spirit rights'),
         )

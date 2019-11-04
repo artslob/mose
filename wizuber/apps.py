@@ -1,6 +1,8 @@
 from django.apps import AppConfig
 from django.db.models.signals import post_migrate, post_save
 
+from wizuber.const import WIZARD_PERM, CUSTOMER_PERM, CUSTOMER_GROUP, WIZARD_GROUP
+
 
 class WizuberConfig(AppConfig):
     name = 'wizuber'
@@ -22,8 +24,8 @@ def add_to_default_group(sender, **kwargs):
     from wizuber.models import Wizard, Customer
 
     model_to_group_name = {
-        Wizard: 'wizard',
-        Customer: 'customer',
+        Wizard: WIZARD_GROUP,
+        Customer: CUSTOMER_GROUP,
     }
 
     group_name = model_to_group_name[sender]
@@ -40,17 +42,17 @@ def populate_models(sender, **kwargs):
     rights = dict(content_type__model='rightssupport')
     wishes = dict(content_type__model='wishes')
 
-    customer_group, created = Group.objects.get_or_create(name='customer')
+    customer_group, created = Group.objects.get_or_create(name=CUSTOMER_GROUP)
     customer_group.permissions.add(
-        Permission.objects.get(codename='customer', **app, **rights),
-        Permission.objects.get(codename='view_wishes', **app, **wishes),
+        Permission.objects.get(codename=CUSTOMER_PERM, **app, **rights),
         Permission.objects.get(codename='add_wishes', **app, **wishes),
+        Permission.objects.get(codename='view_wishes', **app, **wishes),
         Permission.objects.get(codename='change_wishes', **app, **wishes),
     )
 
-    wizard_group, created = Group.objects.get_or_create(name='wizard')
+    wizard_group, created = Group.objects.get_or_create(name=WIZARD_GROUP)
     wizard_group.permissions.add(
-        Permission.objects.get(codename='wizard', **app, **rights),
+        Permission.objects.get(codename=WIZARD_PERM, **app, **rights),
         Permission.objects.get(codename='view_wishes', **app, **wishes),
         Permission.objects.get(codename='change_wishes', **app, **wishes),
     )
