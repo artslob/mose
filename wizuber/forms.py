@@ -1,18 +1,6 @@
-from django.contrib.auth.forms import UserCreationForm, UserChangeForm
+from django.contrib.auth.forms import UserCreationForm
 
-from wizuber.models import WizuberUser, Customer
-
-
-class WizuberUserCreationForm(UserCreationForm):
-    class Meta(UserCreationForm.Meta):
-        model = WizuberUser
-        fields = '__all__'
-
-
-class WizuberUserChangeForm(UserChangeForm):
-    class Meta(UserChangeForm.Meta):
-        model = WizuberUser
-        fields = '__all__'
+from wizuber.models import Customer
 
 
 class CustomerSignUpForm(UserCreationForm):
