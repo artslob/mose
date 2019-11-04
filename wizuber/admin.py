@@ -5,19 +5,15 @@ from wizuber.forms import WizuberUserCreationForm, WizuberUserChangeForm
 from wizuber.models import Wizard, WizuberUser
 
 
-class CustomUserAdmin(UserAdmin):
+class WizuberUserModelAdmin(UserAdmin):
     add_form = WizuberUserCreationForm
     form = WizuberUserChangeForm
-    model = WizuberUser
-    list_display = ['username', 'email', 'first_name', 'last_name', 'is_staff', 'is_active', ]
-    add_fieldsets = (
+    add_fieldsets = UserAdmin.add_fieldsets + (
         (None, {
-            'classes': ('wide',),
-            'fields': ('username', 'email', 'password1', 'password2', 'is_staff', 'is_active', 'is_superuser')}
-         ),
+            'fields': ('email', 'first_name', 'last_name', 'middle_name', 'is_staff', 'is_active', 'is_superuser')
+        }),
     )
-    ordering = ('username',)
 
 
-admin.site.register(WizuberUser, CustomUserAdmin)
-admin.site.register(Wizard)
+admin.site.register(WizuberUser, WizuberUserModelAdmin)
+admin.site.register(Wizard, WizuberUserModelAdmin)
