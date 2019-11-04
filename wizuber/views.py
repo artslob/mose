@@ -50,13 +50,13 @@ class CreateWish(LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixi
     template_name = 'wizuber/create_wish.html'
 
     def test_func(self):
-        return self.request.user.is_customer()
+        return self.request.user.can_create_wish()
 
     def get_success_url(self):
         return reverse('wizuber:wish_detail', kwargs=dict(pk=self.object.pk))
 
     def form_valid(self, form):
-        form.instance.creator = self.request.user.customer
+        form.instance.creator = self.request.user
         return super().form_valid(form)
 
 
