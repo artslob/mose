@@ -75,10 +75,10 @@ class FulfillWish(PermissionRequiredMixin, generic.View, generic.detail.SingleOb
 
     def post(self, request, pk):
         user = request.user
-        if not user.is_wizard():
+        if not isinstance(user, Wizard):
             return HttpResponseForbidden()
         wish = self.get_object()
-        if wish.owner != user.wizard:
+        if wish.owner != user:
             return HttpResponseForbidden()
         wish.status = wish.STATUSES.READY.name
         wish.save()

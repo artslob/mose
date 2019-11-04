@@ -11,7 +11,7 @@
 
     <div class="row py-2">
         <div class="col">
-            <h5>Creator: {{ wish.creator.profile }}</h5>
+            <h5>Creator: {{ wish.creator }}</h5>
         </div>
     </div>
 
@@ -19,7 +19,7 @@
         <div class="col">
             <h5>Wizard:
                 {% if wish.owner %}
-                    <a href="{% url 'wizuber:wizard_detail' wish.owner.pk %}">{{ wish.owner.profile }}</a>
+                    <a href="{% url 'wizuber:wizard_detail' wish.owner.pk %}">{{ wish.owner }}</a>
                 {% else %}
                     <span class="badge badge-secondary">Sorry, the wizard is not assigned yet.</span>
                 {% endif %}
@@ -32,7 +32,7 @@
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title">Description:</h5>
-                    {{ wish.description|linebreaks }}
+                    {{ wish.description | linebreaks }}
                 </div>
             </div>
         </div>
@@ -44,7 +44,7 @@
         </div>
     </div>
 
-    {% if user.is_wizard and user.wizard == wish.owner and wish.status != wish.get_statuses.READY.name %}
+    {% if wish.owner == user and wish.status != wish.get_statuses.READY.name %}
         <div class="row py-2">
             <div class="col">
                 <form action="{% url 'wizuber:fulfill_wish' wish.pk %}" method="POST">
