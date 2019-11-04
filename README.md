@@ -48,3 +48,4 @@ Now you can access these endpoints:
 2. [Right way to query for Permission objects](https://stackoverflow.com/questions/46560651/django-why-is-a-permissions-code-name-different-from-checking-if-it-has-a-permis).
 3. [How to create groups and assign permission during project setup](https://stackoverflow.com/questions/42743825/how-to-create-groups-and-assign-permission-during-project-setup-in-django).
 4. [How to create custom permissions without binding to specific model](https://stackoverflow.com/questions/13932774).
+5. [Using Django auth UserAdmin for a custom user model](https://stackoverflow.com/questions/15012235/using-django-auth-useradmin-for-a-custom-user-model).
