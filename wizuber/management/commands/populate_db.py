@@ -1,5 +1,4 @@
 from django.contrib.auth import get_user_model
-from django.contrib.auth.models import Group
 from django.core.management.base import BaseCommand
 
 from wizuber.models import Customer, Wizard, Wishes
@@ -35,20 +34,19 @@ class Command(BaseCommand):
         return wish
 
     @staticmethod
-    def _create_user(username, model, group_name, **kwargs):
+    def _create_user(username, model, **kwargs):
         user, _ = model.objects.get_or_create(
             username=username, first_name=f'{username} name', last_name=f'{username} last name',
             email=f'{username}@mail.com', **kwargs
         )
         user.set_password('123')
-        user.groups.add(Group.objects.get(name=group_name))
         user.save()
         return user
 
     @classmethod
     def _create_wizard(cls, username):
-        return cls._create_user(username, Wizard, 'wizard')
+        return cls._create_user(username, Wizard)
 
     @classmethod
     def _create_customer(cls, username):
-        return cls._create_user(username, Customer, 'customer')
+        return cls._create_user(username, Customer)

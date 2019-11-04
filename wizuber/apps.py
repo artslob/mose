@@ -1,5 +1,5 @@
 from django.apps import AppConfig
-from django.db.models.signals import post_migrate
+from django.db.models.signals import post_migrate, post_save
 
 
 class WizuberConfig(AppConfig):
@@ -7,6 +7,29 @@ class WizuberConfig(AppConfig):
 
     def ready(self):
         post_migrate.connect(populate_models, sender=self)
+
+        from wizuber.models import Wizard, Customer
+
+        for model in (Wizard, Customer):
+            post_save.connect(add_to_default_group, sender=model)
+
+
+def add_to_default_group(sender, **kwargs):
+    if not kwargs['created']:
+        return
+
+    from django.contrib.auth.models import Group
+    from wizuber.models import Wizard, Customer
+
+    model_to_group_name = {
+        Wizard: 'wizard',
+        Customer: 'customer',
+    }
+
+    group_name = model_to_group_name[sender]
+
+    user = kwargs["instance"]
+    user.groups.add(Group.objects.get(name=group_name))
 
 
 def populate_models(sender, **kwargs):
