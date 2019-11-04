@@ -19,7 +19,7 @@ class CustomerSignUp(generic.CreateView):
 
 
 class WizardsView(generic.ListView):
-    template_name = 'wizuber/wizards.html'
+    template_name = 'wizuber/wizard/list.html'
     context_object_name = 'wizards'
 
     def get_queryset(self):
@@ -28,7 +28,7 @@ class WizardsView(generic.ListView):
 
 class WizardDetail(generic.DetailView):
     model = Wizard
-    template_name = 'wizuber/wizard_detail.html'
+    template_name = 'wizuber/wizard/detail.html'
 
 
 class WishesList(PermissionRequiredMixin, generic.ListView):
