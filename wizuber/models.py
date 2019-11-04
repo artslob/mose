@@ -44,7 +44,30 @@ class Student(WizuberUser):
         return model.objects.none()  # TODO
 
 
+class SpiritGrades(Enum):
+    IMP = 'Imp'
+    FOLIOT = 'Foliot'
+    DJINNI = 'Djinni'
+    AFRIT = 'Afrit'
+    MARID = 'Marid'
+
+    @classmethod
+    def choices(cls):
+        return tuple((i.name, i.value) for i in cls)
+
+    @classmethod
+    def max_length(cls):
+        return max(len(i.name) for i in cls)
+
+    @classmethod
+    def default(cls):
+        return cls.NEW.name
+
+
 class Spirit(WizuberUser):
+    GRADES = SpiritGrades
+    grade = models.CharField(max_length=GRADES.max_length(), choices=GRADES.choices())
+
     def get_queryset_for_wish_list(self, model):
         return model.objects.none()  # TODO
 

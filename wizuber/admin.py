@@ -37,6 +37,9 @@ class StudentModelAdmin(WizuberUserModelAdmin):
 class SpiritModelAdmin(WizuberUserModelAdmin):
     add_form = create_user_admin_form(Spirit, UserCreationForm)
     form = create_user_admin_form(Spirit, UserCreationForm)
+    add_fieldsets = WizuberUserModelAdmin.add_fieldsets + (
+        (None, {'fields': ('grade',)}),
+    )
 
 
 admin.site.register(WizuberUser, WizuberUserModelAdmin)
