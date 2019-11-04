@@ -39,6 +39,16 @@ class Customer(WizuberUser):
     can_create_wish = True
 
 
+class Student(WizuberUser):
+    def get_queryset_for_wish_list(self, model):
+        return model.objects.none()  # TODO
+
+
+class Spirit(WizuberUser):
+    def get_queryset_for_wish_list(self, model):
+        return model.objects.none()  # TODO
+
+
 class WishStatus(Enum):
     NEW = 'New'
     ACTIVE = 'Active'
