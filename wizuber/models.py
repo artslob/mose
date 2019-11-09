@@ -41,6 +41,8 @@ class Customer(WizuberUser):
 
 
 class Student(WizuberUser):
+    teacher = models.OneToOneField(Wizard, on_delete=models.CASCADE)
+
     def get_queryset_for_wish_list(self, model):
         return model.objects.none()  # TODO
 
@@ -58,6 +60,7 @@ class SpiritGrades(ChoicesEnum):
 
 
 class Spirit(WizuberUser):
+    master = models.OneToOneField(Wizard, on_delete=models.CASCADE, null=True, default=True, blank=True)
     GRADES = SpiritGrades
     grade = models.CharField(max_length=GRADES.max_length(), choices=GRADES.choices())
 
