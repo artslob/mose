@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
 
-from wizuber.models import Customer, Wizard, Wish, Student
+from wizuber.models import Customer, Wizard, Wish, Student, Spirit, SpiritGrades
 
 
 class Command(BaseCommand):
@@ -21,6 +21,14 @@ class Command(BaseCommand):
         w2 = self._create_wizard('w2')
 
         st1 = self._create_student('student 1', teacher=w1)
+
+        self._create_spirit('bartimaeus', SpiritGrades.DJINNI.name)
+        self._create_spirit('spirit under w1', SpiritGrades.MARID.name, master=w1)
+        self._create_spirit('spirit under w2', SpiritGrades.FOLIOT.name, master=w2)
+
+        for _, grade in SpiritGrades.choices():
+            for i in range(10):
+                self._create_spirit(f'spirit {grade} {i}', grade)
 
         self._create_wish(c1, 'wish of user c1 without owner')
         self._create_wish(c2, 'wish of user c2 without owner')
@@ -56,3 +64,7 @@ class Command(BaseCommand):
     @classmethod
     def _create_student(cls, username, teacher):
         return cls._create_user(username, Student, teacher=teacher)
+
+    @classmethod
+    def _create_spirit(cls, username, grade: str, master: Wizard = None):
+        return cls._create_user(username, Spirit, grade=grade, master=master)
