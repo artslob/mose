@@ -1,30 +1,10 @@
 from django.contrib.auth.mixins import PermissionRequiredMixin, UserPassesTestMixin, LoginRequiredMixin
 from django.http import HttpResponseForbidden
-from django.shortcuts import render, redirect
-from django.urls import reverse_lazy, reverse
+from django.shortcuts import redirect
+from django.urls import reverse
 from django.views import generic
 
-from wizuber.forms import CustomerSignUpForm
 from wizuber.models import Wizard, Wishes
-
-
-class CustomerSignUp(generic.CreateView):
-    form_class = CustomerSignUpForm
-    success_url = reverse_lazy('wizuber:index')
-    template_name = 'wizuber/account/signup.html'
-
-
-class WizardsView(generic.ListView):
-    template_name = 'wizuber/wizard/list.html'
-    context_object_name = 'wizards'
-
-    def get_queryset(self):
-        return Wizard.objects.all()
-
-
-class WizardDetail(generic.DetailView):
-    model = Wizard
-    template_name = 'wizuber/wizard/detail.html'
 
 
 class WishesList(PermissionRequiredMixin, generic.ListView):
