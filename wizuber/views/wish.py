@@ -29,7 +29,7 @@ class CreateWish(LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixi
         return self.request.user.can_create_wish
 
     def get_success_url(self):
-        return reverse('wizuber:wish_detail', kwargs=dict(pk=self.object.pk))
+        return reverse('detail-wish', kwargs=dict(pk=self.object.pk))
 
     def form_valid(self, form):
         form.instance.creator = self.request.user
@@ -58,4 +58,4 @@ class FulfillWish(PermissionRequiredMixin, generic.View, generic.detail.SingleOb
             return HttpResponseForbidden()
         wish.status = wish.STATUSES.READY.name
         wish.save()
-        return redirect('wizuber:wish_detail', pk=pk)
+        return redirect('detail-wish', pk=pk)

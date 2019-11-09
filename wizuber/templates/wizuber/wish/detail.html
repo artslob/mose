@@ -19,7 +19,7 @@
         <div class="col">
             <h5>Wizard:
                 {% if wish.owner %}
-                    <a href="{% url 'wizuber:wizard_detail' wish.owner.pk %}">{{ wish.owner }}</a>
+                    <a href="{% url 'wizuber:detail-wizard' wish.owner.pk %}">{{ wish.owner }}</a>
                 {% else %}
                     <span class="badge badge-secondary">Sorry, the wizard is not assigned yet.</span>
                 {% endif %}
@@ -47,7 +47,7 @@
     {% if wish.owner == user and wish.status != wish.get_statuses.READY.name %}
         <div class="row py-2">
             <div class="col">
-                <form action="{% url 'wizuber:fulfill_wish' wish.pk %}" method="POST">
+                <form action="{% url 'wizuber:fulfill-wish' wish.pk %}" method="POST">
                     {% csrf_token %}
                     <button type="submit" class="btn badge-warning float-right">Fulfill wish</button>
                 </form>

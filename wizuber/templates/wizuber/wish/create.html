@@ -18,7 +18,7 @@
         </div>
     {% endif %}
 
-    <form method="post" action="{% url 'wizuber:create_wish' %}">
+    <form method="post" action="{% url 'wizuber:create-wish' %}">
         {% csrf_token %}
 
         <div class="form-row">
@@ -28,7 +28,7 @@
         </div>
 
         <button type="submit" class="btn btn-success">Create</button>
-        <a class="btn btn-outline-dark" href="{% url 'wizuber:wishes' %}" role="button">Cancel</a>
+        <a class="btn btn-outline-dark" href="{% url 'wizuber:list-wish' %}" role="button">Cancel</a>
         <input type="hidden" name="next" value="{{ next }}"/>
     </form>
 {% endblock %}

@@ -6,7 +6,7 @@
 
 {% block content %}
     {% if user.is_authenticated and user.can_create_wish %}
-        <a class="btn btn-outline-success" href="{% url 'wizuber:create_wish' %}" role="button">Create new wish</a>
+        <a class="btn btn-outline-success" href="{% url 'wizuber:create-wish' %}" role="button">Create new wish</a>
     {% endif %}
 
     <hr class="pb-2">
@@ -24,7 +24,7 @@
             <tbody>
             {% for wish in wishes %}
                 <tr>
-                    <th scope="row"><a href="{% url 'wizuber:wish_detail' wish.pk %}">{{ forloop.counter }}</a></th>
+                    <th scope="row"><a href="{% url 'wizuber:detail-wish' wish.pk %}">{{ forloop.counter }}</a></th>
                     <td>{{ wish.description | truncatechars:90 }}</td>
                     <td>{{ wish.owner | default_if_none:"----" }}</td>
                     <td>{{ wish.status }}</td>
