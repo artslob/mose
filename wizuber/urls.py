@@ -15,11 +15,11 @@ urlpatterns = [
     path('account/logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('account/signup/', views.account.CustomerSignUp.as_view(), name='signup'),
 
-    path('wizards/', views.wizard.WizardsView.as_view(), name='wizards'),
-    path('wizards/<int:pk>/', views.wizard.WizardDetail.as_view(), name='wizard_detail'),
+    path('wizard/list/', views.wizard.ListWizard.as_view(), name='wizards'),
+    path('wizard/<int:pk>/', views.wizard.DetailWizard.as_view(), name='wizard_detail'),
 
-    path('wishes/', views.wish.WishesList.as_view(), name='wishes'),
-    path('wishes/new/', views.wish.CreateWish.as_view(), name='create_wish'),
-    path('wishes/<int:pk>/', views.wish.WishDetail.as_view(), name='wish_detail'),
-    path('wishes/<int:pk>/fulfill', views.wish.FulfillWish.as_view(), name='fulfill_wish'),
+    path('wish/list/', views.wish.ListWish.as_view(), name='wishes'),
+    path('wish/create/', views.wish.CreateWish.as_view(), name='create_wish'),
+    path('wish/<int:pk>/', views.wish.DetailWish.as_view(), name='wish_detail'),
+    path('wish/<int:pk>/fulfill', views.wish.FulfillWish.as_view(), name='fulfill_wish'),
 ]

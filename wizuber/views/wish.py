@@ -7,7 +7,7 @@ from django.views import generic
 from wizuber.models import Wizard, Wishes
 
 
-class WishesList(PermissionRequiredMixin, generic.ListView):
+class ListWish(PermissionRequiredMixin, generic.ListView):
     permission_required = 'wizuber.view_wishes'
 
     model = Wishes
@@ -36,7 +36,7 @@ class CreateWish(LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixi
         return super().form_valid(form)
 
 
-class WishDetail(PermissionRequiredMixin, generic.DetailView):
+class DetailWish(PermissionRequiredMixin, generic.DetailView):
     permission_required = 'wizuber.view_wishes'
 
     model = Wishes
