@@ -78,7 +78,7 @@ class WishStatus(ChoicesEnum):
         return cls.NEW.name
 
 
-class Wishes(models.Model):
+class Wish(models.Model):
     creator = models.ForeignKey(Customer, on_delete=models.CASCADE)
     description = models.TextField()
     owner = models.ForeignKey(Wizard, on_delete=models.CASCADE, null=True, blank=True)

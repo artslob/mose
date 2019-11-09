@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
 
-from wizuber.models import Customer, Wizard, Wishes
+from wizuber.models import Customer, Wizard, Wish
 
 
 class Command(BaseCommand):
@@ -29,8 +29,8 @@ class Command(BaseCommand):
 
     @staticmethod
     def _create_wish(creator, description, owner=None):
-        status = Wishes.STATUSES.WORK.name if owner else Wishes.STATUSES.NEW.name
-        wish, _ = Wishes.objects.get_or_create(creator=creator, description=description, owner=owner, status=status)
+        status = Wish.STATUSES.WORK.name if owner else Wish.STATUSES.NEW.name
+        wish, _ = Wish.objects.get_or_create(creator=creator, description=description, owner=owner, status=status)
         return wish
 
     @staticmethod

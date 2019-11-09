@@ -4,13 +4,13 @@ from django.shortcuts import redirect
 from django.urls import reverse
 from django.views import generic
 
-from wizuber.models import Wizard, Wishes
+from wizuber.models import Wizard, Wish
 
 
 class ListWish(PermissionRequiredMixin, generic.ListView):
-    permission_required = 'wizuber.view_wishes'
+    permission_required = 'wizuber.view_wish'
 
-    model = Wishes
+    model = Wish
     context_object_name = 'wishes'
     template_name = 'wizuber/wish/list.html'
 
@@ -19,9 +19,9 @@ class ListWish(PermissionRequiredMixin, generic.ListView):
 
 
 class CreateWish(LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin, generic.CreateView):
-    permission_required = 'wizuber.add_wishes'
+    permission_required = 'wizuber.add_wish'
 
-    model = Wishes
+    model = Wish
     fields = ['description']
     template_name = 'wizuber/wish/create.html'
 
@@ -29,7 +29,7 @@ class CreateWish(LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixi
         return self.request.user.can_create_wish
 
     def get_success_url(self):
-        return reverse('detail-wish', kwargs=dict(pk=self.object.pk))
+        return reverse('wizuber:detail-wish', kwargs=dict(pk=self.object.pk))
 
     def form_valid(self, form):
         form.instance.creator = self.request.user
@@ -37,17 +37,17 @@ class CreateWish(LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixi
 
 
 class DetailWish(PermissionRequiredMixin, generic.DetailView):
-    permission_required = 'wizuber.view_wishes'
+    permission_required = 'wizuber.view_wish'
 
-    model = Wishes
+    model = Wish
     context_object_name = 'wish'
     template_name = 'wizuber/wish/detail.html'
 
 
 class FulfillWish(PermissionRequiredMixin, generic.View, generic.detail.SingleObjectMixin):
-    permission_required = 'wizuber.change_wishes'
+    permission_required = 'wizuber.change_wish'
 
-    model = Wishes
+    model = Wish
 
     def post(self, request, pk):
         user = request.user

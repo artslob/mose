@@ -47,19 +47,19 @@ def populate_models(sender, **kwargs):
     app = dict(content_type__app_label='wizuber')
     # models
     rights = dict(content_type__model='rightssupport')
-    wishes = dict(content_type__model='wishes')
+    wishes = dict(content_type__model='wish')
 
     customer_group, created = Group.objects.get_or_create(name=CUSTOMER_GROUP)
     customer_group.permissions.add(
         Permission.objects.get(codename=CUSTOMER_PERM, **app, **rights),
-        Permission.objects.get(codename='add_wishes', **app, **wishes),
-        Permission.objects.get(codename='view_wishes', **app, **wishes),
-        Permission.objects.get(codename='change_wishes', **app, **wishes),
+        Permission.objects.get(codename='add_wish', **app, **wishes),
+        Permission.objects.get(codename='view_wish', **app, **wishes),
+        Permission.objects.get(codename='change_wish', **app, **wishes),
     )
 
     wizard_group, created = Group.objects.get_or_create(name=WIZARD_GROUP)
     wizard_group.permissions.add(
         Permission.objects.get(codename=WIZARD_PERM, **app, **rights),
-        Permission.objects.get(codename='view_wishes', **app, **wishes),
-        Permission.objects.get(codename='change_wishes', **app, **wishes),
+        Permission.objects.get(codename='view_wish', **app, **wishes),
+        Permission.objects.get(codename='change_wish', **app, **wishes),
     )
