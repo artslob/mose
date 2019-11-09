@@ -20,7 +20,7 @@ class Command(BaseCommand):
         w1 = self._create_wizard('w1')
         w2 = self._create_wizard('w2')
 
-        st1 = self._create_student('student 1', teacher=w1)
+        self._create_student('student 1', teacher=w1)
 
         self._create_spirit('bartimaeus', SpiritGrades.DJINNI.name)
         self._create_spirit('spirit under w1', SpiritGrades.MARID.name, master=w1)
