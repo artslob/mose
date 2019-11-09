@@ -60,8 +60,7 @@ class SpiritGrades(ChoicesEnum):
 
 
 class Spirit(WizuberUser):
-    # TODO master is many to one
-    master = models.OneToOneField(Wizard, on_delete=models.CASCADE, null=True, default=True, blank=True)
+    master = models.ForeignKey(Wizard, on_delete=models.CASCADE, null=True, default=True, blank=True)
     GRADES = SpiritGrades
     grade = models.CharField(max_length=GRADES.max_length(), choices=GRADES.choices())
 
