@@ -8,10 +8,6 @@ from wizuber.forms import CustomerSignUpForm
 from wizuber.models import Wizard, Wishes
 
 
-def index(request):
-    return render(request, 'wizuber/index.html')
-
-
 class CustomerSignUp(generic.CreateView):
     form_class = CustomerSignUpForm
     success_url = reverse_lazy('wizuber:index')

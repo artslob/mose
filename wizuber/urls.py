@@ -8,7 +8,7 @@ from . import views
 app_name = 'wizuber'
 
 urlpatterns = [
-    path('', views.index, name='index'),
+    path('', TemplateView.as_view(template_name='wizuber/index.html'), name='index'),
 
     path('account/', login_required(TemplateView.as_view(template_name='wizuber/account/detail.html')), name='account'),
     path('account/login/', auth_views.LoginView.as_view(template_name='wizuber/account/login.html'), name='login'),
