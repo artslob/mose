@@ -60,8 +60,7 @@ class SpiritGrades(ChoicesEnum):
 
 
 class Spirit(WizuberUser):
-    # TODO change cascade to set null and fix default to null
-    master = models.ForeignKey(Wizard, on_delete=models.CASCADE, null=True, default=True, blank=True)
+    master = models.ForeignKey(Wizard, on_delete=models.SET_NULL, null=True, blank=True, default=None)
     GRADES = SpiritGrades
     grade = models.CharField(max_length=GRADES.max_length(), choices=GRADES.choices())
 
