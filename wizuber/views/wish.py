@@ -9,7 +9,7 @@ from wizuber.models import Wizard, Wish, is_wizard
 
 # TODO add checks for permissions
 
-class ListWish(generic.ListView):
+class ListWish(LoginRequiredMixin, generic.ListView):
     model = Wish
     context_object_name = 'wishes'
     template_name = 'wizuber/wish/list.html'
@@ -46,13 +46,13 @@ class CreateWish(LoginRequiredMixin, UserPassesTestMixin, generic.CreateView):
         return super().form_valid(form)
 
 
-class DetailWish(generic.DetailView):
+class DetailWish(LoginRequiredMixin, generic.DetailView):
     model = Wish
     context_object_name = 'wish'
     template_name = 'wizuber/wish/detail.html'
 
 
-class FulfillWish(generic.View, generic.detail.SingleObjectMixin):
+class FulfillWish(LoginRequiredMixin, generic.View, generic.detail.SingleObjectMixin):
     model = Wish
 
     def post(self, request, pk):
