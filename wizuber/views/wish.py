@@ -10,6 +10,14 @@ from wizuber.models import Wizard, Wish, is_wizard
 # TODO add checks for permissions
 
 class ListWish(LoginRequiredMixin, generic.ListView):
+    """
+    Returns list of wishes. For specific types of users returns different results:
+    Customer: wishes created by him;
+    Wizard: wishes owned by him;
+    Student: wishes assigned to him;
+    Spirit: wishes assigned to him;
+    """
+
     model = Wish
     context_object_name = 'wishes'
     template_name = 'wizuber/wish/list.html'
@@ -18,16 +26,16 @@ class ListWish(LoginRequiredMixin, generic.ListView):
         return self.request.user.get_queryset_for_wish_list(self.model)
 
 
-class ListWishActive(LoginRequiredMixin, UserPassesTestMixin, generic.ListView):
-    model = Wish
-    context_object_name = 'wishes'
-    template_name = 'wizuber/wish/list.html'
+class ListWishActive(UserPassesTestMixin, ListWish):
+    """
+    Returns wish list for wizard (only with "active" status). Represents "new orders" page.
+    """
 
     def test_func(self):
         return is_wizard(self.request.user)
 
     def get_queryset(self):
-        return Wish.objects.filter(status=Wish.STATUSES.ACTIVE.name).all()
+        return Wish.objects.filter(status=Wish.STATUSES.ACTIVE.name)
 
 
 class CreateWish(LoginRequiredMixin, UserPassesTestMixin, generic.CreateView):
