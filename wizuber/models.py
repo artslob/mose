@@ -102,3 +102,19 @@ class RightsSupport(models.Model):
             (STUDENT_PERM, 'Global student rights'),
             (SPIRIT_PERM, 'Global spirit rights'),
         )
+
+
+def is_wizard(user):
+    return isinstance(user, Wizard)
+
+
+def is_customer(user):
+    return isinstance(user, Customer)
+
+
+def is_student(user):
+    return isinstance(user, Student)
+
+
+def is_spirit(user):
+    return isinstance(user, Spirit)

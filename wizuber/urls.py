@@ -19,6 +19,7 @@ urlpatterns = [
     path('wizard/<int:pk>/', views.wizard.DetailWizard.as_view(), name='detail-wizard'),
 
     path('wish/list/', views.wish.ListWish.as_view(), name='list-wish'),
+    path('wish/list/active', views.wish.ListWishActive.as_view(), name='list-wish-active'),
     path('wish/create/', views.wish.CreateWish.as_view(), name='create-wish'),
     path('wish/<int:pk>/', views.wish.DetailWish.as_view(), name='detail-wish'),
     path('wish/<int:pk>/fulfill', views.wish.FulfillWish.as_view(), name='fulfill-wish'),

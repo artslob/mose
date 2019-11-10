@@ -4,7 +4,7 @@ from django.shortcuts import redirect
 from django.urls import reverse
 from django.views import generic
 
-from wizuber.models import Wizard, Wish
+from wizuber.models import Wizard, Wish, is_wizard
 
 
 # TODO add checks for permissions
@@ -16,6 +16,18 @@ class ListWish(generic.ListView):
 
     def get_queryset(self):
         return self.request.user.get_queryset_for_wish_list(self.model)
+
+
+class ListWishActive(LoginRequiredMixin, UserPassesTestMixin, generic.ListView):
+    model = Wish
+    context_object_name = 'wishes'
+    template_name = 'wizuber/wish/list.html'
+
+    def test_func(self):
+        return is_wizard(self.request.user)
+
+    def get_queryset(self):
+        return Wish.objects.filter(status=Wish.STATUSES.ACTIVE.name).all()
 
 
 class CreateWish(LoginRequiredMixin, UserPassesTestMixin, generic.CreateView):
