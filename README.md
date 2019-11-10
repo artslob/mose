@@ -28,8 +28,11 @@ Now you can access these endpoints:
 - [x] 5\. Регистрация нового "gifted" пользователя
     1. Добавлены модели `Wizard`, `Student`, `Spirit`.
     2. В админской панели можно создавать и редактировать данные модели.
-- [ ] 6\. Просмотр списка желаний в очереди
-    * Частично: пока не все пользователи добавлены
+- [x] 6\. Просмотр списка желаний в очереди
+    1. Customer: view wishes created by him;
+    2. Wizard: view wishes owned by him + new orders;
+    3. Student: view wishes assigned to him;
+    4. Spirit: view wishes assigned to him;
 - [ ] 7\. Выполнение желания
     1. Описать state машину - как могут изменять состояние желания разные
     типы пользователей на всём его жизненном цикле.
