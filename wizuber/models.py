@@ -22,20 +22,20 @@ class WizuberUser(PolymorphicModel, AbstractUser):
 
     objects = PolymorphicUserManager()
 
-    def get_queryset_for_wish_list(self, model):
-        return model.objects.none()
+    def get_queryset_for_wish_list(self):
+        return Wish.objects.none()
 
     can_create_wish = False
 
 
 class Wizard(WizuberUser):
-    def get_queryset_for_wish_list(self, model):
-        return model.objects.filter(owner=self)
+    def get_queryset_for_wish_list(self):
+        return Wish.objects.filter(owner=self)
 
 
 class Customer(WizuberUser):
-    def get_queryset_for_wish_list(self, model):
-        return model.objects.filter(creator=self)
+    def get_queryset_for_wish_list(self):
+        return Wish.objects.filter(creator=self)
 
     can_create_wish = True
 
@@ -43,8 +43,8 @@ class Customer(WizuberUser):
 class Student(WizuberUser):
     teacher = models.OneToOneField(Wizard, on_delete=models.CASCADE)
 
-    def get_queryset_for_wish_list(self, model):
-        return model.objects.none()  # TODO
+    def get_queryset_for_wish_list(self):
+        return Wish.objects.none()  # TODO
 
 
 class SpiritGrades(ChoicesEnum):
@@ -60,12 +60,13 @@ class SpiritGrades(ChoicesEnum):
 
 
 class Spirit(WizuberUser):
+    # TODO change cascade to set null and fix default to null
     master = models.ForeignKey(Wizard, on_delete=models.CASCADE, null=True, default=True, blank=True)
     GRADES = SpiritGrades
     grade = models.CharField(max_length=GRADES.max_length(), choices=GRADES.choices())
 
-    def get_queryset_for_wish_list(self, model):
-        return model.objects.none()  # TODO
+    def get_queryset_for_wish_list(self):
+        return Wish.objects.none()  # TODO
 
 
 class WishStatus(ChoicesEnum):

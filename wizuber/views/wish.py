@@ -23,7 +23,7 @@ class ListWish(LoginRequiredMixin, generic.ListView):
     template_name = 'wizuber/wish/list.html'
 
     def get_queryset(self):
-        return self.request.user.get_queryset_for_wish_list(self.model)
+        return self.request.user.get_queryset_for_wish_list()
 
 
 class ListWishActive(UserPassesTestMixin, ListWish):
