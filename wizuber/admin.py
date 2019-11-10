@@ -17,10 +17,11 @@ def create_user_admin_form(form_model, base_class, model_fields='__all__'):
 class WizuberUserModelAdmin(UserAdmin):
     add_form = create_user_admin_form(WizuberUser, UserCreationForm)
     form = create_user_admin_form(WizuberUser, UserChangeForm)
-    add_fieldsets = UserAdmin.add_fieldsets + (
-        (None, {
-            'fields': ('email', 'first_name', 'last_name', 'middle_name', 'is_staff', 'is_active', 'is_superuser')
-        }),
+    personal_info = ('Personal info', {'fields': ('email', 'first_name', 'last_name', 'middle_name')})
+    add_fieldsets = UserAdmin.add_fieldsets + (personal_info,)
+    fieldsets = (
+        (None, {'fields': ('username', 'password')}),
+        personal_info,
     )
 
 
@@ -32,14 +33,17 @@ class WizardModelAdmin(WizuberUserModelAdmin):
 class StudentModelAdmin(WizuberUserModelAdmin):
     add_form = create_user_admin_form(Student, UserCreationForm)
     form = create_user_admin_form(Student, UserChangeForm)
+    addition_fields = ('Additional fields', {'fields': ('teacher',)})
+    add_fieldsets = WizuberUserModelAdmin.add_fieldsets + (addition_fields,)
+    fieldsets = WizuberUserModelAdmin.fieldsets + (addition_fields,)
 
 
 class SpiritModelAdmin(WizuberUserModelAdmin):
     add_form = create_user_admin_form(Spirit, UserCreationForm)
     form = create_user_admin_form(Spirit, UserChangeForm)
-    add_fieldsets = WizuberUserModelAdmin.add_fieldsets + (
-        (None, {'fields': ('grade',)}),
-    )
+    addition_fields = ('Additional fields', {'fields': ('grade', 'master')})
+    add_fieldsets = WizuberUserModelAdmin.add_fieldsets + (addition_fields,)
+    fieldsets = WizuberUserModelAdmin.fieldsets + (addition_fields,)
 
 
 admin.site.register(WizuberUser, WizuberUserModelAdmin)
