@@ -30,12 +30,12 @@ class WizuberUser(PolymorphicModel, AbstractUser):
 
 class Wizard(WizuberUser):
     def get_queryset_for_wish_list(self):
-        return Wish.objects.filter(owner=self)
+        return self.owned_wishes.all()
 
 
 class Customer(WizuberUser):
     def get_queryset_for_wish_list(self):
-        return Wish.objects.filter(creator=self)
+        return self.created_wishes.all()
 
     can_create_wish = True
 
@@ -82,9 +82,9 @@ class WishStatus(ChoicesEnum):
 
 
 class Wish(models.Model):
-    creator = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    creator = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='created_wishes')
     description = models.TextField()
-    owner = models.ForeignKey(Wizard, on_delete=models.CASCADE, null=True, blank=True)
+    owner = models.ForeignKey(Wizard, on_delete=models.CASCADE, null=True, blank=True, related_name='owned_wishes')
     STATUSES = WishStatus
     status = models.CharField(max_length=STATUSES.max_length(), choices=STATUSES.choices(), default=STATUSES.default())
 
