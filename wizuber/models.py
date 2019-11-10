@@ -44,7 +44,7 @@ class Student(WizuberUser):
     teacher = models.OneToOneField(Wizard, on_delete=models.CASCADE)
 
     def get_queryset_for_wish_list(self):
-        return Wish.objects.none()  # TODO
+        return self.assigned_wishes.all()
 
 
 class SpiritGrades(ChoicesEnum):
@@ -65,7 +65,7 @@ class Spirit(WizuberUser):
     grade = models.CharField(max_length=GRADES.max_length(), choices=GRADES.choices())
 
     def get_queryset_for_wish_list(self):
-        return Wish.objects.none()  # TODO
+        return self.assigned_wishes.all()
 
 
 class WishStatus(ChoicesEnum):
@@ -87,6 +87,8 @@ class Wish(models.Model):
     owner = models.ForeignKey(Wizard, on_delete=models.CASCADE, null=True, blank=True, related_name='owned_wishes')
     STATUSES = WishStatus
     status = models.CharField(max_length=STATUSES.max_length(), choices=STATUSES.choices(), default=STATUSES.default())
+    assigned_to = models.ForeignKey(WizuberUser, related_name='assigned_wishes', on_delete=models.SET_NULL,
+                                    null=True, blank=True)
 
     def get_statuses(self):
         return self.STATUSES

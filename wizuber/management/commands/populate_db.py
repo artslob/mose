@@ -20,27 +20,30 @@ class Command(BaseCommand):
         w1 = self._create_wizard('w1')
         w2 = self._create_wizard('w2')
 
-        self._create_student('student 1', teacher=w1)
+        stud = self._create_student('stud', teacher=w1)
 
-        self._create_spirit('bartimaeus', SpiritGrades.DJINNI.name)
-        self._create_spirit('spirit under w1', SpiritGrades.MARID.name, master=w1)
-        self._create_spirit('spirit under w2', SpiritGrades.FOLIOT.name, master=w2)
+        bartimaeus = self._create_spirit('bartimaeus', SpiritGrades.DJINNI.name)
+        self._create_spirit('spirit_under_w1', SpiritGrades.MARID.name, master=w1)
+        self._create_spirit('spirit_under_w2', SpiritGrades.FOLIOT.name, master=w2)
 
         for _, grade in SpiritGrades.choices():
             for i in range(10):
-                self._create_spirit(f'spirit {grade} {i}', grade)
+                self._create_spirit(f'spirit_{grade}_{i}', grade)
 
         self._create_wish(c1, 'wish of user c1 without owner')
         self._create_wish(c2, 'wish of user c2 without owner')
         self._create_wish(c1, 'wish of user c1 with owner: wizard w1', w1)
         self._create_wish(c2, 'wish of user c2 with owner: wizard w2', w2)
+        self._create_wish(c2, 'wish c2 with w2 and assigned to bartimaeus', w2, assigned_to=bartimaeus)
+        self._create_wish(c2, 'wish c2 with w2 and assigned to student', w2, assigned_to=stud)
 
         self.stdout.write(self.style.SUCCESS('Database successfully populated.'))
 
     @staticmethod
-    def _create_wish(creator, description, owner=None):
+    def _create_wish(creator, description, owner=None, **kwargs):
         status = Wish.STATUSES.WORK.name if owner else Wish.STATUSES.NEW.name
-        wish, _ = Wish.objects.get_or_create(creator=creator, description=description, owner=owner, status=status)
+        get_or_create = Wish.objects.get_or_create
+        wish, _ = get_or_create(creator=creator, description=description, owner=owner, status=status, **kwargs)
         return wish
 
     @staticmethod
