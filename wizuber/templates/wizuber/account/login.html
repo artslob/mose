@@ -1,14 +1,6 @@
 {% extends 'wizuber/base.html' %}
 
-{% block title %}
-    Login
-{% endblock %}
-
 {% block content %}
-    <h2>Login</h2>
-
-    <hr>
-
     {% if form.non_field_errors %}
         <div class="alert alert-danger" role="alert">
             <b>While processing your input these errors occurred:</b>

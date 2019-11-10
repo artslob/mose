@@ -1,14 +1,6 @@
 {% extends 'wizuber/base.html' %}
 
-{% block title %}
-    Create new wish
-{% endblock %}
-
 {% block content %}
-    <h2>Create new wish</h2>
-
-    <hr>
-
     {% if form.non_field_errors %}
         <div class="alert alert-danger" role="alert">
             <b>While processing your input these errors occurred:</b>

@@ -5,11 +5,13 @@ from django.urls import reverse
 from django.views import generic
 
 from wizuber.models import Wizard, Wish, is_wizard
+from wizuber.views.helpers import PageTitleMixin
 
 
 # TODO add checks for permissions
 
-class ListWish(LoginRequiredMixin, generic.ListView):
+
+class ListWish(LoginRequiredMixin, PageTitleMixin, generic.ListView):
     """
     Returns list of wishes. For specific types of users returns different results:
     Customer: wishes created by him;
@@ -17,7 +19,7 @@ class ListWish(LoginRequiredMixin, generic.ListView):
     Student: wishes assigned to him;
     Spirit: wishes assigned to him;
     """
-
+    page_title = 'Wishes List'
     model = Wish
     context_object_name = 'wishes'
     template_name = 'wizuber/wish/list.html'
@@ -27,9 +29,8 @@ class ListWish(LoginRequiredMixin, generic.ListView):
 
 
 class ListWishActive(UserPassesTestMixin, ListWish):
-    """
-    Returns wish list for wizard (only with "active" status). Represents "new orders" page.
-    """
+    """ Returns wish list for wizard (only with "active" status). Represents "new orders" page. """
+    page_title = 'Available Wishes For Order'
 
     def test_func(self):
         return is_wizard(self.request.user)
@@ -38,7 +39,8 @@ class ListWishActive(UserPassesTestMixin, ListWish):
         return Wish.objects.filter(status=Wish.STATUSES.ACTIVE.name)
 
 
-class CreateWish(LoginRequiredMixin, UserPassesTestMixin, generic.CreateView):
+class CreateWish(LoginRequiredMixin, UserPassesTestMixin, PageTitleMixin, generic.CreateView):
+    page_title = 'Create New Wish'
     model = Wish
     fields = ['description']
     template_name = 'wizuber/wish/create.html'
@@ -54,7 +56,8 @@ class CreateWish(LoginRequiredMixin, UserPassesTestMixin, generic.CreateView):
         return super().form_valid(form)
 
 
-class DetailWish(LoginRequiredMixin, generic.DetailView):
+class DetailWish(LoginRequiredMixin, PageTitleMixin, generic.DetailView):
+    page_title = 'Wish Details'
     model = Wish
     context_object_name = 'wish'
     template_name = 'wizuber/wish/detail.html'
