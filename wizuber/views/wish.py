@@ -1,4 +1,4 @@
-from django.contrib.auth.mixins import PermissionRequiredMixin, UserPassesTestMixin, LoginRequiredMixin
+from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
 from django.http import HttpResponseForbidden
 from django.shortcuts import redirect
 from django.urls import reverse
@@ -7,9 +7,9 @@ from django.views import generic
 from wizuber.models import Wizard, Wish
 
 
-class ListWish(PermissionRequiredMixin, generic.ListView):
-    permission_required = 'wizuber.view_wish'
+# TODO add checks for permissions
 
+class ListWish(generic.ListView):
     model = Wish
     context_object_name = 'wishes'
     template_name = 'wizuber/wish/list.html'
@@ -18,9 +18,7 @@ class ListWish(PermissionRequiredMixin, generic.ListView):
         return self.request.user.get_queryset_for_wish_list(self.model)
 
 
-class CreateWish(LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin, generic.CreateView):
-    permission_required = 'wizuber.add_wish'
-
+class CreateWish(LoginRequiredMixin, UserPassesTestMixin, generic.CreateView):
     model = Wish
     fields = ['description']
     template_name = 'wizuber/wish/create.html'
@@ -36,17 +34,13 @@ class CreateWish(LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixi
         return super().form_valid(form)
 
 
-class DetailWish(PermissionRequiredMixin, generic.DetailView):
-    permission_required = 'wizuber.view_wish'
-
+class DetailWish(generic.DetailView):
     model = Wish
     context_object_name = 'wish'
     template_name = 'wizuber/wish/detail.html'
 
 
-class FulfillWish(PermissionRequiredMixin, generic.View, generic.detail.SingleObjectMixin):
-    permission_required = 'wizuber.change_wish'
-
+class FulfillWish(generic.View, generic.detail.SingleObjectMixin):
     model = Wish
 
     def post(self, request, pk):
