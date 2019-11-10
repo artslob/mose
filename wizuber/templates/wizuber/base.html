@@ -1,3 +1,5 @@
+{% load wizuber_tags %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -17,16 +19,12 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navBarToggler">
-            <ul class="navbar-nav mr-auto">
+            <div class="navbar-nav mr-auto">
                 {% if user.is_authenticated %}
-                    <li class="nav-item active">
-                        <a class="nav-link" href="{% url 'wizuber:list-wish' %}">My wishes</a>
-                    </li>
+                    <a class="nav-item nav-link active" href="{% url 'wizuber:list-wish' %}">My wishes</a>
                 {% endif %}
-                <li class="nav-item active">
-                    <a class="nav-link" href="{% url 'wizuber:list-wizard' %}">Wizards</a>
-                </li>
-            </ul>
+                <a class="nav-item nav-link active" href="{% url 'wizuber:list-wizard' %}">Wizards</a>
+            </div>
             <ul class="navbar-nav">
                 {% if user.is_authenticated %}
                     <li class="nav-item dropdown">
