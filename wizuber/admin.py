@@ -26,17 +26,17 @@ class WizuberUserModelAdmin(UserAdmin):
 
 class WizardModelAdmin(WizuberUserModelAdmin):
     add_form = create_user_admin_form(Wizard, UserCreationForm)
-    form = create_user_admin_form(Wizard, UserCreationForm)
+    form = create_user_admin_form(Wizard, UserChangeForm)
 
 
 class StudentModelAdmin(WizuberUserModelAdmin):
     add_form = create_user_admin_form(Student, UserCreationForm)
-    form = create_user_admin_form(Student, UserCreationForm)
+    form = create_user_admin_form(Student, UserChangeForm)
 
 
 class SpiritModelAdmin(WizuberUserModelAdmin):
     add_form = create_user_admin_form(Spirit, UserCreationForm)
-    form = create_user_admin_form(Spirit, UserCreationForm)
+    form = create_user_admin_form(Spirit, UserChangeForm)
     add_fieldsets = WizuberUserModelAdmin.add_fieldsets + (
         (None, {'fields': ('grade',)}),
     )
