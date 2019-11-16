@@ -39,4 +39,4 @@ tests:
     MOSE_DATABASE_HOST: 'db'
   script:
     - pip install -r requirements.txt
-    - python manage.py test
+    - python manage.py test --no-input

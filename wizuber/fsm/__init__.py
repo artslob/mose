@@ -1,5 +1,3 @@
-from wizuber.fsm.action import DeleteAction
+from wizuber.fsm.action import IAction, DeleteAction
 
-__all__ = [
-    DeleteAction
-]
+__all__ = [IAction, DeleteAction]

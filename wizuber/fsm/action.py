@@ -6,6 +6,12 @@ from wizuber.models import Wish, WizuberUser
 
 
 class IAction(metaclass=ABCMeta):
+    defined_actions = set()
+
+    def __init_subclass__(cls, **kwargs):
+        super().__init_subclass__(**kwargs)
+        cls.defined_actions.add(cls)
+
     def __init__(self, wish: Wish, user: WizuberUser, *args, **kwargs):
         self.wish = wish
         self.user = user
