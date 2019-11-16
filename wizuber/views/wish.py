@@ -41,7 +41,7 @@ class ListWishActive(UserPassesTestMixin, ListWish):
 class CreateWish(LoginRequiredMixin, UserPassesTestMixin, PageTitleMixin, generic.CreateView):
     page_title = 'Create New Wish'
     model = Wish
-    fields = ['description']
+    fields = ['description', 'price']
     template_name = 'wizuber/wish/create.html'
 
     def test_func(self):

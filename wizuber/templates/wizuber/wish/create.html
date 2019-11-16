@@ -13,10 +13,12 @@
     <form method="post" action="{% url 'wizuber:create-wish' %}">
         {% csrf_token %}
 
-        <div class="form-row">
-            <div class="form-group col-12">
-                {% include 'wizuber/signup_form_field.html' with field=form.description placeholder="Enter description" %}
-            </div>
+        <div class="form-group">
+            {% include 'wizuber/signup_form_field.html' with field=form.description placeholder="Enter description" %}
+        </div>
+
+        <div class="form-group">
+            {% include 'wizuber/signup_form_field.html' with field=form.price placeholder="Enter price" %}
         </div>
 
         <button type="submit" class="btn btn-success">Create</button>

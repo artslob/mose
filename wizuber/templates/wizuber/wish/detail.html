@@ -36,6 +36,12 @@
         </div>
     </div>
 
+    <div class="row py-2">
+        <div class="col">
+            <h5>Price: {{ wish.price }}</h5>
+        </div>
+    </div>
+
     {% if wish.owner == user and wish.status != wish.get_statuses.READY.name %}
         <div class="row py-2">
             <div class="col">

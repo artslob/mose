@@ -1,4 +1,5 @@
 from django.contrib.auth.models import AbstractUser, UserManager
+from django.core.validators import MinValueValidator
 from django.db import models
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
@@ -30,6 +31,8 @@ class WizuberUser(PolymorphicModel, AbstractUser):
 
 
 class Wizard(WizuberUser):
+    balance = models.PositiveIntegerField(default=0)
+
     def get_absolute_url(self):
         return reverse('wizuber:detail-wizard', kwargs=dict(pk=self.id))
 
@@ -38,6 +41,8 @@ class Wizard(WizuberUser):
 
 
 class Customer(WizuberUser):
+    balance = models.PositiveIntegerField(default=500)
+
     def get_queryset_for_wish_list(self):
         return self.created_wishes.all()
 
@@ -93,6 +98,7 @@ class Wish(models.Model):
     status = models.CharField(max_length=STATUSES.max_length(), choices=STATUSES.choices(), default=STATUSES.default())
     assigned_to = models.ForeignKey(WizuberUser, related_name='assigned_wishes', on_delete=models.SET_NULL,
                                     null=True, blank=True)
+    price = models.PositiveIntegerField(validators=[MinValueValidator(limit_value=1)], default=50)
 
     def get_absolute_url(self):
         return reverse('wizuber:detail-wish', kwargs=dict(pk=self.id))
