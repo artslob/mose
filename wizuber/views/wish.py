@@ -1,7 +1,6 @@
 from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
 from django.http import HttpResponseForbidden
 from django.shortcuts import redirect
-from django.urls import reverse
 from django.views import generic
 
 from wizuber.models import Wizard, Wish, is_wizard
@@ -48,9 +47,6 @@ class CreateWish(LoginRequiredMixin, UserPassesTestMixin, PageTitleMixin, generi
     def test_func(self):
         return self.request.user.can_create_wish
 
-    def get_success_url(self):
-        return reverse('wizuber:detail-wish', kwargs=dict(pk=self.object.pk))
-
     def form_valid(self, form):
         form.instance.creator = self.request.user
         return super().form_valid(form)
@@ -75,4 +71,4 @@ class FulfillWish(LoginRequiredMixin, generic.View, generic.detail.SingleObjectM
             return HttpResponseForbidden()
         wish.status = wish.STATUSES.READY.name
         wish.save()
-        return redirect('detail-wish', pk=pk)
+        return redirect(wish.get_absolute_url())

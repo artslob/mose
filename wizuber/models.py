@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser, UserManager
 from django.db import models
+from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from polymorphic.managers import PolymorphicManager
 from polymorphic.models import PolymorphicModel
@@ -29,6 +30,9 @@ class WizuberUser(PolymorphicModel, AbstractUser):
 
 
 class Wizard(WizuberUser):
+    def get_absolute_url(self):
+        return reverse('wizuber:detail-wizard', kwargs=dict(pk=self.id))
+
     def get_queryset_for_wish_list(self):
         return self.owned_wishes.all()
 
@@ -89,6 +93,9 @@ class Wish(models.Model):
     status = models.CharField(max_length=STATUSES.max_length(), choices=STATUSES.choices(), default=STATUSES.default())
     assigned_to = models.ForeignKey(WizuberUser, related_name='assigned_wishes', on_delete=models.SET_NULL,
                                     null=True, blank=True)
+
+    def get_absolute_url(self):
+        return reverse('wizuber:detail-wish', kwargs=dict(pk=self.id))
 
     def get_statuses(self):
         return self.STATUSES
