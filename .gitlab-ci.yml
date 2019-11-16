@@ -1,9 +1,8 @@
 image: 'python:3.6.9-buster'
 
 flake8:
-  before_script:
-    - pip install flake8==3.7.9
   script:
+    - pip install flake8==3.7.9
     - flake8
 
 migrations:
@@ -25,3 +24,19 @@ migrations:
     - ./manage.py makemigrations --check
     - ./manage.py migrate
     - ./manage.py populate_db
+
+tests:
+  services:
+    - name: postgres:11.5
+      alias: db
+  variables:
+    POSTGRES_DB: ci_db
+    POSTGRES_USER: ci_runner
+    POSTGRES_PASSWORD: "ci_pass"
+    MOSE_DATABASE_NAME: "$POSTGRES_DB"
+    MOSE_DATABASE_USER: "$POSTGRES_USER"
+    MOSE_DATABASE_PASSWORD: "$POSTGRES_PASSWORD"
+    MOSE_DATABASE_HOST: 'db'
+  script:
+    - pip install -r requirements.txt
+    - python manage.py test
