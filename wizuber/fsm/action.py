@@ -1,3 +1,4 @@
+import inspect
 from abc import ABCMeta, abstractmethod
 from typing import Type
 
@@ -6,11 +7,14 @@ from wizuber.models import Wish, WizuberUser
 
 
 class IAction(metaclass=ABCMeta):
-    defined_actions = set()
+    defined_actions = {}
 
     def __init_subclass__(cls, **kwargs):
         super().__init_subclass__(**kwargs)
-        cls.defined_actions.add(cls)
+        action_name = cls.get_action_name()
+        if action_name in cls.defined_actions and not inspect.isabstract(cls):
+            raise RuntimeError(f'action name {action_name!r} is not unique!')
+        cls.defined_actions[action_name] = cls
 
     def __init__(self, wish: Wish, user: WizuberUser, *args, **kwargs):
         self.wish = wish
