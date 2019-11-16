@@ -11,7 +11,7 @@
         <div class="col">
             <h5>Wizard:
                 {% if wish.owner %}
-                    <a href="{% url 'wizuber:detail-wizard' wish.owner.pk %}">{{ wish.owner }}</a>
+                    <a href="{{ wish.owner.get_absolute_url }}">{{ wish.owner }}</a>
                 {% else %}
                     <span class="badge badge-secondary">Sorry, the wizard is not assigned yet.</span>
                 {% endif %}

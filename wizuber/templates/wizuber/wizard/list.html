@@ -4,7 +4,7 @@
     {% if wizards %}
         <ul>
             {% for wizard in wizards %}
-                <li><a href="{% url 'wizuber:detail-wizard' wizard.pk %}">{{ wizard }}</a></li>
+                <li><a href="{{ wizard.get_absolute_url }}">{{ wizard }}</a></li>
             {% endfor %}
         </ul>
     {% else %}
