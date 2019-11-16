@@ -47,7 +47,7 @@
         <hr>
 
         {% for action in actions %}
-            {% include action.get_template_name with form=action.form_class %}
+            {% include action.get_template_name with action=action %}
         {% endfor %}
     {% endif %}
 

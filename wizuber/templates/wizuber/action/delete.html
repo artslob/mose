@@ -1,1 +1,8 @@
-<p>delete action</p>
+<div class="row py-2">
+    <div class="col">
+        <form action="{% url 'wizuber:handle-wish-action' wish.pk action.get_action_name %}" method="POST">
+            {% csrf_token %}
+            <button type="submit" class="btn badge-danger">Delete wish</button>
+        </form>
+    </div>
+</div>

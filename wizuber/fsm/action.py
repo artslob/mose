@@ -16,6 +16,11 @@ class IAction(metaclass=ABCMeta):
         self.wish = wish
         self.user = user
 
+    @classmethod
+    @abstractmethod
+    def get_action_name(cls) -> str:
+        pass
+
     @abstractmethod
     def is_available(self) -> bool:
         pass
@@ -34,6 +39,10 @@ class IAction(metaclass=ABCMeta):
 
 
 class DeleteAction(IAction):
+    @classmethod
+    def get_action_name(cls) -> str:
+        return 'delete'
+
     @classmethod
     def form_class(cls) -> Type[IForm]:
         return DeleteForm

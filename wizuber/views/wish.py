@@ -70,6 +70,14 @@ class DetailWish(LoginRequiredMixin, PageTitleMixin, generic.DetailView):
         return [action for action in action_instances if action.is_available()]
 
 
+class HandleWishAction(LoginRequiredMixin, generic.View, generic.detail.SingleObjectMixin):
+    model = Wish
+
+    def post(self, request, pk: int, action: str):
+        print(pk, action)
+        return redirect(self.get_object().get_absolute_url())
+
+
 class FulfillWish(LoginRequiredMixin, generic.View, generic.detail.SingleObjectMixin):
     model = Wish
 
