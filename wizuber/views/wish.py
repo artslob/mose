@@ -3,6 +3,7 @@ from django.http import HttpResponseForbidden
 from django.shortcuts import redirect
 from django.views import generic
 
+from wizuber.fsm import DeleteAction
 from wizuber.models import Wizard, Wish, is_wizard
 from wizuber.views.helpers import PageTitleMixin
 
@@ -57,6 +58,16 @@ class DetailWish(LoginRequiredMixin, PageTitleMixin, generic.DetailView):
     model = Wish
     context_object_name = 'wish'
     template_name = 'wizuber/wish/detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['actions'] = self.get_actions()
+        return context
+
+    def get_actions(self):
+        wish, user = self.object, self.request.user
+        action_instances = (cls(wish, user) for cls in [DeleteAction, ])
+        return [action for action in action_instances if action.is_available()]
 
 
 class FulfillWish(LoginRequiredMixin, generic.View, generic.detail.SingleObjectMixin):

@@ -42,7 +42,17 @@
         </div>
     </div>
 
+    {% if actions %}
+        <h2 class="pt-4">Actions:</h2>
+        <hr>
+
+        {% for action in actions %}
+            {% include action.get_template_name with form=action.form_class %}
+        {% endfor %}
+    {% endif %}
+
     {% if wish.owner == user and wish.status != wish.get_statuses.READY.name %}
+        {# TODO remove fullfil method #}
         <div class="row py-2">
             <div class="col">
                 <form action="{% url 'wizuber:fulfill-wish' wish.pk %}" method="POST">

@@ -91,6 +91,7 @@ class WishStatus(ChoicesEnum):
 
 
 class Wish(models.Model):
+    # TODO check all on_delete parameters
     creator = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='created_wishes')
     description = models.TextField()
     owner = models.ForeignKey(Wizard, on_delete=models.CASCADE, null=True, blank=True, related_name='owned_wishes')
