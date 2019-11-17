@@ -72,7 +72,7 @@ class PayAction(IAction):
 
     @classmethod
     def get_action_description(cls) -> str:
-        return 'To make wish visible for wizard pay for this wish'
+        return 'Pay for this with to make it visible for wizard'
 
     @classmethod
     def form_class(cls) -> Type[IForm]:

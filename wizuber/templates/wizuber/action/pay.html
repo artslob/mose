@@ -5,17 +5,21 @@
 
             <div class="form-row">
                 <div class="col-auto">
-                    <div class="input-group my-2">
+                    <div class="input-group">
                         <div class="input-group-prepend">
                             <span class="input-group-text">£</span>
                         </div>
-                        {# TODO check user balance and disable button #}
                         <input type="text" class="form-control" value="{{ wish.price }}" aria-label="price amount"
                                disabled>
-                        <div class="input-group-append">
-                            <button type="submit" class="btn btn-outline-success">Pay for wish</button>
-                        </div>
+                        {% if wish.price <= user.balance %}
+                            <div class="input-group-append">
+                                <button type="submit" class="btn btn-outline-success">Pay for wish</button>
+                            </div>
+                        {% endif %}
                     </div>
+                    {% if wish.price > user.balance %}
+                        <small>You dont have enough money to pay for this wish.</small>
+                    {% endif %}
                 </div>
             </div>
 
