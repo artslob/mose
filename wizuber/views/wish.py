@@ -1,5 +1,5 @@
 from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
-from django.http import HttpResponseForbidden
+from django.http import HttpResponseForbidden, Http404
 from django.shortcuts import redirect
 from django.views import generic
 
@@ -75,7 +75,10 @@ class HandleWishAction(LoginRequiredMixin, generic.View, generic.detail.SingleOb
 
     def post(self, request, pk: int, action: str):
         print(pk, action)
-        action_class = ActionMapping.action_class_by_name(action)
+        try:
+            action_class = ActionMapping.action_class_by_name(action)
+        except KeyError:
+            raise Http404
         print(action_class)
         return redirect(self.get_object().get_absolute_url())
 
