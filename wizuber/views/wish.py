@@ -83,7 +83,7 @@ class HandleWishAction(LoginRequiredMixin, generic.View, generic.detail.SingleOb
         print(action_class)
         wish = self.get_object()
         action = action_class(wish=wish, user=self.request.user)
-        if not action.is_available():
+        if not action.is_processing_available():
             raise PermissionDenied
         action.do_action()
         return redirect(action.get_success_url())

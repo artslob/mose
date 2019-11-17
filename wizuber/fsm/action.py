@@ -45,6 +45,12 @@ class IAction(metaclass=ABCMeta):
     def get_template_name(cls) -> str:
         return cls.form_class().get_full_template_name()
 
+    def is_processing_available(self) -> bool:
+        return self.is_available() and self._is_processing_available()
+
+    def _is_processing_available(self) -> bool:
+        return True
+
     @abstractmethod
     def do_action(self):
         pass
@@ -93,8 +99,10 @@ class PayAction(IAction):
     def is_available(self) -> bool:
         return self.wish.creator == self.user and self.wish.status == self.wish.STATUSES.NEW.name
 
+    def _is_processing_available(self) -> bool:
+        return self.user.balance >= self.wish.price
+
     def do_action(self):
         # TODO subtract money from user balance
-        # TODO also add method is_processing_available - to check for enough money
         self.wish.status = self.wish.STATUSES.ACTIVE.name
         self.wish.save()
