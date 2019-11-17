@@ -16,3 +16,9 @@ class DeleteForm(IForm):
     @classmethod
     def template_name(cls) -> str:
         return 'delete'
+
+
+class PayForm(IForm):
+    @classmethod
+    def template_name(cls) -> str:
+        return 'pay'

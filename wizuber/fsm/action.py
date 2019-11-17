@@ -2,7 +2,7 @@ import inspect
 from abc import ABCMeta, abstractmethod
 from typing import Type
 
-from wizuber.fsm.form import IForm, DeleteForm
+from wizuber.fsm.form import IForm, DeleteForm, PayForm
 from wizuber.models import Wish, WizuberUser
 
 
@@ -63,3 +63,20 @@ class DeleteAction(IAction):
     def is_available(self) -> bool:
         """ Delete action is always available for user-creator. """
         return self.wish.creator == self.user
+
+
+class PayAction(IAction):
+    @classmethod
+    def get_action_name(cls) -> str:
+        return 'pay'
+
+    @classmethod
+    def get_action_description(cls) -> str:
+        return 'To make wish visible for wizard pay for this wish'
+
+    @classmethod
+    def form_class(cls) -> Type[IForm]:
+        return PayForm
+
+    def is_available(self) -> bool:
+        return self.wish.creator == self.user and self.wish.status == self.wish.STATUSES.NEW.name
