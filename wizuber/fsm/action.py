@@ -2,6 +2,7 @@ import inspect
 from abc import ABCMeta, abstractmethod
 from typing import Type
 
+from django.db.models import F
 from django.urls import reverse
 
 from wizuber.fsm.form import IForm, DeleteForm, PayForm
@@ -103,6 +104,8 @@ class PayAction(IAction):
         return self.user.balance >= self.wish.price
 
     def do_action(self):
-        # TODO subtract money from user balance
+        self.user.balance = F('balance') - self.wish.price
+        self.user.save()
+        self.user.refresh_from_db()
         self.wish.status = self.wish.STATUSES.ACTIVE.name
         self.wish.save()
