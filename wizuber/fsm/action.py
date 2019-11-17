@@ -131,4 +131,5 @@ class OwnAction(IAction):
 
     def do_action(self):
         self.wish.owner = self.user
+        self.wish.status = self.wish.STATUSES.WORK.name
         self.wish.save()
