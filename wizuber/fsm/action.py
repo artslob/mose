@@ -2,6 +2,8 @@ import inspect
 from abc import ABCMeta, abstractmethod
 from typing import Type
 
+from django.urls import reverse
+
 from wizuber.fsm.form import IForm, DeleteForm, PayForm
 from wizuber.models import Wish, WizuberUser
 
@@ -47,6 +49,9 @@ class IAction(metaclass=ABCMeta):
     def do_action(self):
         pass
 
+    def get_success_url(self):
+        return self.wish.get_absolute_url()
+
 
 class DeleteAction(IAction):
     @classmethod
@@ -66,7 +71,10 @@ class DeleteAction(IAction):
         return self.wish.creator == self.user
 
     def do_action(self):
-        pass
+        self.wish.delete()
+
+    def get_success_url(self):
+        return reverse('wizuber:list-wish')
 
 
 class PayAction(IAction):

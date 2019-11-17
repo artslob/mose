@@ -86,7 +86,7 @@ class HandleWishAction(LoginRequiredMixin, generic.View, generic.detail.SingleOb
         if not action.is_available():
             raise PermissionDenied
         action.do_action()
-        return redirect(wish.get_absolute_url())
+        return redirect(action.get_success_url())
 
 
 class FulfillWish(LoginRequiredMixin, generic.View, generic.detail.SingleObjectMixin):
