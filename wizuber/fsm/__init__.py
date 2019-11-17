@@ -10,7 +10,7 @@ class ActionMapping(Enum):
 
     @staticmethod
     def action_classes() -> List[Type[IAction]]:
-        return [cls for cls in IAction.defined_actions.values()]
+        return list(IAction.defined_actions.values())
 
     @staticmethod
     def action_class_by_name(name: str) -> Type[IAction]:
