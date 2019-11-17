@@ -1,4 +1,4 @@
-from django.test import TestCase
+from django.test import TestCase, Client
 
 from wizuber.fsm import IAction, ActionMapping
 
@@ -37,3 +37,10 @@ class FsmAvailableActions(TestCase):
     def test_get_action_class_by_name(self):
         cls = ActionMapping.action_class_by_name('delete')
         self.assertTrue(issubclass(cls, IAction))
+
+    def test_get_action_class_by_not_existing_name(self):
+        self.assertRaises(KeyError, ActionMapping.action_class_by_name, 'test-action')
+
+    def test_post_action_not_existing_name(self):
+        response = Client().post('wish/1/handle/test-action')
+        self.assertEqual(response.status_code, 404)
