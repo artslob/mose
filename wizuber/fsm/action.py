@@ -43,7 +43,8 @@ class IAction(metaclass=ABCMeta):
     def get_template_name(cls) -> str:
         return cls.form_class().get_full_template_name()
 
-    def do_action(self, *args, **kwargs):
+    @abstractmethod
+    def do_action(self):
         pass
 
 
@@ -64,6 +65,9 @@ class DeleteAction(IAction):
         """ Delete action is always available for user-creator. """
         return self.wish.creator == self.user
 
+    def do_action(self):
+        pass
+
 
 class PayAction(IAction):
     @classmethod
@@ -80,3 +84,7 @@ class PayAction(IAction):
 
     def is_available(self) -> bool:
         return self.wish.creator == self.user and self.wish.status == self.wish.STATUSES.NEW.name
+
+    def do_action(self):
+        self.wish.status = self.wish.STATUSES.ACTIVE.name
+        self.wish.save()

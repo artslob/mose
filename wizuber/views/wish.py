@@ -1,4 +1,5 @@
 from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
+from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseForbidden, Http404
 from django.shortcuts import redirect
 from django.views import generic
@@ -80,7 +81,12 @@ class HandleWishAction(LoginRequiredMixin, generic.View, generic.detail.SingleOb
         except KeyError:
             raise Http404
         print(action_class)
-        return redirect(self.get_object().get_absolute_url())
+        wish = self.get_object()
+        action = action_class(wish=wish, user=self.request.user)
+        if not action.is_available():
+            raise PermissionDenied
+        action.do_action()
+        return redirect(wish.get_absolute_url())
 
 
 class FulfillWish(LoginRequiredMixin, generic.View, generic.detail.SingleObjectMixin):
