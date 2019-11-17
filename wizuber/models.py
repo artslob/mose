@@ -108,6 +108,50 @@ class Wish(models.Model):
         return self.STATUSES
 
 
+class BaseArtifact(models.Model):
+    wish = models.ForeignKey(Wish, related_name='artifacts', on_delete=models.CASCADE)
+
+
+class SizeChoices(ChoicesEnum):
+    LARGE = 'large'
+    MEDIUM = 'medium'
+    SMALL = 'small'
+
+    @classmethod
+    def default(cls):
+        return cls.MEDIUM.name
+
+
+class CandleMaterial(ChoicesEnum):
+    TALLOW = 'tallow'
+    BEESWAX = 'beeswax'
+    PARAFFIN = 'paraffin'
+
+    @classmethod
+    def default(cls):
+        return cls.TALLOW.name
+
+
+class CandleArtifact(BaseArtifact):
+    SIZES = SizeChoices
+    size = models.CharField(max_length=SIZES.max_length(), choices=SIZES.choices(), default=SIZES.default())
+    MATERIALS = CandleMaterial
+    material = models.CharField(
+        max_length=MATERIALS.max_length(), choices=MATERIALS.choices(), default=MATERIALS.default()
+    )
+
+
+class PentacleArtifact(BaseArtifact):
+    name = models.CharField(max_length=100)
+    description = models.TextField(blank=True)
+    SIZES = SizeChoices
+    size = models.CharField(max_length=SIZES.max_length(), choices=SIZES.choices(), default=SIZES.default())
+
+
+class SpiritArtifact(BaseArtifact):
+    spirit = models.ForeignKey(Spirit, related_name='spirit_artifacts', on_delete=models.CASCADE)
+
+
 class RightsSupport(models.Model):
     class Meta:
         # No database table creation or deletion operations will be performed for this model.
