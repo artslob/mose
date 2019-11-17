@@ -22,3 +22,9 @@ class PayForm(IForm):
     @classmethod
     def template_name(cls) -> str:
         return 'pay'
+
+
+class OwnForm(IForm):
+    @classmethod
+    def template_name(cls) -> str:
+        return 'own'

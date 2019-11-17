@@ -1,13 +1,14 @@
 from enum import Enum, unique
 from typing import Type, List
 
-from wizuber.fsm.action import IAction, DeleteAction, PayAction
+from wizuber.fsm.action import IAction, DeleteAction, PayAction, OwnAction
 
 
 @unique
 class ActionMapping(Enum):
     DELETE = DeleteAction
     PAY = PayAction
+    OWN = OwnAction
 
     @staticmethod
     def action_classes() -> List[Type[IAction]]:
@@ -18,4 +19,4 @@ class ActionMapping(Enum):
         return IAction.defined_actions[name]
 
 
-__all__ = [ActionMapping, IAction, DeleteAction, PayAction]
+__all__ = [ActionMapping, IAction, DeleteAction, PayAction, OwnAction]

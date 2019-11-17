@@ -5,7 +5,7 @@ from wizuber.fsm import IAction, ActionMapping
 
 class FsmAvailableActions(TestCase):
     def setUp(self):
-        self.expected_number_of_actions = 2
+        self.expected_number_of_actions = 3
 
     def test_available_actions_length(self):
         enum_length = len(ActionMapping.__members__)

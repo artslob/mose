@@ -5,8 +5,8 @@ from typing import Type
 from django.db.models import F
 from django.urls import reverse
 
-from wizuber.fsm.form import IForm, DeleteForm, PayForm
-from wizuber.models import Wish, WizuberUser
+from wizuber.fsm.form import IForm, DeleteForm, PayForm, OwnForm
+from wizuber.models import Wish, WizuberUser, is_wizard
 
 
 class IAction(metaclass=ABCMeta):
@@ -108,4 +108,27 @@ class PayAction(IAction):
         self.user.save()
         self.user.refresh_from_db()
         self.wish.status = self.wish.STATUSES.ACTIVE.name
+        self.wish.save()
+
+
+class OwnAction(IAction):
+    @classmethod
+    def get_action_name(cls) -> str:
+        return 'own'
+
+    @classmethod
+    def get_action_description(cls) -> str:
+        return 'You can accept order for this wish'
+
+    def is_available(self) -> bool:
+        without_owner = self.wish.owner is None
+        is_active_status = self.wish.status == self.wish.STATUSES.ACTIVE.name
+        return is_wizard(self.user) and without_owner and is_active_status
+
+    @classmethod
+    def form_class(cls) -> Type[IForm]:
+        return OwnForm
+
+    def do_action(self):
+        self.wish.owner = self.user
         self.wish.save()
