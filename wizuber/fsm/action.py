@@ -94,5 +94,7 @@ class PayAction(IAction):
         return self.wish.creator == self.user and self.wish.status == self.wish.STATUSES.NEW.name
 
     def do_action(self):
+        # TODO subtract money from user balance
+        # TODO also add method is_processing_available - to check for enough money
         self.wish.status = self.wish.STATUSES.ACTIVE.name
         self.wish.save()
