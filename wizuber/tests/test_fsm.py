@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from django.test import TestCase, Client
 
 from wizuber.fsm import IAction, action_classes, action_class_by_name, ActionNotFound
@@ -45,3 +47,13 @@ class FsmAvailableActions(TestCase):
     def test_post_action_not_existing_name(self):
         response = Client().post('wish/1/handle/test-action')
         self.assertEqual(response.status_code, 404)
+
+    def test_action_have_templates(self):
+        wizuber_dir: Path = Path(__file__).resolve().parent.parent
+        templates_dir = wizuber_dir / 'templates'
+        self.assertTrue(templates_dir.is_dir())
+        for cls in action_classes():
+            template_path = cls.get_full_template_name()
+            self.assertTrue(isinstance(template_path, str))
+            full_template_path = templates_dir / template_path
+            self.assertTrue(full_template_path.is_file(), msg=f'template {template_path!r} not exist')
