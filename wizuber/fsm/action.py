@@ -31,6 +31,14 @@ class IAction(metaclass=ABCMeta):
         pass
 
     @classmethod
+    def template_name(cls) -> str:
+        return cls.get_action_name()
+
+    @classmethod
+    def get_full_template_name(cls) -> str:
+        return f'wizuber/action/{cls.template_name()}.html'
+
+    @classmethod
     @abstractmethod
     def get_action_description(cls) -> str:
         pass
@@ -43,10 +51,6 @@ class IAction(metaclass=ABCMeta):
     @abstractmethod
     def form_class(cls) -> Type[IForm]:
         pass
-
-    @classmethod
-    def get_template_name(cls) -> str:
-        return cls.form_class().get_full_template_name()
 
     def is_processing_available(self) -> bool:
         return self.is_available() and self._is_processing_available()
