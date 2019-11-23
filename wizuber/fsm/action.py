@@ -1,7 +1,9 @@
 import inspect
 from abc import ABCMeta, abstractmethod, ABC
+from typing import Type
 
 from django.db.models import F
+from django.forms import ModelForm
 from django.http import HttpRequest
 from django.urls import reverse
 
@@ -146,62 +148,61 @@ class ArtifactAction(IAction, ABC):
 
         return False
 
+    @classmethod
+    @abstractmethod
+    def get_artifact_name(cls) -> str:
+        pass
 
-class CandleArtifactAction(ArtifactAction):
     @classmethod
     def get_action_name(cls) -> str:
-        return 'candle-artifact'
+        return f'{cls.get_artifact_name()}-artifact'
 
     @classmethod
     def get_action_description(cls) -> str:
-        return 'Add candle artifact for this wish'
+        return f'Add {cls.get_artifact_name()} artifact for this wish'
 
-    def get_form(self):
-        return CandleArtifactForm()
+    @classmethod
+    @abstractmethod
+    def get_form_class(cls) -> Type[ModelForm]:
+        pass
+
+    def get_form(self, request: HttpRequest = None) -> ModelForm:
+        cls = self.get_form_class()
+        return cls(data=request.POST if request else None)
 
     def _execute(self, request: HttpRequest):
-        form = CandleArtifactForm(request.POST)
+        form = self.get_form(request)
         form.instance.wish = self.wish
         if not form.is_valid():
             raise ValueError
         form.save()
+
+
+class CandleArtifactAction(ArtifactAction):
+    @classmethod
+    def get_artifact_name(cls) -> str:
+        return 'candle'
+
+    @classmethod
+    def get_form_class(cls) -> Type[ModelForm]:
+        return CandleArtifactForm
 
 
 class PentacleArtifactAction(ArtifactAction):
     @classmethod
-    def get_action_name(cls) -> str:
-        return 'pentacle-artifact'
+    def get_artifact_name(cls) -> str:
+        return 'pentacle'
 
     @classmethod
-    def get_action_description(cls) -> str:
-        return 'Add pentacle artifact for this wish'
-
-    def get_form(self):
-        return PentacleArtifactForm()
-
-    def _execute(self, request: HttpRequest):
-        form = PentacleArtifactForm(request.POST)
-        form.instance.wish = self.wish
-        if not form.is_valid():
-            raise ValueError
-        form.save()
+    def get_form_class(cls) -> Type[ModelForm]:
+        return PentacleArtifactForm
 
 
 class SpiritArtifactAction(ArtifactAction):
     @classmethod
-    def get_action_name(cls) -> str:
-        return 'spirit-artifact'
+    def get_artifact_name(cls) -> str:
+        return 'spirit'
 
     @classmethod
-    def get_action_description(cls) -> str:
-        return 'Add spirit artifact for this wish'
-
-    def get_form(self):
-        return SpiritArtifactForm()
-
-    def _execute(self, request: HttpRequest):
-        form = SpiritArtifactForm(request.POST)
-        form.instance.wish = self.wish
-        if not form.is_valid():
-            raise ValueError
-        form.save()
+    def get_form_class(cls) -> Type[ModelForm]:
+        return SpiritArtifactForm
