@@ -1,28 +1,24 @@
-<div class="row py-2">
-    <div class="col">
-        <form action="{% url 'wizuber:handle-wish-action' wish.pk action.get_action_name %}" method="POST">
-            {% csrf_token %}
+{% extends 'wizuber/action/base.html' %}
 
-            <div class="form-row">
-                <div class="col-auto">
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text">£</span>
-                        </div>
-                        <input type="text" class="form-control" value="{{ wish.price }}" aria-label="price amount"
-                               disabled>
-                        {% if wish.price <= user.balance %}
-                            <div class="input-group-append">
-                                <button type="submit" class="btn btn-outline-success">Pay for wish</button>
-                            </div>
-                        {% endif %}
-                    </div>
-                    {% if wish.price > user.balance %}
-                        <small>You dont have enough money to pay for this wish.</small>
-                    {% endif %}
+{% block main %}
+
+    <div class="form-row">
+        <div class="col-auto">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">£</span>
                 </div>
+                <input type="text" class="form-control" value="{{ wish.price }}" aria-label="price amount" disabled>
+                {% if wish.price <= user.balance %}
+                    <div class="input-group-append">
+                        <button type="submit" class="btn btn-outline-success">Pay for wish</button>
+                    </div>
+                {% endif %}
             </div>
-
-        </form>
+            {% if wish.price > user.balance %}
+                <small>You dont have enough money to pay for this wish.</small>
+            {% endif %}
+        </div>
     </div>
-</div>
+
+{% endblock %}

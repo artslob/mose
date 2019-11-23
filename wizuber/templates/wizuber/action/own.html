@@ -1,23 +1,20 @@
-<div class="row py-2">
-    <div class="col">
-        <form action="{% url 'wizuber:handle-wish-action' wish.pk action.get_action_name %}" method="POST">
-            {% csrf_token %}
+{% extends 'wizuber/action/base.html' %}
 
-            <div class="form-row">
-                <div class="col-auto">
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text">£</span>
-                        </div>
-                        <input type="text" class="form-control" value="{{ wish.price }}" aria-label="price amount"
-                               disabled>
-                        <div class="input-group-append">
-                            <button type="submit" class="btn btn-outline-primary">Take ownership</button>
-                        </div>
-                    </div>
+{% block main %}
+
+    <div class="form-row">
+        <div class="col-auto">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">£</span>
+                </div>
+                <input type="text" class="form-control" value="{{ wish.price }}" aria-label="price amount"
+                       disabled>
+                <div class="input-group-append">
+                    <button type="submit" class="btn btn-outline-primary">Take ownership</button>
                 </div>
             </div>
-
-        </form>
+        </div>
     </div>
-</div>
+
+{% endblock %}
