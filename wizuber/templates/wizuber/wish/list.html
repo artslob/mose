@@ -18,7 +18,7 @@
             <tbody>
             {% for wish in wishes %}
                 <tr>
-                    <th scope="row"><a href="{% url 'wizuber:detail-wish' wish.pk %}">{{ forloop.counter }}</a></th>
+                    <th scope="row"><a href="{{ wish.get_absolute_url }}">{{ forloop.counter }}</a></th>
                     <td>{{ wish.description | truncatechars:90 }}</td>
                     <td>{{ wish.owner | default_if_none:"----" }}</td>
                     <td>{{ wish.status }}</td>
