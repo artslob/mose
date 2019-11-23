@@ -228,8 +228,28 @@ class ToStudentAction(IAction):
         user, wish = self.user, self.wish
         is_work_status = wish.status == wish.STATUSES.WORK.name
 
-        return is_work_status and user.is_wizard and user == wish.owner == wish.assigned_to and user.has_student
+        return is_work_status and user.is_wizard and user == wish.owner == wish.assigned_to and user.has_student()
 
     def _execute(self, request: HttpRequest):
         self.wish.assigned_to = self.user.student
+        self.wish.save()
+
+
+class ToWizardAction(IAction):
+    @classmethod
+    def get_action_name(cls) -> str:
+        return 'to-wizard'
+
+    @classmethod
+    def get_action_description(cls) -> str:
+        return 'You should assign this wish back to your teacher'
+
+    def is_available(self) -> bool:
+        user, wish = self.user, self.wish
+        is_work_status = wish.status == wish.STATUSES.WORK.name
+
+        return is_work_status and user.is_student and wish.owner == user.teacher and user == wish.assigned_to
+
+    def _execute(self, request: HttpRequest):
+        self.wish.assigned_to = self.user.teacher
         self.wish.save()
