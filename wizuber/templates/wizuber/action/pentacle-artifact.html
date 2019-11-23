@@ -3,29 +3,31 @@
 {% block main %}
 
     {{ action.get_form.as_p }}
-    <button type="submit" class="btn btn-outline-primary">Add candle</button>
+    <button type="submit" class="btn btn-outline-primary">Add pentacle</button>
 
 {% endblock %}
 
 {% block bottom %}
 
-    {% if wish.candle_artifacts %}
+    {% if wish.pentacle_artifacts %}
         <div class="row py-2">
             <div class="col">
                 <table class="table table-sm table-striped">
                     <thead>
                     <tr>
                         <th scope="col">#</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Description</th>
                         <th scope="col">Size</th>
-                        <th scope="col">Material</th>
                     </tr>
                     </thead>
                     <tbody>
-                    {% for artifact in wish.candle_artifacts %}
+                    {% for artifact in wish.pentacle_artifacts %}
                         <tr>
                             <th scope="row">{{ forloop.counter }}</th>
+                            <td>{{ artifact.name }}</td>
+                            <td>{{ artifact.description | truncatechars:60 }}</td>
                             <td>{{ artifact.size | title }}</td>
-                            <td>{{ artifact.material | title }}</td>
                         </tr>
                     {% endfor %}
                     </tbody>

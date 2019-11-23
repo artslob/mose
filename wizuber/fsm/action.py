@@ -6,7 +6,7 @@ from django.http import HttpRequest
 from django.urls import reverse
 
 from wizuber.fsm.exception import ActionAccessDenied
-from wizuber.fsm.form import CandleArtifactForm
+from wizuber.fsm.form import CandleArtifactForm, PentacleArtifactForm
 from wizuber.models import Wish, WizuberUser
 
 
@@ -161,6 +161,26 @@ class CandleArtifactAction(ArtifactAction):
 
     def _execute(self, request: HttpRequest):
         form = CandleArtifactForm(request.POST)
+        form.instance.wish = self.wish
+        if not form.is_valid():
+            raise ValueError
+        form.save()
+
+
+class PentacleArtifactAction(ArtifactAction):
+    @classmethod
+    def get_action_name(cls) -> str:
+        return 'pentacle-artifact'
+
+    @classmethod
+    def get_action_description(cls) -> str:
+        return 'Add pentacle artifact for this wish'
+
+    def get_form(self):
+        return PentacleArtifactForm()
+
+    def _execute(self, request: HttpRequest):
+        form = PentacleArtifactForm(request.POST)
         form.instance.wish = self.wish
         if not form.is_valid():
             raise ValueError
