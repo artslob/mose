@@ -1,22 +1,31 @@
 {% extends 'wizuber/base.html' %}
 
 {% block content %}
-    <div class="row py-2">
-        <div class="col">
-            <h5>Creator: {{ wish.creator }}</h5>
-        </div>
-    </div>
-
-    <div class="row py-2">
-        <div class="col">
-            <h5>Wizard:
-                {% if wish.owner %}
-                    <a href="{{ wish.owner.get_absolute_url }}">{{ wish.owner }}</a>
-                {% else %}
-                    <span class="badge badge-secondary">Sorry, the wizard is not assigned yet.</span>
-                {% endif %}
-            </h5>
-        </div>
+    <div class="table-responsive-lg">
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <th scope="col">Creator</th>
+                <th scope="col">Wizard</th>
+                <th scope="col">Status</th>
+                <th scope="col">Price</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>{{ wish.creator }}</td>
+                <td>
+                    {% if wish.owner %}
+                        <a href="{{ wish.owner.get_absolute_url }}">{{ wish.owner }}</a>
+                    {% else %}
+                        <span class="badge badge-secondary">––––</span>
+                    {% endif %}
+                </td>
+                <td><span class="badge badge-success">{{ wish.status }}</span></td>
+                <td>{{ wish.price }}</td>
+            </tr>
+            </tbody>
+        </table>
     </div>
 
     <div class="row py-2">
@@ -27,18 +36,6 @@
                     {{ wish.description | linebreaks }}
                 </div>
             </div>
-        </div>
-    </div>
-
-    <div class="row py-2">
-        <div class="col">
-            <h5>Status: <span class="badge badge-success">{{ wish.status }}</span></h5>
-        </div>
-    </div>
-
-    <div class="row py-2">
-        <div class="col">
-            <h5>Price: {{ wish.price }}</h5>
         </div>
     </div>
 
