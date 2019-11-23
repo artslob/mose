@@ -170,7 +170,7 @@ class PentacleArtifact(BaseArtifact):
 
 
 class SpiritArtifact(BaseArtifact):
-    spirit = models.ForeignKey(Spirit, related_name='spirit_artifacts', on_delete=models.CASCADE)
+    spirit = models.OneToOneField(Spirit, related_name='spirit_artifact', on_delete=models.CASCADE)
 
 
 class RightsSupport(models.Model):
