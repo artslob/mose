@@ -20,11 +20,17 @@ class IAction(metaclass=ABCMeta):
         if inspect.isabstract(cls):
             return
         action_name = cls.get_action_name()
+        cls.validate_subclass_action_name(action_name)
+        cls.defined_actions[action_name] = cls
+
+    @classmethod
+    def validate_subclass_action_name(cls, action_name: str):
         if action_name in cls.defined_actions:
             raise RuntimeError(f'action name {action_name!r} is not unique!')
         if not isinstance(action_name, str):
             raise RuntimeError(f'action name {action_name!r} should be string, got: {type(action_name)}')
-        cls.defined_actions[action_name] = cls
+        if action_name != action_name.lower() or action_name.count(' ') > 0:
+            raise RuntimeError(f'action name should be in lowercase and without spaces: {action_name!r}')
 
     def __init__(self, wish: Wish, user: WizuberUser, *args, **kwargs):
         self.wish = wish
