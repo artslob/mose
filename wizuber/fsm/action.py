@@ -18,6 +18,8 @@ class IAction(metaclass=ABCMeta):
         action_name = cls.get_action_name()
         if action_name in cls.defined_actions:
             raise RuntimeError(f'action name {action_name!r} is not unique!')
+        if not isinstance(action_name, str):
+            raise RuntimeError(f'action name {action_name!r} should be string, got: {type(action_name)}')
         cls.defined_actions[action_name] = cls
 
     def __init__(self, wish: Wish, user: WizuberUser, *args, **kwargs):
