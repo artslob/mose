@@ -1,6 +1,7 @@
 from typing import Type, List
 
 from wizuber.fsm.action import IAction, DeleteAction, PayAction, OwnAction
+from wizuber.fsm.exception import ActionNotFound
 
 
 def action_classes() -> List[Type[IAction]]:
@@ -8,7 +9,15 @@ def action_classes() -> List[Type[IAction]]:
 
 
 def action_class_by_name(name: str) -> Type[IAction]:
-    return IAction.defined_actions[name]
+    try:
+        return IAction.defined_actions[name]
+    except KeyError:
+        msg = f'action with name {name!r} not found'
+        raise ActionNotFound(msg) from None
 
 
-__all__ = [action_classes, action_class_by_name, IAction, DeleteAction, PayAction, OwnAction]
+__all__ = [
+    action_classes, action_class_by_name,
+    IAction, DeleteAction, PayAction, OwnAction,
+    ActionNotFound
+]

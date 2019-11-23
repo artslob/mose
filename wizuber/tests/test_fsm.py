@@ -1,6 +1,6 @@
 from django.test import TestCase, Client
 
-from wizuber.fsm import IAction, action_classes, action_class_by_name
+from wizuber.fsm import IAction, action_classes, action_class_by_name, ActionNotFound
 
 
 class FsmAvailableActions(TestCase):
@@ -36,7 +36,11 @@ class FsmAvailableActions(TestCase):
             self.assertTrue(issubclass(cls, IAction))
 
     def test_get_action_class_by_not_existing_name(self):
-        self.assertRaises(KeyError, action_class_by_name, 'test-action')
+        with self.assertRaises(ActionNotFound) as context:
+            action_class_by_name('test')
+
+        error_msg = str(context.exception)
+        self.assertTrue("action with name 'test' not found" == error_msg)
 
     def test_post_action_not_existing_name(self):
         response = Client().post('wish/1/handle/test-action')
