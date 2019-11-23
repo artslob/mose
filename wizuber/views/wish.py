@@ -4,7 +4,7 @@ from django.http import HttpResponseForbidden, Http404
 from django.shortcuts import redirect
 from django.views import generic
 
-from wizuber.fsm import action_classes, action_class_by_name, ActionNotFound
+from wizuber.fsm import action_classes, action_class_by_name, ActionNotFound, ActionAccessDenied
 from wizuber.models import Wizard, Wish
 from wizuber.views.helpers import PageTitleMixin
 
@@ -81,11 +81,11 @@ class HandleWishAction(LoginRequiredMixin, generic.View, generic.detail.SingleOb
         except ActionNotFound:
             raise Http404
         print(action_class)
-        wish = self.get_object()
-        action = action_class(wish=wish, user=self.request.user)
-        if not action.is_processing_available():
-            raise PermissionDenied
-        action.do_action()
+        action = action_class(wish=self.get_object(), user=self.request.user)
+        try:
+            action.execute()
+        except ActionAccessDenied:
+            raise PermissionDenied from None
         return redirect(action.get_success_url())
 
 

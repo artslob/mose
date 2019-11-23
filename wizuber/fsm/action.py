@@ -4,6 +4,7 @@ from abc import ABCMeta, abstractmethod, ABC
 from django.db.models import F
 from django.urls import reverse
 
+from wizuber.fsm.exception import ActionAccessDenied
 from wizuber.models import Wish, WizuberUser
 
 
@@ -51,8 +52,14 @@ class IAction(metaclass=ABCMeta):
     def _is_processing_available(self) -> bool:
         return True
 
+    def execute(self):
+        if not self.is_processing_available():
+            raise ActionAccessDenied
+
+        return self._execute()
+
     @abstractmethod
-    def do_action(self):
+    def _execute(self):
         pass
 
     def get_success_url(self):
@@ -72,7 +79,7 @@ class DeleteAction(IAction):
         """ Delete action is always available for user-creator. """
         return self.wish.creator == self.user
 
-    def do_action(self):
+    def _execute(self):
         self.wish.delete()
 
     def get_success_url(self):
@@ -94,7 +101,7 @@ class PayAction(IAction):
     def _is_processing_available(self) -> bool:
         return self.user.balance >= self.wish.price
 
-    def do_action(self):
+    def _execute(self):
         self.user.balance = F('balance') - self.wish.price
         self.user.save()
         self.user.refresh_from_db()
@@ -116,7 +123,7 @@ class OwnAction(IAction):
         is_active_status = self.wish.status == self.wish.STATUSES.ACTIVE.name
         return self.user.is_wizard and without_owner and is_active_status
 
-    def do_action(self):
+    def _execute(self):
         self.wish.owner = self.user
         self.wish.status = self.wish.STATUSES.WORK.name
         self.wish.save()
