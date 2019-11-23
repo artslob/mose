@@ -5,12 +5,12 @@ from wizuber.fsm import IAction, action_classes, action_class_by_name, ActionNot
 
 class FsmAvailableActions(TestCase):
     def setUp(self):
-        self.expected_number_of_actions = 3
+        self.expected_number_of_actions = 4
 
     def test_available_actions_length(self):
-        enum_length = len(action_classes())
+        method_length = len(action_classes())
         dict_length = len(IAction.defined_actions)
-        self.assertTrue(dict_length == enum_length == self.expected_number_of_actions)
+        self.assertTrue(dict_length == method_length == self.expected_number_of_actions)
 
     def test_types_of_defined_action(self):
         defined_actions = IAction.defined_actions
