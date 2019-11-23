@@ -215,7 +215,7 @@ class SpiritArtifactAction(ArtifactAction):
         return SpiritArtifactForm
 
 
-class ToStudentAction(IAction):
+class AssignToStudentAction(IAction):
     @classmethod
     def get_action_name(cls) -> str:
         return 'to-student'
@@ -235,7 +235,7 @@ class ToStudentAction(IAction):
         self.wish.save()
 
 
-class ToWizardAction(IAction):
+class AssignToWizardAction(IAction):
     @classmethod
     def get_action_name(cls) -> str:
         return 'to-wizard'
