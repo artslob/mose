@@ -43,10 +43,13 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS('Database successfully populated.'))
 
     @staticmethod
-    def _create_wish(creator, description, owner=None, **kwargs):
+    def _create_wish(creator, description, owner=None, assigned_to=None):
         status = Wish.STATUSES.WORK.name if owner else Wish.STATUSES.NEW.name
-        get_or_create = Wish.objects.get_or_create
-        wish, _ = get_or_create(creator=creator, description=description, owner=owner, status=status, **kwargs)
+        assigned_to = assigned_to if assigned_to else owner
+
+        wish, _ = Wish.objects.get_or_create(
+            creator=creator, description=description, assigned_to=assigned_to, owner=owner, status=status
+        )
         return wish
 
     @staticmethod

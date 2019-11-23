@@ -40,6 +40,9 @@ class Wizard(WizuberUser):
 
     is_wizard = True
 
+    def has_student(self) -> bool:
+        return hasattr(self, 'student')
+
     def get_absolute_url(self):
         return reverse('wizuber:detail-wizard', kwargs=dict(pk=self.id))
 

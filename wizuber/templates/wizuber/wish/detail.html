@@ -7,6 +7,7 @@
             <tr>
                 <th scope="col">Creator</th>
                 <th scope="col">Wizard</th>
+                <th scope="col">Assigned to</th>
                 <th scope="col">Status</th>
                 <th scope="col">Price</th>
             </tr>
@@ -17,6 +18,13 @@
                 <td>
                     {% if wish.owner %}
                         <a href="{{ wish.owner.get_absolute_url }}">{{ wish.owner }}</a>
+                    {% else %}
+                        <span class="badge badge-secondary">––––</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if wish.assigned_to %}
+                        {{ wish.assigned_to }}
                     {% else %}
                         <span class="badge badge-secondary">––––</span>
                     {% endif %}
