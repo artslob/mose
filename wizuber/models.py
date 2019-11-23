@@ -120,7 +120,8 @@ class Wish(models.Model):
         return self.STATUSES
 
 
-class BaseArtifact(models.Model):
+
+class BaseArtifact(PolymorphicModel):
     wish = models.ForeignKey(Wish, related_name='artifacts', on_delete=models.CASCADE)
 
 
