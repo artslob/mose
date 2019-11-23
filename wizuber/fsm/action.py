@@ -1,12 +1,12 @@
 import inspect
-from abc import ABCMeta, abstractmethod
+from abc import ABCMeta, abstractmethod, ABC
 from typing import Type
 
 from django.db.models import F
 from django.urls import reverse
 
 from wizuber.fsm.form import IForm, DeleteForm, PayForm, OwnForm
-from wizuber.models import Wish, WizuberUser, is_wizard
+from wizuber.models import Wish, WizuberUser, is_wizard, is_student
 
 
 class IAction(metaclass=ABCMeta):
@@ -14,8 +14,10 @@ class IAction(metaclass=ABCMeta):
 
     def __init_subclass__(cls, **kwargs):
         super().__init_subclass__(**kwargs)
+        if inspect.isabstract(cls):
+            return
         action_name = cls.get_action_name()
-        if action_name in cls.defined_actions and not inspect.isabstract(cls):
+        if action_name in cls.defined_actions:
             raise RuntimeError(f'action name {action_name!r} is not unique!')
         cls.defined_actions[action_name] = cls
 
@@ -133,3 +135,21 @@ class OwnAction(IAction):
         self.wish.owner = self.user
         self.wish.status = self.wish.STATUSES.WORK.name
         self.wish.save()
+
+
+class ArtifactAction(IAction, ABC):
+    @classmethod
+    def get_action_description(cls) -> str:
+        return 'You can add one or more artifacts to wish'
+
+    def is_available(self) -> bool:
+        user, wish = self.user, self.wish
+        is_work_status = wish.status == wish.STATUSES.WORK.name
+
+        if is_work_status and is_wizard(user) and wish.owner == user:
+            return True
+
+        if is_work_status and is_student(user) and wish.owner == user.teacher:
+            return True
+
+        return False
