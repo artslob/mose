@@ -1,6 +1,6 @@
 from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
-from django.http import HttpResponseForbidden, Http404
+from django.http import HttpResponseForbidden, Http404, HttpRequest
 from django.shortcuts import redirect
 from django.views import generic
 
@@ -74,7 +74,7 @@ class DetailWish(LoginRequiredMixin, PageTitleMixin, generic.DetailView):
 class HandleWishAction(LoginRequiredMixin, generic.View, generic.detail.SingleObjectMixin):
     model = Wish
 
-    def post(self, request, pk: int, action: str):
+    def post(self, request: HttpRequest, pk: int, action: str):
         print(pk, action)
         try:
             action_class = action_class_by_name(action)
@@ -83,7 +83,7 @@ class HandleWishAction(LoginRequiredMixin, generic.View, generic.detail.SingleOb
         print(action_class)
         action = action_class(wish=self.get_object(), user=self.request.user)
         try:
-            action.execute()
+            action.execute(request)
         except ActionAccessDenied:
             raise PermissionDenied from None
         return redirect(action.get_success_url())

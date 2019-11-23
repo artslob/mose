@@ -2,9 +2,11 @@ import inspect
 from abc import ABCMeta, abstractmethod, ABC
 
 from django.db.models import F
+from django.http import HttpRequest
 from django.urls import reverse
 
 from wizuber.fsm.exception import ActionAccessDenied
+from wizuber.fsm.form import CandleArtifactForm
 from wizuber.models import Wish, WizuberUser
 
 
@@ -54,14 +56,14 @@ class IAction(metaclass=ABCMeta):
     def _is_processing_available(self) -> bool:
         return True
 
-    def execute(self):
+    def execute(self, request: HttpRequest):
         if not self.is_processing_available():
             raise ActionAccessDenied
 
-        return self._execute()
+        return self._execute(request)
 
     @abstractmethod
-    def _execute(self):
+    def _execute(self, request: HttpRequest):
         pass
 
     def get_success_url(self):
@@ -81,7 +83,7 @@ class DeleteAction(IAction):
         """ Delete action is always available for user-creator. """
         return self.wish.creator == self.user
 
-    def _execute(self):
+    def _execute(self, request: HttpRequest):
         self.wish.delete()
 
     def get_success_url(self):
@@ -103,7 +105,7 @@ class PayAction(IAction):
     def _is_processing_available(self) -> bool:
         return self.user.balance >= self.wish.price
 
-    def _execute(self):
+    def _execute(self, request: HttpRequest):
         self.user.balance = F('balance') - self.wish.price
         self.user.save()
         self.user.refresh_from_db()
@@ -125,17 +127,13 @@ class OwnAction(IAction):
         is_active_status = self.wish.status == self.wish.STATUSES.ACTIVE.name
         return self.user.is_wizard and without_owner and is_active_status
 
-    def _execute(self):
+    def _execute(self, request: HttpRequest):
         self.wish.owner = self.user
         self.wish.status = self.wish.STATUSES.WORK.name
         self.wish.save()
 
 
 class ArtifactAction(IAction, ABC):
-    @classmethod
-    def get_action_description(cls) -> str:
-        return 'You can add one or more artifacts to wish'
-
     def is_available(self) -> bool:
         user, wish = self.user, self.wish
         is_work_status = wish.status == wish.STATUSES.WORK.name
@@ -147,3 +145,23 @@ class ArtifactAction(IAction, ABC):
             return True
 
         return False
+
+
+class CandleArtifactAction(ArtifactAction):
+    @classmethod
+    def get_action_name(cls) -> str:
+        return 'candle-artifact'
+
+    @classmethod
+    def get_action_description(cls) -> str:
+        return 'Add candle artifact for this wish'
+
+    def get_form(self):
+        return CandleArtifactForm()
+
+    def _execute(self, request: HttpRequest):
+        form = CandleArtifactForm(request.POST)
+        form.instance.wish = self.wish
+        if not form.is_valid():
+            raise ValueError
+        form.save()

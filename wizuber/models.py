@@ -119,6 +119,8 @@ class Wish(models.Model):
     def get_statuses(self):
         return self.STATUSES
 
+    def candle_artifacts(self):
+        return CandleArtifact.objects.filter(wish=self)
 
 
 class BaseArtifact(PolymorphicModel):
