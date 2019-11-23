@@ -37,6 +37,9 @@ class Command(BaseCommand):
         self._create_wish(c2, 'wish c2 with w2 and assigned to bartimaeus', w2, assigned_to=bartimaeus)
         self._create_wish(c2, 'wish c2 with w2 and assigned to student', w2, assigned_to=stud)
 
+        for i in range(10):
+            self._create_wish(c1, f'{i} wish', w1)
+
         self.stdout.write(self.style.SUCCESS('Database successfully populated.'))
 
     @staticmethod

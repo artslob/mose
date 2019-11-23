@@ -119,18 +119,9 @@ class Wish(models.Model):
     def get_statuses(self):
         return self.STATUSES
 
-    def candle_artifacts(self):
-        return CandleArtifact.objects.filter(wish=self)
-
-    def pentacle_artifacts(self):
-        return PentacleArtifact.objects.filter(wish=self)
-
-    def spirit_artifacts(self):
-        return SpiritArtifact.objects.filter(wish=self)
-
 
 class BaseArtifact(PolymorphicModel):
-    wish = models.ForeignKey(Wish, related_name='artifacts', on_delete=models.CASCADE)
+    pass
 
 
 class SizeChoices(ChoicesEnum):
@@ -154,6 +145,7 @@ class CandleMaterial(ChoicesEnum):
 
 
 class CandleArtifact(BaseArtifact):
+    wish = models.ForeignKey(Wish, related_name='candle_artifacts', on_delete=models.CASCADE)
     SIZES = SizeChoices
     size = models.CharField(max_length=SIZES.max_length(), choices=SIZES.choices(), default=SIZES.default())
     MATERIALS = CandleMaterial
@@ -163,6 +155,7 @@ class CandleArtifact(BaseArtifact):
 
 
 class PentacleArtifact(BaseArtifact):
+    wish = models.ForeignKey(Wish, related_name='pentacle_artifacts', on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
     description = models.TextField(blank=True)
     SIZES = SizeChoices
@@ -170,6 +163,7 @@ class PentacleArtifact(BaseArtifact):
 
 
 class SpiritArtifact(BaseArtifact):
+    wish = models.OneToOneField(Wish, related_name='spirit_artifact', on_delete=models.CASCADE)
     spirit = models.OneToOneField(Spirit, related_name='spirit_artifact', on_delete=models.CASCADE)
 
 
