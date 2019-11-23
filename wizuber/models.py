@@ -125,6 +125,9 @@ class Wish(models.Model):
     def pentacle_artifacts(self):
         return PentacleArtifact.objects.filter(wish=self)
 
+    def spirit_artifacts(self):
+        return SpiritArtifact.objects.filter(wish=self)
+
 
 class BaseArtifact(PolymorphicModel):
     wish = models.ForeignKey(Wish, related_name='artifacts', on_delete=models.CASCADE)

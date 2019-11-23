@@ -1,6 +1,6 @@
 from django.forms import ModelForm
 
-from wizuber.models import CandleArtifact, PentacleArtifact
+from wizuber.models import CandleArtifact, PentacleArtifact, SpiritArtifact
 
 
 class CandleArtifactForm(ModelForm):
@@ -12,4 +12,10 @@ class CandleArtifactForm(ModelForm):
 class PentacleArtifactForm(ModelForm):
     class Meta:
         model = PentacleArtifact
+        exclude = ['wish']
+
+
+class SpiritArtifactForm(ModelForm):
+    class Meta:
+        model = SpiritArtifact
         exclude = ['wish']

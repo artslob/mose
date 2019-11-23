@@ -1,0 +1,35 @@
+{% extends 'wizuber/action/base.html' %}
+
+{% block main %}
+
+    {{ action.get_form.as_p }}
+    <button type="submit" class="btn btn-outline-primary">Add spirit</button>
+
+{% endblock %}
+
+{% block bottom %}
+
+    {% if wish.spirit_artifacts %}
+        <div class="row py-2">
+            <div class="col">
+                <table class="table table-sm table-striped">
+                    <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Spirit name</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for artifact in wish.spirit_artifacts %}
+                        <tr>
+                            <th scope="row">{{ forloop.counter }}</th>
+                            <td>{{ artifact.spirit.username }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {% endif %}
+
+{% endblock %}
