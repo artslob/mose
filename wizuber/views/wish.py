@@ -4,7 +4,7 @@ from django.http import HttpResponseForbidden, Http404
 from django.shortcuts import redirect
 from django.views import generic
 
-from wizuber.fsm import ActionMapping
+from wizuber.fsm import action_classes, action_class_by_name
 from wizuber.models import Wizard, Wish, is_wizard
 from wizuber.views.helpers import PageTitleMixin
 
@@ -67,7 +67,7 @@ class DetailWish(LoginRequiredMixin, PageTitleMixin, generic.DetailView):
 
     def get_actions(self):
         wish, user = self.object, self.request.user
-        action_instances = (cls(wish, user) for cls in ActionMapping.action_classes())
+        action_instances = (cls(wish, user) for cls in action_classes())
         return [action for action in action_instances if action.is_available()]
 
 
@@ -77,7 +77,7 @@ class HandleWishAction(LoginRequiredMixin, generic.View, generic.detail.SingleOb
     def post(self, request, pk: int, action: str):
         print(pk, action)
         try:
-            action_class = ActionMapping.action_class_by_name(action)
+            action_class = action_class_by_name(action)
         except KeyError:
             raise Http404
         print(action_class)
