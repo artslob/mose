@@ -1,6 +1,6 @@
 from typing import Type, List
 
-from wizuber.fsm.action import IAction, DeleteAction, PayAction, OwnAction
+from wizuber.fsm.action import IAction
 from wizuber.fsm.exception import ActionNotFound, ActionAccessDenied
 
 
@@ -18,6 +18,6 @@ def action_class_by_name(name: str) -> Type[IAction]:
 
 __all__ = [
     action_classes, action_class_by_name,
-    IAction, DeleteAction, PayAction, OwnAction,
+    IAction,
     ActionNotFound, ActionAccessDenied
 ]
