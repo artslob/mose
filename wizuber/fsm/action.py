@@ -1,11 +1,9 @@
 import inspect
 from abc import ABCMeta, abstractmethod, ABC
-from typing import Type
 
 from django.db.models import F
 from django.urls import reverse
 
-from wizuber.fsm.form import IForm, DeleteForm, PayForm, OwnForm
 from wizuber.models import Wish, WizuberUser, is_wizard, is_student
 
 
@@ -47,11 +45,6 @@ class IAction(metaclass=ABCMeta):
     def is_available(self) -> bool:
         pass
 
-    @classmethod
-    @abstractmethod
-    def form_class(cls) -> Type[IForm]:
-        pass
-
     def is_processing_available(self) -> bool:
         return self.is_available() and self._is_processing_available()
 
@@ -75,10 +68,6 @@ class DeleteAction(IAction):
     def get_action_description(cls) -> str:
         return 'You can delete this wish'
 
-    @classmethod
-    def form_class(cls) -> Type[IForm]:
-        return DeleteForm
-
     def is_available(self) -> bool:
         """ Delete action is always available for user-creator. """
         return self.wish.creator == self.user
@@ -98,10 +87,6 @@ class PayAction(IAction):
     @classmethod
     def get_action_description(cls) -> str:
         return 'Pay for this with to make it visible for wizard'
-
-    @classmethod
-    def form_class(cls) -> Type[IForm]:
-        return PayForm
 
     def is_available(self) -> bool:
         return self.wish.creator == self.user and self.wish.status == self.wish.STATUSES.NEW.name
@@ -130,10 +115,6 @@ class OwnAction(IAction):
         without_owner = self.wish.owner is None
         is_active_status = self.wish.status == self.wish.STATUSES.ACTIVE.name
         return is_wizard(self.user) and without_owner and is_active_status
-
-    @classmethod
-    def form_class(cls) -> Type[IForm]:
-        return OwnForm
 
     def do_action(self):
         self.wish.owner = self.user
