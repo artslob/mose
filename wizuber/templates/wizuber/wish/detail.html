@@ -44,7 +44,8 @@
         <hr>
 
         {% for action in actions %}
-            {{ forloop.counter }}. {{ action.get_action_description }}:
+            <span class="font-weight-bold text-success">{{ forloop.counter }}.</span>
+            {{ action.get_action_description }}:
             {% include action.get_full_template_name %}
             <hr>
         {% endfor %}
