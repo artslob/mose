@@ -5,7 +5,7 @@ from django.shortcuts import redirect
 from django.views import generic
 
 from wizuber.fsm import action_classes, action_class_by_name
-from wizuber.models import Wizard, Wish, is_wizard
+from wizuber.models import Wizard, Wish
 from wizuber.views.helpers import PageTitleMixin
 
 
@@ -34,7 +34,7 @@ class ListWishActive(UserPassesTestMixin, ListWish):
     page_title = 'Available Wishes For Order'
 
     def test_func(self):
-        return is_wizard(self.request.user)
+        return self.request.user.is_wizard
 
     def get_queryset(self):
         return Wish.objects.filter(status=Wish.STATUSES.ACTIVE.name)

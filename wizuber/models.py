@@ -27,11 +27,18 @@ class WizuberUser(PolymorphicModel, AbstractUser):
     def get_queryset_for_wish_list(self):
         return Wish.objects.none()
 
+    is_wizard = False
+    is_customer = False
+    is_student = False
+    is_spirit = False
+
     can_create_wish = False
 
 
 class Wizard(WizuberUser):
     balance = models.PositiveIntegerField(default=0)
+
+    is_wizard = True
 
     def get_absolute_url(self):
         return reverse('wizuber:detail-wizard', kwargs=dict(pk=self.id))
@@ -43,14 +50,17 @@ class Wizard(WizuberUser):
 class Customer(WizuberUser):
     balance = models.PositiveIntegerField(default=500)
 
+    is_customer = True
+    can_create_wish = True
+
     def get_queryset_for_wish_list(self):
         return self.created_wishes.all()
-
-    can_create_wish = True
 
 
 class Student(WizuberUser):
     teacher = models.OneToOneField(Wizard, on_delete=models.CASCADE)
+
+    is_student = True
 
     def get_queryset_for_wish_list(self):
         return self.assigned_wishes.all()
@@ -72,6 +82,8 @@ class Spirit(WizuberUser):
     master = models.ForeignKey(Wizard, on_delete=models.SET_NULL, null=True, blank=True, default=None)
     GRADES = SpiritGrades
     grade = models.CharField(max_length=GRADES.max_length(), choices=GRADES.choices())
+
+    is_spirit = True
 
     def get_queryset_for_wish_list(self):
         return self.assigned_wishes.all()
@@ -162,19 +174,3 @@ class RightsSupport(models.Model):
             (STUDENT_PERM, 'Global student rights'),
             (SPIRIT_PERM, 'Global spirit rights'),
         )
-
-
-def is_wizard(user):
-    return isinstance(user, Wizard)
-
-
-def is_customer(user):
-    return isinstance(user, Customer)
-
-
-def is_student(user):
-    return isinstance(user, Student)
-
-
-def is_spirit(user):
-    return isinstance(user, Spirit)

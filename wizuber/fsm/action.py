@@ -4,7 +4,7 @@ from abc import ABCMeta, abstractmethod, ABC
 from django.db.models import F
 from django.urls import reverse
 
-from wizuber.models import Wish, WizuberUser, is_wizard, is_student
+from wizuber.models import Wish, WizuberUser
 
 
 class IAction(metaclass=ABCMeta):
@@ -114,7 +114,7 @@ class OwnAction(IAction):
     def is_available(self) -> bool:
         without_owner = self.wish.owner is None
         is_active_status = self.wish.status == self.wish.STATUSES.ACTIVE.name
-        return is_wizard(self.user) and without_owner and is_active_status
+        return self.user.is_wizard and without_owner and is_active_status
 
     def do_action(self):
         self.wish.owner = self.user
@@ -131,10 +131,10 @@ class ArtifactAction(IAction, ABC):
         user, wish = self.user, self.wish
         is_work_status = wish.status == wish.STATUSES.WORK.name
 
-        if is_work_status and is_wizard(user) and wish.owner == user:
+        if is_work_status and user.is_wizard and wish.owner == user:
             return True
 
-        if is_work_status and is_student(user) and wish.owner == user.teacher:
+        if is_work_status and user.is_student and wish.owner == user.teacher:
             return True
 
         return False
