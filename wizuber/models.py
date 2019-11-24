@@ -70,7 +70,7 @@ class Customer(WizuberUser):
 
 
 class Student(WizuberUser):
-    teacher = models.OneToOneField(Wizard, on_delete=models.CASCADE)
+    teacher = models.OneToOneField(Wizard, on_delete=models.PROTECT)
 
     class Meta:
         ordering = ['id']
@@ -121,10 +121,9 @@ class WishStatus(ChoicesEnum):
 
 
 class Wish(models.Model):
-    # TODO check all on_delete parameters
     creator = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='created_wishes')
     description = models.TextField()
-    owner = models.ForeignKey(Wizard, on_delete=models.CASCADE, null=True, blank=True, related_name='owned_wishes')
+    owner = models.ForeignKey(Wizard, on_delete=models.PROTECT, null=True, blank=True, related_name='owned_wishes')
     STATUSES = WishStatus
     status = models.CharField(max_length=STATUSES.max_length(), choices=STATUSES.choices(), default=STATUSES.default())
     assigned_to = models.ForeignKey(WizuberUser, related_name='assigned_wishes', on_delete=models.SET_NULL,
@@ -195,7 +194,7 @@ class PentacleArtifact(BaseArtifact):
 
 class SpiritArtifact(BaseArtifact):
     wish = models.OneToOneField(Wish, related_name='spirit_artifact', on_delete=models.CASCADE)
-    spirit = models.ForeignKey(Spirit, related_name='spirit_artifacts', on_delete=models.CASCADE)
+    spirit = models.ForeignKey(Spirit, related_name='spirit_artifacts', on_delete=models.PROTECT)
 
     class Meta:
         ordering = ['id']
