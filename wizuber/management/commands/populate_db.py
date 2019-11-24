@@ -8,6 +8,8 @@ class Command(BaseCommand):
     help = 'Populates database with initial data'
 
     def handle(self, *args, **options):
+        # TODO add models on whole business scenario
+
         admin, _ = get_user_model().objects.get_or_create(username='admin', email='admin@wizuber.com')
         admin.set_password('123')
         admin.is_superuser = True
