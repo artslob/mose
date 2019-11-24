@@ -7,7 +7,7 @@ from wizuber.fsm import IAction, action_classes, action_class_by_name, ActionNot
 
 class FsmAvailableActions(TestCase):
     def setUp(self):
-        self.expected_number_of_actions = 8
+        self.expected_number_of_actions = 9
 
     def test_available_actions_length(self):
         method_length = len(action_classes())

@@ -96,9 +96,9 @@ class WishStatus(ChoicesEnum):
     NEW = 'New'
     ACTIVE = 'Active'
     WORK = 'Work'
+    ON_SPIRIT = 'On Spirit'
     READY = 'Ready'
     CLOSED = 'Closed'
-    CANCELED = 'Canceled'
 
     @classmethod
     def default(cls):
@@ -121,6 +121,9 @@ class Wish(models.Model):
 
     def get_statuses(self):
         return self.STATUSES
+
+    def has_spirit_artifact(self) -> bool:
+        return hasattr(self, 'spirit_artifact')
 
 
 class BaseArtifact(PolymorphicModel):
