@@ -41,6 +41,9 @@ class WizuberUser(PolymorphicModel, AbstractUser):
 class Wizard(WizuberUser):
     balance = models.PositiveIntegerField(default=0)
 
+    class Meta:
+        ordering = ['id']
+
     is_wizard = True
 
     def has_student(self) -> bool:
@@ -56,6 +59,9 @@ class Wizard(WizuberUser):
 class Customer(WizuberUser):
     balance = models.PositiveIntegerField(default=500)
 
+    class Meta:
+        ordering = ['id']
+
     is_customer = True
     can_create_wish = True
 
@@ -65,6 +71,9 @@ class Customer(WizuberUser):
 
 class Student(WizuberUser):
     teacher = models.OneToOneField(Wizard, on_delete=models.CASCADE)
+
+    class Meta:
+        ordering = ['id']
 
     is_student = True
 
@@ -88,6 +97,9 @@ class Spirit(WizuberUser):
     master = models.ForeignKey(Wizard, on_delete=models.SET_NULL, null=True, blank=True, default=None)
     GRADES = SpiritGrades
     grade = models.CharField(max_length=GRADES.max_length(), choices=GRADES.choices())
+
+    class Meta:
+        ordering = ['id']
 
     is_spirit = True
 
@@ -119,6 +131,9 @@ class Wish(models.Model):
                                     null=True, blank=True)
     price = models.PositiveIntegerField(validators=[MinValueValidator(limit_value=1)], default=50)
 
+    class Meta:
+        ordering = ['id']
+
     def get_absolute_url(self):
         return reverse('wizuber:detail-wish', kwargs=dict(pk=self.id))
 
@@ -130,7 +145,8 @@ class Wish(models.Model):
 
 
 class BaseArtifact(PolymorphicModel):
-    pass
+    class Meta:
+        ordering = ['id']
 
 
 class SizeChoices(ChoicesEnum):
@@ -162,6 +178,9 @@ class CandleArtifact(BaseArtifact):
         max_length=MATERIALS.max_length(), choices=MATERIALS.choices(), default=MATERIALS.default()
     )
 
+    class Meta:
+        ordering = ['id']
+
 
 class PentacleArtifact(BaseArtifact):
     wish = models.ForeignKey(Wish, related_name='pentacle_artifacts', on_delete=models.CASCADE)
@@ -170,10 +189,16 @@ class PentacleArtifact(BaseArtifact):
     SIZES = SizeChoices
     size = models.CharField(max_length=SIZES.max_length(), choices=SIZES.choices(), default=SIZES.default())
 
+    class Meta:
+        ordering = ['id']
+
 
 class SpiritArtifact(BaseArtifact):
     wish = models.OneToOneField(Wish, related_name='spirit_artifact', on_delete=models.CASCADE)
     spirit = models.OneToOneField(Spirit, related_name='spirit_artifact', on_delete=models.CASCADE)
+
+    class Meta:
+        ordering = ['id']
 
 
 class RightsSupport(models.Model):
