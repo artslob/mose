@@ -40,6 +40,17 @@ class ListWishActive(UserPassesTestMixin, ListWish):
         return Wish.objects.filter(status=Wish.STATUSES.ACTIVE.name)
 
 
+class ListWishClosed(ListWishActive):
+    """ Returns customer`s wish list with closed statuses. """
+    page_title = 'Closed Wishes'
+
+    def test_func(self):
+        return self.request.user.is_customer
+
+    def get_queryset(self):
+        return Wish.objects.filter(status=Wish.STATUSES.CLOSED.name, creator=self.request.user)
+
+
 class CreateWish(LoginRequiredMixin, UserPassesTestMixin, PageTitleMixin, generic.CreateView):
     page_title = 'Create New Wish'
     model = Wish

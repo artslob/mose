@@ -28,6 +28,9 @@
                 {% if user.is_wizard %}
                     <a class="nav-item nav-link active" href="{% url 'wizuber:list-wish-active' %}">New orders</a>
                 {% endif %}
+                {% if user.is_customer %}
+                    <a class="nav-item nav-link active" href="{% url 'wizuber:list-wish-closed' %}">Closed wishes</a>
+                {% endif %}
                 <a class="nav-item nav-link active" href="{% url 'wizuber:list-wizard' %}">Wizards</a>
             </div>
             <ul class="navbar-nav">

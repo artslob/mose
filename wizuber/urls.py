@@ -7,6 +7,7 @@ import wizuber.views as views
 app_name = 'wizuber'
 
 # TODO add deletion of artifacts
+# TODO pagination
 
 urlpatterns = [
     path('', TemplateView.as_view(template_name='wizuber/index.html'), name='index'),
@@ -20,7 +21,8 @@ urlpatterns = [
     path('wizard/<int:pk>/', views.wizard.DetailWizard.as_view(), name='detail-wizard'),
 
     path('wish/list/', views.wish.ListWish.as_view(), name='list-wish'),
-    path('wish/list/active', views.wish.ListWishActive.as_view(), name='list-wish-active'),
+    path('wish/list/active/', views.wish.ListWishActive.as_view(), name='list-wish-active'),
+    path('wish/list/closed/', views.wish.ListWishClosed.as_view(), name='list-wish-closed'),
     path('wish/create/', views.wish.CreateWish.as_view(), name='create-wish'),
     path('wish/<int:pk>/', views.wish.DetailWish.as_view(), name='detail-wish'),
     path('wish/<int:pk>/handle/<str:action>', views.wish.HandleWishAction.as_view(), name='handle-wish-action'),

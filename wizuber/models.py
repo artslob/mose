@@ -47,7 +47,7 @@ class Wizard(WizuberUser):
         return reverse('wizuber:detail-wizard', kwargs=dict(pk=self.id))
 
     def get_queryset_for_wish_list(self):
-        return self.owned_wishes.all()
+        return self.owned_wishes.exclude(status=Wish.STATUSES.CLOSED.name)
 
 
 class Customer(WizuberUser):
@@ -57,7 +57,7 @@ class Customer(WizuberUser):
     can_create_wish = True
 
     def get_queryset_for_wish_list(self):
-        return self.created_wishes.all()
+        return self.created_wishes.exclude(status=Wish.STATUSES.CLOSED.name)
 
 
 class Student(WizuberUser):
@@ -66,7 +66,7 @@ class Student(WizuberUser):
     is_student = True
 
     def get_queryset_for_wish_list(self):
-        return self.assigned_wishes.all()
+        return self.assigned_wishes
 
 
 class SpiritGrades(ChoicesEnum):
@@ -89,7 +89,7 @@ class Spirit(WizuberUser):
     is_spirit = True
 
     def get_queryset_for_wish_list(self):
-        return self.assigned_wishes.all()
+        return self.assigned_wishes
 
 
 class WishStatus(ChoicesEnum):
