@@ -316,5 +316,7 @@ class CloseAction(IAction):
     def _execute(self, request: HttpRequest):
         self.wish.assigned_to = self.wish.creator
         self.wish.status = self.wish.STATUSES.CLOSED.name
-        # TODO add money to wizard
         self.wish.save()
+        self.user.balance = F('balance') + self.wish.price
+        self.user.save()
+        self.user.refresh_from_db()
