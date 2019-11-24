@@ -296,3 +296,24 @@ class AssignFromSpiritToWizardAction(IAction):
         self.wish.assigned_to = self.wish.owner
         self.wish.status = self.wish.STATUSES.READY.name
         self.wish.save()
+
+
+class CloseAction(IAction):
+    @classmethod
+    def get_action_name(cls) -> str:
+        return 'close'
+
+    @classmethod
+    def get_action_description(cls) -> str:
+        return 'You can close this wish'
+
+    def is_available(self) -> bool:
+        user, wish = self.user, self.wish
+        is_ready = wish.status == wish.STATUSES.READY.name
+
+        return is_ready and user.is_wizard and user == wish.owner == wish.assigned_to
+
+    def _execute(self, request: HttpRequest):
+        self.wish.assigned_to = self.wish.creator
+        self.wish.status = self.wish.STATUSES.CLOSED.name
+        self.wish.save()
