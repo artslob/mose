@@ -24,6 +24,9 @@ class WizuberUser(PolymorphicModel, AbstractUser):
 
     objects = PolymorphicUserManager()
 
+    class Meta:
+        ordering = ['id']
+
     def get_queryset_for_wish_list(self):
         return Wish.objects.none()
 

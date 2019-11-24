@@ -35,29 +35,7 @@
     {% endif %}
 
     {% if is_paginated %}
-        <nav aria-label="Page navigation example">
-            <ul class="pagination justify-content-center">
-                {% if page_obj.number > 2 %}
-                    <li class="page-item"><a class="page-link" href="#">1</a></li>
-                {% endif %}
-                {% if page_obj.number > 3 %}
-                    <li class="page-item disabled"><a class="page-link" href="#">...</a></li>
-                {% endif %}
-                {% if page_obj.has_previous %}
-                    <li class="page-item"><a class="page-link" href="#">{{ page_obj.previous_page_number }}</a></li>
-                {% endif %}
-                <li class="page-item active"><a class="page-link" href="#">{{ page_obj.number }}</a></li>
-                {% if page_obj.has_next %}
-                    <li class="page-item"><a class="page-link" href="#">{{ page_obj.next_page_number }}</a></li>
-                {% endif %}
-                {% if page_obj.number < paginator.num_pages|add:"-2" %}
-                    <li class="page-item disabled"><a class="page-link" href="#">...</a></li>
-                {% endif %}
-                {% if page_obj.number < paginator.num_pages|add:"-1" %}
-                    <li class="page-item"><a class="page-link" href="#">{{ paginator.num_pages }}</a></li>
-                {% endif %}
-            </ul>
-        </nav>
+        {% include 'wizuber/include/pagination.html' %}
     {% endif %}
 
 {% endblock %}
