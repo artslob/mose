@@ -1,0 +1,16 @@
+{% extends 'wizuber/action/base.html' %}
+
+{% block main %}
+
+    <div class="form-row">
+        <div class="col-auto">
+            <div class="input-group">
+                <input type="text" class="form-control" value="{{ wish.owner }}" aria-label="wizard username" disabled>
+                <div class="input-group-append">
+                    <button type="submit" class="btn btn-outline-primary">Assign back to wizard</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

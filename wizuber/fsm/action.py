@@ -275,3 +275,24 @@ class AssignToSpiritAction(IAction):
         self.wish.assigned_to = self.wish.spirit_artifact.spirit
         self.wish.status = self.wish.STATUSES.ON_SPIRIT.name
         self.wish.save()
+
+
+class AssignFromSpiritToWizardAction(IAction):
+    @classmethod
+    def get_action_name(cls) -> str:
+        return 'spirit-to-wizard'
+
+    @classmethod
+    def get_action_description(cls) -> str:
+        return 'You can assign wish back to wizard'
+
+    def is_available(self) -> bool:
+        user, wish = self.user, self.wish
+        is_on_spirit_status = wish.status == wish.STATUSES.ON_SPIRIT.name
+
+        return is_on_spirit_status and user.is_spirit and user == wish.assigned_to
+
+    def _execute(self, request: HttpRequest):
+        self.wish.assigned_to = self.wish.owner
+        self.wish.status = self.wish.STATUSES.READY.name
+        self.wish.save()
