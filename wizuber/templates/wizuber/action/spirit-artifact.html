@@ -2,7 +2,14 @@
 
 {% block main %}
     {% if not wish.spirit_artifact %}
-        {{ action.get_form.as_p }}
+        {% with form=action.get_form %}
+            <div class="form-row">
+                <div class="form-group col-auto">
+                    {% include 'wizuber/signup_form_field.html' with field=form.spirit %}
+                </div>
+            </div>
+        {% endwith %}
+
         <button type="submit" class="btn btn-outline-primary">Add spirit</button>
     {% endif %}
 {% endblock %}

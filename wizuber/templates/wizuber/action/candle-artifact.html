@@ -1,7 +1,17 @@
 {% extends 'wizuber/action/base.html' %}
 
 {% block main %}
-    {{ action.get_form.as_p }}
+    {% with form=action.get_form %}
+        <div class="form-row">
+            <div class="form-group col-auto">
+                {% include 'wizuber/signup_form_field.html' with field=form.size %}
+            </div>
+            <div class="form-group col-auto">
+                {% include 'wizuber/signup_form_field.html' with field=form.material %}
+            </div>
+        </div>
+    {% endwith %}
+
     <button type="submit" class="btn btn-outline-primary">Add candle</button>
 {% endblock %}
 
