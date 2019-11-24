@@ -24,6 +24,7 @@ class ListWish(LoginRequiredMixin, PageTitleMixin, generic.ListView):
     model = Wish
     context_object_name = 'wishes'
     template_name = 'wizuber/wish/list.html'
+    paginate_by = 3
 
     def get_queryset(self):
         return self.request.user.get_queryset_for_wish_list()
