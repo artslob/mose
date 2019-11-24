@@ -78,7 +78,7 @@ class Student(WizuberUser):
     is_student = True
 
     def get_queryset_for_wish_list(self):
-        return self.assigned_wishes
+        return self.assigned_wishes.all()
 
 
 class SpiritGrades(ChoicesEnum):
@@ -104,7 +104,7 @@ class Spirit(WizuberUser):
     is_spirit = True
 
     def get_queryset_for_wish_list(self):
-        return self.assigned_wishes
+        return self.assigned_wishes.all()
 
 
 class WishStatus(ChoicesEnum):
