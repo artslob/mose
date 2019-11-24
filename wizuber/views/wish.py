@@ -1,11 +1,11 @@
 from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
-from django.http import HttpResponseForbidden, Http404, HttpRequest
+from django.http import Http404, HttpRequest
 from django.shortcuts import redirect
 from django.views import generic
 
 from wizuber.fsm import action_classes, action_class_by_name, ActionNotFound, ActionAccessDenied
-from wizuber.models import Wizard, Wish
+from wizuber.models import Wish
 from wizuber.views.helpers import PageTitleMixin
 
 
@@ -99,18 +99,3 @@ class HandleWishAction(LoginRequiredMixin, generic.View, generic.detail.SingleOb
         except ActionAccessDenied:
             raise PermissionDenied from None
         return redirect(action.get_success_url())
-
-
-class FulfillWish(LoginRequiredMixin, generic.View, generic.detail.SingleObjectMixin):
-    model = Wish
-
-    def post(self, request, pk):
-        user = request.user
-        if not isinstance(user, Wizard):
-            return HttpResponseForbidden()
-        wish = self.get_object()
-        if wish.owner != user:
-            return HttpResponseForbidden()
-        wish.status = wish.STATUSES.READY.name
-        wish.save()
-        return redirect(wish.get_absolute_url())

@@ -59,15 +59,4 @@
         {% endfor %}
     {% endif %}
 
-    {% if wish.owner == user and wish.status != wish.get_statuses.READY.name %}
-        {# TODO remove fullfil method #}
-        <div class="row py-2">
-            <div class="col">
-                <form action="{% url 'wizuber:fulfill-wish' wish.pk %}" method="POST">
-                    {% csrf_token %}
-                    <button type="submit" class="btn badge-warning float-right">Fulfill wish</button>
-                </form>
-            </div>
-        </div>
-    {% endif %}
 {% endblock %}
