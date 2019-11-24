@@ -195,6 +195,7 @@ class PentacleArtifact(BaseArtifact):
 
 class SpiritArtifact(BaseArtifact):
     wish = models.OneToOneField(Wish, related_name='spirit_artifact', on_delete=models.CASCADE)
+    # TODO make many to one
     spirit = models.OneToOneField(Spirit, related_name='spirit_artifact', on_delete=models.CASCADE)
 
     class Meta:
