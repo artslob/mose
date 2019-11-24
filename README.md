@@ -29,22 +29,26 @@ Now you can access these endpoints:
     1. Добавлены модели `Wizard`, `Student`, `Spirit`.
     2. В админской панели можно создавать и редактировать данные модели.
 - [x] 6\. Просмотр списка желаний в очереди
-    1. Customer: view wishes created by him;
-    2. Wizard: view wishes owned by him + new orders;
-    3. Student: view wishes assigned to him;
-    4. Spirit: view wishes assigned to him;
-- [ ] 7\. Выполнение желания
+    1. Customer: 
+        * wishes created by him;
+        * wishes created by him and closed;
+    2. Wizard:
+        * wishes owned by him;
+        * wishes in active status and without owner;
+    3. Student: wishes assigned to him;
+    4. Spirit: wishes assigned to him;
+- [x] 7\. Выполнение желания
     1. Описать state машину - как могут изменять состояние желания разные
     типы пользователей на всём его жизненном цикле.
     2. Реализовать смену состояний.
 - [x] 8\. Просмотр заказчиком желания
-- [ ] 9\. Отмена желания
-- [ ] 10\. Оплата желания
+- [x] 9\. Отмена желания
+- [x] 10\. Оплата желания
 - [ ] 11\. Редактирование профиля пользователя
 - [x] 12\. Деавторизация пользователя (выход из системы)
 - [ ] 13\. Реактивация желания
-- [ ] 14\. Закрытие желания
-- [ ] 15\. Обработка желания
+- [x] 14\. Закрытие желания
+- [x] 15\. Обработка желания
 
 ## Links to docs:
 1. [django-polymorphic](https://django-polymorphic.readthedocs.io)
