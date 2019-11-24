@@ -7,7 +7,6 @@ import wizuber.views as views
 app_name = 'wizuber'
 
 # TODO add deletion of artifacts
-# TODO pagination
 
 urlpatterns = [
     path('', TemplateView.as_view(template_name='wizuber/index.html'), name='index'),

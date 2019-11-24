@@ -8,6 +8,7 @@ class ListWizard(PageTitleMixin, generic.ListView):
     template_name = 'wizuber/wizard/list.html'
     context_object_name = 'wizards'
     page_title = 'Wizard List'
+    paginate_by = 10
 
     def get_queryset(self):
         return Wizard.objects.all()
