@@ -25,4 +25,6 @@ urlpatterns = [
     path('wish/create/', views.wish.CreateWish.as_view(), name='create-wish'),
     path('wish/<int:pk>/', views.wish.DetailWish.as_view(), name='detail-wish'),
     path('wish/<int:pk>/handle/<str:action>', views.wish.HandleWishAction.as_view(), name='handle-wish-action'),
+
+    path('artifact/<int:pk>/delete/', views.artifact.DeleteArtifact.as_view(), name='delete-artifact'),
 ]
