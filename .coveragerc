@@ -1,0 +1,8 @@
+[run]
+source = mose,wizuber
+
+[report]
+omit =
+    mose/wsgi.py
+    wizuber/tests/*
+    wizuber/migrations/*
