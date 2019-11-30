@@ -30,6 +30,9 @@ class WizuberUser(PolymorphicModel, AbstractUser):
     def get_queryset_for_wish_list(self):
         return Wish.objects.none()
 
+    def can_view_wish(self, wish: 'Wish') -> bool:
+        return False
+
     is_wizard = False
     is_customer = False
     is_student = False
@@ -53,6 +56,9 @@ class Wizard(WizuberUser):
     def get_queryset_for_wish_list(self):
         return self.owned_wishes.exclude(status=Wish.STATUSES.CLOSED.name)
 
+    def can_view_wish(self, wish: 'Wish') -> bool:
+        return wish.in_status(wish.STATUSES.ACTIVE) or self == wish.owner
+
 
 class Customer(WizuberUser):
     balance = models.PositiveIntegerField(default=500)
@@ -65,6 +71,9 @@ class Customer(WizuberUser):
     def get_queryset_for_wish_list(self):
         return self.created_wishes.exclude(status=Wish.STATUSES.CLOSED.name)
 
+    def can_view_wish(self, wish: 'Wish') -> bool:
+        return self == wish.creator
+
 
 class Student(WizuberUser):
     teacher = models.OneToOneField(Wizard, on_delete=models.PROTECT)
@@ -76,6 +85,9 @@ class Student(WizuberUser):
 
     def get_queryset_for_wish_list(self):
         return self.assigned_wishes.all()
+
+    def can_view_wish(self, wish: 'Wish') -> bool:
+        return self == wish.assigned_to and self.teacher.can_view_wish(wish)
 
 
 class SpiritGrades(ChoicesEnum):
@@ -102,6 +114,9 @@ class Spirit(WizuberUser):
 
     def get_queryset_for_wish_list(self):
         return self.assigned_wishes.all()
+
+    def can_view_wish(self, wish: 'Wish') -> bool:
+        return self == wish.assigned_to
 
 
 class WishStatus(ChoicesEnum):
@@ -138,6 +153,9 @@ class Wish(models.Model):
 
     def has_spirit_artifact(self) -> bool:
         return hasattr(self, 'spirit_artifact')
+
+    def in_status(self, status: WishStatus) -> bool:
+        return self.status == status.name
 
 
 class BaseArtifact(PolymorphicModel):

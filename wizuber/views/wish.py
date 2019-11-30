@@ -66,11 +66,14 @@ class CreateWish(LoginRequiredMixin, UserPassesTestMixin, PageTitleMixin, generi
         return super().form_valid(form)
 
 
-class DetailWish(LoginRequiredMixin, PageTitleMixin, generic.DetailView):
+class DetailWish(LoginRequiredMixin, UserPassesTestMixin, PageTitleMixin, generic.DetailView):
     page_title = 'Wish Details'
     model = Wish
     context_object_name = 'wish'
     template_name = 'wizuber/wish/detail.html'
+
+    def test_func(self):
+        return self.request.user.can_view_wish(self.get_object())
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
