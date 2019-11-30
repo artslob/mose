@@ -1,5 +1,7 @@
 ## METHODOLOGY OF SOFTWARE ENGINEERING (mose)
 
+[![Coverage Status](https://coveralls.io/repos/gitlab/artslob/mose/badge.svg?branch=HEAD)](https://coveralls.io/gitlab/artslob/mose?branch=HEAD)
+
 Проект по предмету "Методология программной инженерии".
 
 ## Installation
