@@ -31,15 +31,22 @@
                         <th scope="col">Name</th>
                         <th scope="col">Description</th>
                         <th scope="col">Size</th>
+                        <th scope="col"></th>
                     </tr>
                     </thead>
                     <tbody>
                     {% for artifact in wish.pentacle_artifacts.all %}
                         <tr>
-                            <th scope="row">{{ forloop.counter }}</th>
-                            <td>{{ artifact.name }}</td>
-                            <td>{{ artifact.description | truncatechars:60 }}</td>
-                            <td>{{ artifact.size | title }}</td>
+                            <th class="align-middle" scope="row">{{ forloop.counter }}</th>
+                            <td class="align-middle">{{ artifact.name }}</td>
+                            <td class="align-middle">{{ artifact.description | truncatechars:60 }}</td>
+                            <td class="align-middle">{{ artifact.size | title }}</td>
+                            <td class="align-middle">
+                                <form action="{% url 'wizuber:delete-artifact' artifact.pk %}" method="POST">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-outline-danger btn-sm">Delete</button>
+                                </form>
+                            </td>
                         </tr>
                     {% endfor %}
                     </tbody>

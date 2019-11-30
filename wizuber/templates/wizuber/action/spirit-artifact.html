@@ -23,12 +23,19 @@
                     <tr>
                         <th scope="col">#</th>
                         <th scope="col">Spirit Username</th>
+                        <th scope="col"></th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr>
-                        <th scope="row">1</th>
-                        <td>{{ wish.spirit_artifact.spirit.username }}</td>
+                        <th class="align-middle" scope="row">1</th>
+                        <td class="align-middle">{{ wish.spirit_artifact.spirit.username }}</td>
+                        <td class="align-middle">
+                            <form action="{% url 'wizuber:delete-artifact' wish.spirit_artifact.pk %}" method="POST">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-outline-danger btn-sm">Delete</button>
+                            </form>
+                        </td>
                     </tr>
                     </tbody>
                 </table>

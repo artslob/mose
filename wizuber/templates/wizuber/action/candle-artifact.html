@@ -25,14 +25,21 @@
                         <th scope="col">#</th>
                         <th scope="col">Size</th>
                         <th scope="col">Material</th>
+                        <th scope="col"></th>
                     </tr>
                     </thead>
                     <tbody>
                     {% for artifact in wish.candle_artifacts.all %}
                         <tr>
-                            <th scope="row">{{ forloop.counter }}</th>
-                            <td>{{ artifact.size | title }}</td>
-                            <td>{{ artifact.material | title }}</td>
+                            <th class="align-middle" scope="row">{{ forloop.counter }}</th>
+                            <td class="align-middle">{{ artifact.size | title }}</td>
+                            <td class="align-middle">{{ artifact.material | title }}</td>
+                            <td class="align-middle">
+                                <form action="{% url 'wizuber:delete-artifact' artifact.pk %}" method="POST">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-outline-danger btn-sm">Delete</button>
+                                </form>
+                            </td>
                         </tr>
                     {% endfor %}
                     </tbody>

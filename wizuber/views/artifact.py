@@ -10,7 +10,7 @@ class DeleteArtifact(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     http_method_names = ['post', 'delete', 'head', 'options', 'trace']
 
     def test_func(self):
-        user, wish = self.request.user, self.get_object()
+        user, wish = self.request.user, self.get_object().wish
         is_work_status = wish.status == wish.STATUSES.WORK.name
 
         if is_work_status and user.is_wizard and user == wish.owner == wish.assigned_to:
