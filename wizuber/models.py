@@ -184,7 +184,6 @@ class CandleArtifact(BaseArtifact):
 class PentacleArtifact(BaseArtifact):
     wish = models.ForeignKey(Wish, related_name='pentacle_artifacts', on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
-    description = models.TextField(blank=True)
     SIZES = SizeChoices
     size = models.CharField(max_length=SIZES.max_length(), choices=SIZES.choices(), default=SIZES.default())
 
