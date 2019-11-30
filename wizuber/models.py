@@ -35,8 +35,6 @@ class WizuberUser(PolymorphicModel, AbstractUser):
     is_student = False
     is_spirit = False
 
-    can_create_wish = False
-
 
 class Wizard(WizuberUser):
     balance = models.PositiveIntegerField(default=0)
@@ -63,7 +61,6 @@ class Customer(WizuberUser):
         ordering = ['id']
 
     is_customer = True
-    can_create_wish = True
 
     def get_queryset_for_wish_list(self):
         return self.created_wishes.exclude(status=Wish.STATUSES.CLOSED.name)

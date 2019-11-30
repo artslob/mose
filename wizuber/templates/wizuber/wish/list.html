@@ -1,7 +1,7 @@
 {% extends 'wizuber/base.html' %}
 
 {% block content %}
-    {% if user.is_authenticated and user.can_create_wish %}
+    {% if user.is_authenticated and user.is_customer %}
         <a class="btn btn-outline-success mb-4" href="{% url 'wizuber:create-wish' %}" role="button">Create new wish</a>
     {% endif %}
 
