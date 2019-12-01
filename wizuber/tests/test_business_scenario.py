@@ -15,10 +15,12 @@ class PrimaryBusinessScenario(TestCase):
         self.wish_desc = 'test wish'
         self.customer = Customer.objects.create_user('test_customer', 'customer@test.com', '123')
 
-    def check_actions(self, response, expected_action_names: Iterable[str]):
-        expected_set = set(expected_action_names)
-        actual_set = set(action.get_action_name() for action in response.context['actions'])
-        self.assertEqual(expected_set, actual_set)
+    def check_available_actions(self, wish, expected_action_names: Iterable[str]):
+        url = reverse('wizuber:detail-wish', kwargs=dict(pk=wish.pk))
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        actions = set(action.get_action_name() for action in response.context['actions'])
+        self.assertEqual(actions, set(expected_action_names))
 
     def refresh(self, wish=None):
         self.customer.refresh_from_db()
@@ -47,11 +49,7 @@ class PrimaryBusinessScenario(TestCase):
         self.assertEqual(wish.status, WishStatus.NEW.name)
         self.assertTrue(wish.in_status(WishStatus.NEW))
 
-        # check available actions for customer
-        url = reverse('wizuber:detail-wish', kwargs=dict(pk=wish.pk))
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
-        self.check_actions(response, ['pay', 'delete'])
+        self.check_available_actions(wish, ['pay', 'delete'])
 
         # pay for wish
         self.refresh(wish)
@@ -62,3 +60,4 @@ class PrimaryBusinessScenario(TestCase):
         self.refresh(wish)
         self.assertTrue(wish.in_status(WishStatus.ACTIVE))
         self.assertEqual(self.customer.balance, CUSTOMER_BALANCE - wish.price)
+        self.check_available_actions(wish, [])
