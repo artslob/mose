@@ -3,7 +3,7 @@ from typing import Iterable
 from django.test import TestCase
 from django.urls import reverse
 
-from wizuber.models import Wish, Customer, WishStatus, Wizard, CandleMaterial, SizeChoices
+from wizuber.models import Wish, Customer, WishStatus, Wizard, CandleMaterial, SizeChoices, Student
 
 # constants
 CUSTOMER_BALANCE = 500
@@ -15,6 +15,7 @@ class PrimaryBusinessScenario(TestCase):
     def setUp(self) -> None:
         self.customer = Customer.objects.create_user('test_customer', 'customer@test.com', '123')
         self.wizard = Wizard.objects.create_user('test_wizard', 'wizard@test.com', '123')
+        self.student = Student.objects.create_user('test_student', 'student@test.com', '123', teacher=self.wizard)
 
     def check_available_actions(self, wish, expected_action_names: Iterable[str]):
         url = reverse('wizuber:detail-wish', kwargs=dict(pk=wish.pk))
@@ -26,6 +27,7 @@ class PrimaryBusinessScenario(TestCase):
     def refresh(self, wish=None):
         self.customer.refresh_from_db()
         self.wizard.refresh_from_db()
+        self.student.refresh_from_db()
         if wish is not None:
             wish.refresh_from_db()
 
@@ -79,9 +81,9 @@ class PrimaryBusinessScenario(TestCase):
         self.assertEqual(wish.pentacle_artifacts.count(), 0)
         self.assertEqual(wish.candle_artifacts.count(), 0)
         self.assertFalse(wish.has_spirit_artifact())
-        self.check_available_actions(wish, ['spirit-artifact', 'candle-artifact', 'pentacle-artifact'])
+        self.check_available_actions(wish, ['spirit-artifact', 'candle-artifact', 'pentacle-artifact', 'to-student'])
 
-        # check pentacle artifact creation by wizard
+        # check candle artifact creation by wizard
         url = reverse('wizuber:handle-wish-action', kwargs=dict(pk=wish.pk, action='candle-artifact'))
         response = self.client.post(url, dict(material=CandleMaterial.TALLOW.name, size=SizeChoices.SMALL.name))
         self.assertEqual(response.status_code, 302)
@@ -91,3 +93,26 @@ class PrimaryBusinessScenario(TestCase):
         self.assertEqual(candle.wish, wish)
         self.assertEqual(candle.material, CandleMaterial.TALLOW.name)
         self.assertEqual(candle.size, SizeChoices.SMALL.name)
+
+        # check assign to student
+        url = reverse('wizuber:handle-wish-action', kwargs=dict(pk=wish.pk, action='to-student'))
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, 302)
+        self.refresh(wish)
+        self.assertTrue(wish.owner == self.wizard)
+        self.assertTrue(wish.assigned_to == self.student)
+
+        # check pentacle artifact creation by student
+        self.client.force_login(self.student)
+        self.check_available_actions(wish, ['to-wizard', 'spirit-artifact', 'candle-artifact', 'pentacle-artifact'])
+
+        url = reverse('wizuber:handle-wish-action', kwargs=dict(pk=wish.pk, action='pentacle-artifact'))
+        response = self.client.post(url, dict(name='some test pentacle', size=SizeChoices.LARGE.name))
+        self.assertEqual(response.status_code, 302)
+        self.refresh(wish)
+        self.assertEqual(wish.pentacle_artifacts.count(), 1)
+        pentacle = wish.pentacle_artifacts.first()
+        self.assertEqual(pentacle.wish, wish)
+        self.assertEqual(pentacle.name, 'some test pentacle')
+        self.assertEqual(pentacle.size, SizeChoices.LARGE.name)
+        self.check_available_actions(wish, ['to-wizard', 'spirit-artifact', 'candle-artifact', 'pentacle-artifact'])
