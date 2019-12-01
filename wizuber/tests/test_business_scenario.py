@@ -5,6 +5,9 @@ from django.urls import reverse
 
 from wizuber.models import Wish, Customer, WishStatus
 
+# constants
+CUSTOMER_BALANCE = 500
+
 
 class PrimaryBusinessScenario(TestCase):
     def setUp(self) -> None:
@@ -16,6 +19,11 @@ class PrimaryBusinessScenario(TestCase):
         expected_set = set(expected_action_names)
         actual_set = set(action.get_action_name() for action in response.context['actions'])
         self.assertEqual(expected_set, actual_set)
+
+    def refresh(self, wish=None):
+        self.customer.refresh_from_db()
+        if wish is not None:
+            wish.refresh_from_db()
 
     def test_db_state(self):
         self.assertEqual(Wish.objects.count(), 0)
@@ -44,3 +52,13 @@ class PrimaryBusinessScenario(TestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.check_actions(response, ['pay', 'delete'])
+
+        # pay for wish
+        self.refresh(wish)
+        self.assertEqual(self.customer.balance, CUSTOMER_BALANCE)
+        url = reverse('wizuber:handle-wish-action', kwargs=dict(pk=wish.pk, action='pay'))
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, 302)
+        self.refresh(wish)
+        self.assertTrue(wish.in_status(WishStatus.ACTIVE))
+        self.assertEqual(self.customer.balance, CUSTOMER_BALANCE - wish.price)
