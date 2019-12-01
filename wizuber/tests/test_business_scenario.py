@@ -3,7 +3,7 @@ from typing import Iterable
 from django.test import TestCase
 from django.urls import reverse
 
-from wizuber.models import Wish, Customer, WishStatus, Wizard
+from wizuber.models import Wish, Customer, WishStatus, Wizard, CandleMaterial, SizeChoices
 
 # constants
 CUSTOMER_BALANCE = 500
@@ -76,4 +76,18 @@ class PrimaryBusinessScenario(TestCase):
         self.assertTrue(wish.in_status(WishStatus.WORK))
         self.assertTrue(wish.owner == wish.assigned_to == self.wizard)
         self.assertEqual(self.wizard.owned_wishes.count(), 1)
+        self.assertEqual(wish.pentacle_artifacts.count(), 0)
+        self.assertEqual(wish.candle_artifacts.count(), 0)
+        self.assertFalse(wish.has_spirit_artifact())
         self.check_available_actions(wish, ['spirit-artifact', 'candle-artifact', 'pentacle-artifact'])
+
+        # check pentacle artifact creation by wizard
+        url = reverse('wizuber:handle-wish-action', kwargs=dict(pk=wish.pk, action='candle-artifact'))
+        response = self.client.post(url, dict(material=CandleMaterial.TALLOW.name, size=SizeChoices.SMALL.name))
+        self.assertEqual(response.status_code, 302)
+        self.refresh(wish)
+        self.assertEqual(wish.candle_artifacts.count(), 1)
+        candle = wish.candle_artifacts.first()
+        self.assertEqual(candle.wish, wish)
+        self.assertEqual(candle.material, CandleMaterial.TALLOW.name)
+        self.assertEqual(candle.size, SizeChoices.SMALL.name)
