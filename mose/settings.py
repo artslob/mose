@@ -111,3 +111,28 @@ LOGIN_REDIRECT_URL = 'wizuber:index'
 LOGOUT_REDIRECT_URL = 'wizuber:index'
 
 AUTH_USER_MODEL = 'wizuber.WizuberUser'
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '<{asctime}> {levelname} {name} {message}',
+            'style': '{',
+            'datefmt': '%d/%b/%Y %X',
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
+    },
+    'loggers': {
+        'wizuber': {
+            'handlers': ['console'],
+            'level': 'INFO',
+        }
+    }
+}

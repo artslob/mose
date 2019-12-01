@@ -1,3 +1,5 @@
+import logging
+
 from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
 from django.http import Http404, HttpRequest
@@ -8,8 +10,7 @@ from wizuber.fsm import action_classes, action_class_by_name, ActionNotFound, Ac
 from wizuber.models import Wish
 from wizuber.views.helpers import PageTitleMixin
 
-
-# TODO add checks for permissions
+logger = logging.getLogger(__name__)
 
 
 class ListWish(LoginRequiredMixin, PageTitleMixin, generic.ListView):
@@ -90,12 +91,11 @@ class HandleWishAction(LoginRequiredMixin, generic.View, generic.detail.SingleOb
     model = Wish
 
     def post(self, request: HttpRequest, pk: int, action: str):
-        print(pk, action)
+        logger.info('action "%s" for wish "%s" from user "%s"', action, pk, self.request.user)
         try:
             action_class = action_class_by_name(action)
         except ActionNotFound:
             raise Http404
-        print(action_class)
         action = action_class(wish=self.get_object(), user=self.request.user)
         try:
             action.execute(request)
