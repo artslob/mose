@@ -155,3 +155,14 @@ class PrimaryBusinessScenario(TestCase):
         self.assertTrue(wish.in_status(WishStatus.ON_SPIRIT))
         self.assertEqual(wish.owner, self.wizard)
         self.assertEqual(wish.assigned_to, self.spirit)
+
+        # check assign from spirit to wizard
+        self.client.force_login(self.spirit)
+        self.check_available_actions(wish, ['spirit-to-wizard'])
+
+        url = reverse('wizuber:handle-wish-action', kwargs=dict(pk=wish.pk, action='spirit-to-wizard'))
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, 302)
+        self.refresh(wish)
+        self.assertTrue(wish.in_status(WishStatus.READY))
+        self.assertTrue(wish.owner == wish.assigned_to == self.wizard)
