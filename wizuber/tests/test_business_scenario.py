@@ -3,7 +3,8 @@ from typing import Iterable
 from django.test import TestCase
 from django.urls import reverse
 
-from wizuber.models import Wish, Customer, WishStatus, Wizard, CandleMaterial, SizeChoices, Student
+from wizuber.models import Wish, Customer, WishStatus, Wizard, CandleMaterial, SizeChoices, Student, Spirit, \
+    SpiritGrades, WizuberUser
 
 # constants
 CUSTOMER_BALANCE = 500
@@ -16,6 +17,8 @@ class PrimaryBusinessScenario(TestCase):
         self.customer = Customer.objects.create_user('test_customer', 'customer@test.com', '123')
         self.wizard = Wizard.objects.create_user('test_wizard', 'wizard@test.com', '123')
         self.student = Student.objects.create_user('test_student', 'student@test.com', '123', teacher=self.wizard)
+        self.spirit = Spirit.objects.create_user('test_spirit', 'spirit@test.com', '123',
+                                                 grade=SpiritGrades.FOLIOT.name)
 
     def check_available_actions(self, wish, expected_action_names: Iterable[str]):
         url = reverse('wizuber:detail-wish', kwargs=dict(pk=wish.pk))
@@ -28,13 +31,17 @@ class PrimaryBusinessScenario(TestCase):
         self.customer.refresh_from_db()
         self.wizard.refresh_from_db()
         self.student.refresh_from_db()
+        self.spirit.refresh_from_db()
         if wish is not None:
             wish.refresh_from_db()
 
     def test_db_state(self):
         self.assertEqual(Wish.objects.count(), 0)
+        self.assertEqual(WizuberUser.objects.count(), 4)
         self.assertEqual(Customer.objects.count(), 1)
         self.assertEqual(Wizard.objects.count(), 1)
+        self.assertEqual(Student.objects.count(), 1)
+        self.assertEqual(Spirit.objects.count(), 1)
 
     def test_business_scenario(self):
         # test wish creating
@@ -115,4 +122,14 @@ class PrimaryBusinessScenario(TestCase):
         self.assertEqual(pentacle.wish, wish)
         self.assertEqual(pentacle.name, 'some test pentacle')
         self.assertEqual(pentacle.size, SizeChoices.LARGE.name)
+        self.check_available_actions(wish, ['to-wizard', 'spirit-artifact', 'candle-artifact', 'pentacle-artifact'])
+
+        # check spirit artifact creation by student
+        url = reverse('wizuber:handle-wish-action', kwargs=dict(pk=wish.pk, action='spirit-artifact'))
+        response = self.client.post(url, dict(spirit=self.spirit.pk))
+        self.assertEqual(response.status_code, 302)
+        self.refresh(wish)
+        self.assertTrue(wish.has_spirit_artifact())
+        self.assertEqual(wish.spirit_artifact.wish, wish)
+        self.assertEqual(wish.spirit_artifact.spirit, self.spirit)
         self.check_available_actions(wish, ['to-wizard', 'spirit-artifact', 'candle-artifact', 'pentacle-artifact'])
