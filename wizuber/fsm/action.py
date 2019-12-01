@@ -88,8 +88,7 @@ class DeleteAction(IAction):
         return 'You can delete this wish'
 
     def is_available(self) -> bool:
-        """ Delete action is always available for user-creator. """
-        return self.wish.creator == self.user and self.wish.status != self.wish.STATUSES.CLOSED.name
+        return self.wish.creator == self.user and self.wish.in_status(self.wish.STATUSES.NEW)
 
     def _execute(self, request: HttpRequest):
         self.wish.delete()
