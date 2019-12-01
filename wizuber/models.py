@@ -87,7 +87,7 @@ class Student(WizuberUser):
         return self.assigned_wishes.all()
 
     def can_view_wish(self, wish: 'Wish') -> bool:
-        return self == wish.assigned_to and self.teacher.can_view_wish(wish)
+        return self.teacher.can_view_wish(wish)
 
 
 class SpiritGrades(ChoicesEnum):
