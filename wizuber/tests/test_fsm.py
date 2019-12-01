@@ -1,6 +1,7 @@
 from pathlib import Path
 
-from django.test import TestCase, Client
+from django.test import TestCase
+from django.urls import reverse
 
 from wizuber.fsm import IAction, action_classes, action_class_by_name, ActionNotFound
 
@@ -45,8 +46,10 @@ class FsmAvailableActions(TestCase):
         self.assertTrue("action with name 'test' not found" == error_msg)
 
     def test_post_action_not_existing_name(self):
-        response = Client().post('wish/1/handle/test-action')
-        self.assertEqual(response.status_code, 404)
+        kwargs = dict(pk=1, action='test-action')
+        url = reverse('wizuber:handle-wish-action', kwargs=kwargs)
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, 302)
 
     def test_action_have_templates(self):
         wizuber_dir: Path = Path(__file__).resolve().parent.parent
