@@ -8,6 +8,7 @@ from wizuber.models import Wish, Customer, WishStatus, Wizard, CandleMaterial, S
 
 # constants
 CUSTOMER_BALANCE = 500
+WIZARD_START_BALANCE = 13
 WISH_PRICE = 42
 WISH_DESC = 'test wish'
 
@@ -15,7 +16,7 @@ WISH_DESC = 'test wish'
 class PrimaryBusinessScenario(TestCase):
     def setUp(self) -> None:
         self.customer = Customer.objects.create_user('test_customer', 'customer@test.com', '123')
-        self.wizard = Wizard.objects.create_user('test_wizard', 'wizard@test.com', '123')
+        self.wizard = Wizard.objects.create_user('test_wizard', 'wizard@test.com', '123', balance=WIZARD_START_BALANCE)
         self.student = Student.objects.create_user('test_student', 'student@test.com', '123', teacher=self.wizard)
         self.spirit = Spirit.objects.create_user('test_spirit', 'spirit@test.com', '123',
                                                  grade=SpiritGrades.FOLIOT.name)
@@ -166,3 +167,17 @@ class PrimaryBusinessScenario(TestCase):
         self.refresh(wish)
         self.assertTrue(wish.in_status(WishStatus.READY))
         self.assertTrue(wish.owner == wish.assigned_to == self.wizard)
+
+        # check close wish
+        self.client.force_login(self.wizard)
+        self.check_available_actions(wish, ['close'])
+        self.assertEqual(self.wizard.balance, WIZARD_START_BALANCE)
+
+        url = reverse('wizuber:handle-wish-action', kwargs=dict(pk=wish.pk, action='close'))
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, 302)
+        self.refresh(wish)
+        self.assertTrue(wish.in_status(WishStatus.CLOSED))
+        self.assertTrue(wish.owner == self.wizard)
+        self.assertTrue(wish.creator == wish.assigned_to == self.customer)
+        self.assertEqual(self.wizard.balance, WIZARD_START_BALANCE + wish.price)
