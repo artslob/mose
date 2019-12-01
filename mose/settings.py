@@ -117,7 +117,7 @@ LOGGING = {
     'disable_existing_loggers': False,
     'formatters': {
         'verbose': {
-            'format': '<{asctime}> {levelname} {name} {message}',
+            'format': '[{asctime}] {levelname} [{name}]: {message}',
             'style': '{',
             'datefmt': '%d/%b/%Y %X',
         },
