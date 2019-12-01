@@ -13,6 +13,8 @@ from wizuber.models import Wish, WizuberUser
 
 
 class IAction(metaclass=ABCMeta):
+    """ Abstract class for all wish actions. New action classes are registered in `defined_actions`. """
+
     defined_actions = {}
 
     def __init_subclass__(cls, **kwargs):
@@ -26,20 +28,32 @@ class IAction(metaclass=ABCMeta):
     @classmethod
     def validate_subclass_action_name(cls, action_name: str):
         if action_name in cls.defined_actions:
-            raise RuntimeError(f'action name {action_name!r} is not unique!')
+            raise RuntimeError(f'action name {action_name!r} is not unique!')  # pragma: no cover
         if not isinstance(action_name, str):
-            raise RuntimeError(f'action name {action_name!r} should be string, got: {type(action_name)}')
+            raise RuntimeError(
+                f'action name {action_name!r} should be string, got: {type(action_name)}'
+            )  # pragma: no cover
         if action_name != action_name.lower() or action_name.count(' ') > 0:
-            raise RuntimeError(f'action name should be in lowercase and without spaces: {action_name!r}')
+            raise RuntimeError(
+                f'action name should be in lowercase and without spaces: {action_name!r}'
+            )  # pragma: no cover
 
-    def __init__(self, wish: Wish, user: WizuberUser, *args, **kwargs):
+    def __init__(self, wish: Wish, user: WizuberUser):
+        """
+        :param wish: instance of with to make action upon.
+        :param user: logged-in user that want to make some action with this wish.
+        """
         self.wish = wish
         self.user = user
 
     @classmethod
     @abstractmethod
     def get_action_name(cls) -> str:
-        pass
+        """
+        Unique string that defines name of the action. Should be lowercase without spaces.
+        By default equals to name of html template.
+        For example: action with name 'pay' has template 'wizuber/action/pay.html'.
+        """
 
     @classmethod
     def template_name(cls) -> str:
@@ -52,13 +66,18 @@ class IAction(metaclass=ABCMeta):
     @classmethod
     @abstractmethod
     def get_action_description(cls) -> str:
-        pass
+        """ Human-readable prompt string that displayed at html template. """
 
     @abstractmethod
     def is_available(self) -> bool:
-        pass
+        """ Check if user can potentially make this action. If true, user can see this action on html template. """
 
     def is_processing_available(self) -> bool:
+        """
+        Check that user can see action and also execute it.
+        e.g.: customer-creator of the wish can always see button for 'pay' action, but if user has not enough money
+        to pay for wish button will be disabled and this method returns False.
+        """
         return self.is_available() and self._is_processing_available()
 
     def _is_processing_available(self) -> bool:
@@ -72,7 +91,10 @@ class IAction(metaclass=ABCMeta):
 
     @abstractmethod
     def _execute(self, request: HttpRequest):
-        pass
+        """
+        Actual code of action should be here.
+        All checks for permissions should be in `is_processing_available`.
+        """
 
     def get_success_url(self):
         return self.wish.get_absolute_url()
@@ -142,6 +164,8 @@ class OwnAction(IAction):
 
 
 class ArtifactAction(IAction, ABC):
+    """ Abstract class for artifact actions. """
+
     def is_available(self) -> bool:
         user, wish = self.user, self.wish
         is_work_status = wish.status == wish.STATUSES.WORK.name
@@ -157,7 +181,7 @@ class ArtifactAction(IAction, ABC):
     @classmethod
     @abstractmethod
     def get_artifact_name(cls) -> str:
-        pass
+        """ String value of artifact name. Part of action name. """
 
     @classmethod
     def get_action_name(cls) -> str:
@@ -170,7 +194,7 @@ class ArtifactAction(IAction, ABC):
     @classmethod
     @abstractmethod
     def get_form_class(cls) -> Type[ModelForm]:
-        pass
+        """ Class of the form used by this artifact action. """
 
     def get_form(self, request: HttpRequest = None) -> ModelForm:
         cls = self.get_form_class()

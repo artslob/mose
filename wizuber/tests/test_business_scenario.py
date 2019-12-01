@@ -44,6 +44,8 @@ class PrimaryBusinessScenario(TestCase):
         self.assertEqual(Student.objects.count(), 1)
         self.assertEqual(Spirit.objects.count(), 1)
 
+    # TODO: check for artifact deletion
+
     def test_business_scenario(self):
         # test wish creating
         self.assertEqual(Wish.objects.count(), 0)
