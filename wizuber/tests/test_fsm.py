@@ -1,12 +1,12 @@
 from pathlib import Path
 
-from django.test import TestCase
+from django.test import SimpleTestCase
 from django.urls import reverse
 
 from wizuber.fsm import IAction, action_classes, action_class_by_name, ActionNotFound
 
 
-class FsmAvailableActions(TestCase):
+class FsmAvailableActions(SimpleTestCase):
     def setUp(self):
         self.expected_number_of_actions = 11
 
