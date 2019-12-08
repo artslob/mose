@@ -79,45 +79,53 @@ class PrimaryBusinessScenario(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertEqual(Wish.objects.count(), 0)
 
-    def test_business_scenario(self):
-        self.wish_creating()
-        wish = self.check_created_wish_attributes()
+    def test_artifact_deletion(self):
+        pass
 
-        # pay for wish
+    def pay_for_wish(self):
         self.refresh()
         self.assertEqual(self.customer.balance, CUSTOMER_BALANCE)
         response = self.client.post(self.get_url_for_action('pay'))
         self.assertEqual(response.status_code, 302)
         self.refresh()
-        self.assertTrue(wish.in_status(WishStatus.ACTIVE))
-        self.assertEqual(self.customer.balance, CUSTOMER_BALANCE - wish.price)
-        self.check_available_actions(wish, [])
+        self.assertTrue(self.wish.in_status(WishStatus.ACTIVE))
+        self.assertEqual(self.customer.balance, CUSTOMER_BALANCE - self.wish.price)
+        self.check_available_actions(self.wish, [])
 
-        # check wizard own wish
+    def wizard_own_wish(self):
         self.client.force_login(self.wizard)
-        self.check_available_actions(wish, ['own'])
+        self.check_available_actions(self.wish, ['own'])
 
         response = self.client.post(self.get_url_for_action('own'))
         self.assertEqual(response.status_code, 302)
         self.refresh()
-        self.assertTrue(wish.in_status(WishStatus.WORK))
-        self.assertTrue(wish.owner == wish.assigned_to == self.wizard)
+        self.assertTrue(self.wish.in_status(WishStatus.WORK))
+        self.assertTrue(self.wish.owner == self.wish.assigned_to == self.wizard)
         self.assertEqual(self.wizard.owned_wishes.count(), 1)
-        self.assertEqual(wish.pentacle_artifacts.count(), 0)
-        self.assertEqual(wish.candle_artifacts.count(), 0)
-        self.assertFalse(wish.has_spirit_artifact())
-        self.check_available_actions(wish, ['spirit-artifact', 'candle-artifact', 'pentacle-artifact', 'to-student'])
+        self.assertEqual(self.wish.pentacle_artifacts.count(), 0)
+        self.assertEqual(self.wish.candle_artifacts.count(), 0)
+        self.assertFalse(self.wish.has_spirit_artifact())
+        self.check_available_actions(self.wish, [
+            'spirit-artifact', 'candle-artifact', 'pentacle-artifact', 'to-student'
+        ])
 
-        # check candle artifact creation by wizard
+    def candle_artifact_creation_by_wizard(self):
         response = self.client.post(self.get_url_for_action('candle-artifact'),
                                     dict(material=CandleMaterial.TALLOW.name, size=SizeChoices.SMALL.name))
         self.assertEqual(response.status_code, 302)
         self.refresh()
-        self.assertEqual(wish.candle_artifacts.count(), 1)
-        candle = wish.candle_artifacts.first()
-        self.assertEqual(candle.wish, wish)
+        self.assertEqual(self.wish.candle_artifacts.count(), 1)
+        candle = self.wish.candle_artifacts.first()
+        self.assertEqual(candle.wish, self.wish)
         self.assertEqual(candle.material, CandleMaterial.TALLOW.name)
         self.assertEqual(candle.size, SizeChoices.SMALL.name)
+
+    def test_business_scenario(self):
+        self.wish_creating()
+        wish = self.check_created_wish_attributes()
+        self.pay_for_wish()
+        self.wizard_own_wish()
+        self.candle_artifact_creation_by_wizard()
 
         # check assign to student
         response = self.client.post(self.get_url_for_action('to-student'))
