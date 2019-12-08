@@ -85,12 +85,28 @@ class PrimaryBusinessScenario(TestCase):
         self.pay_for_wish()
         self.wizard_own_wish()
         self.candle_artifact_creation_by_wizard()
+        self.check_available_actions(self.wish, [
+            'spirit-artifact', 'candle-artifact', 'pentacle-artifact', 'to-student'
+        ])
 
         # check candle artifact is deleted
         url = reverse('wizuber:delete-artifact', kwargs=dict(pk=self.wish.candle_artifacts.first().pk))
         response = self.client.post(url)
         self.assertRedirects(response, self.wish.get_absolute_url())
         self.assertEqual(BaseArtifact.objects.count(), 0)
+        self.check_available_actions(self.wish, [
+            'spirit-artifact', 'candle-artifact', 'pentacle-artifact', 'to-student'
+        ])
+
+        # check pentacle artifact is deleted
+        self.check_pentacle_artifact_creation()
+        url = reverse('wizuber:delete-artifact', kwargs=dict(pk=self.wish.pentacle_artifacts.first().pk))
+        response = self.client.post(url)
+        self.assertRedirects(response, self.wish.get_absolute_url())
+        self.assertEqual(BaseArtifact.objects.count(), 0)
+        self.check_available_actions(self.wish, [
+            'spirit-artifact', 'candle-artifact', 'pentacle-artifact', 'to-student'
+        ])
 
     def pay_for_wish(self):
         self.refresh()
@@ -130,6 +146,17 @@ class PrimaryBusinessScenario(TestCase):
         self.assertEqual(candle.material, CandleMaterial.TALLOW.name)
         self.assertEqual(candle.size, SizeChoices.SMALL.name)
 
+    def check_pentacle_artifact_creation(self):
+        response = self.client.post(self.get_url_for_action('pentacle-artifact'),
+                                    dict(name='some test pentacle', size=SizeChoices.LARGE.name))
+        self.assertEqual(response.status_code, 302)
+        self.refresh()
+        self.assertEqual(self.wish.pentacle_artifacts.count(), 1)
+        pentacle = self.wish.pentacle_artifacts.first()
+        self.assertEqual(pentacle.wish, self.wish)
+        self.assertEqual(pentacle.name, 'some test pentacle')
+        self.assertEqual(pentacle.size, SizeChoices.LARGE.name)
+
     def test_business_scenario(self):
         self.wish_creating()
         wish = self.check_created_wish_attributes()
@@ -147,16 +174,7 @@ class PrimaryBusinessScenario(TestCase):
         # check pentacle artifact creation by student
         self.client.force_login(self.student)
         self.check_available_actions(wish, ['to-wizard', 'spirit-artifact', 'candle-artifact', 'pentacle-artifact'])
-
-        response = self.client.post(self.get_url_for_action('pentacle-artifact'),
-                                    dict(name='some test pentacle', size=SizeChoices.LARGE.name))
-        self.assertEqual(response.status_code, 302)
-        self.refresh()
-        self.assertEqual(wish.pentacle_artifacts.count(), 1)
-        pentacle = wish.pentacle_artifacts.first()
-        self.assertEqual(pentacle.wish, wish)
-        self.assertEqual(pentacle.name, 'some test pentacle')
-        self.assertEqual(pentacle.size, SizeChoices.LARGE.name)
+        self.check_pentacle_artifact_creation()
         self.check_available_actions(wish, ['to-wizard', 'spirit-artifact', 'candle-artifact', 'pentacle-artifact'])
 
         # check spirit artifact creation by student
