@@ -1,4 +1,5 @@
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
+from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.firefox.webdriver import WebDriver
 
 from wizuber.models import Customer, Wizard, Student, Spirit, SpiritGrades
@@ -11,7 +12,9 @@ class MySeleniumTests(StaticLiveServerTestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.selenium = WebDriver()
+        options = Options()
+        options.headless = True
+        cls.selenium = WebDriver(options=options)
         cls.selenium.implicitly_wait(10)
 
     def setUp(self) -> None:
