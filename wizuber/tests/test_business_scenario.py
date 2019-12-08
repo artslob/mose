@@ -4,7 +4,7 @@ from django.test import TestCase
 from django.urls import reverse
 
 from wizuber.models import Wish, Customer, WishStatus, Wizard, CandleMaterial, SizeChoices, Student, Spirit, \
-    SpiritGrades, WizuberUser
+    SpiritGrades, WizuberUser, BaseArtifact
 
 # constants
 CUSTOMER_BALANCE = 500
@@ -80,7 +80,17 @@ class PrimaryBusinessScenario(TestCase):
         self.assertEqual(Wish.objects.count(), 0)
 
     def test_artifact_deletion(self):
-        pass
+        self.wish_creating()
+        self.check_created_wish_attributes()
+        self.pay_for_wish()
+        self.wizard_own_wish()
+        self.candle_artifact_creation_by_wizard()
+
+        # check candle artifact is deleted
+        url = reverse('wizuber:delete-artifact', kwargs=dict(pk=self.wish.candle_artifacts.first().pk))
+        response = self.client.post(url)
+        self.assertRedirects(response, self.wish.get_absolute_url())
+        self.assertEqual(BaseArtifact.objects.count(), 0)
 
     def pay_for_wish(self):
         self.refresh()
