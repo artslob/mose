@@ -44,8 +44,6 @@ class PrimaryBusinessScenario(TestCase):
         self.assertEqual(Student.objects.count(), 1)
         self.assertEqual(Spirit.objects.count(), 1)
 
-    # TODO: check for artifact deletion
-
     def get_url_for_action(self, action_name: str):
         kwargs = dict(pk=self.wish.pk, action=action_name)
         return reverse('wizuber:handle-wish-action', kwargs=kwargs)
@@ -84,12 +82,13 @@ class PrimaryBusinessScenario(TestCase):
         self.check_created_wish_attributes()
         self.pay_for_wish()
         self.wizard_own_wish()
+
+        # check candle artifact is deleted
         self.candle_artifact_creation_by_wizard()
         self.check_available_actions(self.wish, [
             'spirit-artifact', 'candle-artifact', 'pentacle-artifact', 'to-student'
         ])
-
-        # check candle artifact is deleted
+        self.assertEqual(BaseArtifact.objects.count(), 1)
         url = reverse('wizuber:delete-artifact', kwargs=dict(pk=self.wish.candle_artifacts.first().pk))
         response = self.client.post(url)
         self.assertRedirects(response, self.wish.get_absolute_url())
@@ -100,7 +99,19 @@ class PrimaryBusinessScenario(TestCase):
 
         # check pentacle artifact is deleted
         self.check_pentacle_artifact_creation()
+        self.assertEqual(BaseArtifact.objects.count(), 1)
         url = reverse('wizuber:delete-artifact', kwargs=dict(pk=self.wish.pentacle_artifacts.first().pk))
+        response = self.client.post(url)
+        self.assertRedirects(response, self.wish.get_absolute_url())
+        self.assertEqual(BaseArtifact.objects.count(), 0)
+        self.check_available_actions(self.wish, [
+            'spirit-artifact', 'candle-artifact', 'pentacle-artifact', 'to-student'
+        ])
+
+        # check spirit artifact is deleted
+        self.check_spirit_artifact_creation()
+        self.assertEqual(BaseArtifact.objects.count(), 1)
+        url = reverse('wizuber:delete-artifact', kwargs=dict(pk=self.wish.spirit_artifact.pk))
         response = self.client.post(url)
         self.assertRedirects(response, self.wish.get_absolute_url())
         self.assertEqual(BaseArtifact.objects.count(), 0)
@@ -156,6 +167,14 @@ class PrimaryBusinessScenario(TestCase):
         self.assertEqual(pentacle.wish, self.wish)
         self.assertEqual(pentacle.name, 'some test pentacle')
         self.assertEqual(pentacle.size, SizeChoices.LARGE.name)
+
+    def check_spirit_artifact_creation(self):
+        response = self.client.post(self.get_url_for_action('spirit-artifact'), dict(spirit=self.spirit.pk))
+        self.assertEqual(response.status_code, 302)
+        self.refresh()
+        self.assertTrue(self.wish.has_spirit_artifact())
+        self.assertEqual(self.wish.spirit_artifact.wish, self.wish)
+        self.assertEqual(self.wish.spirit_artifact.spirit, self.spirit)
 
     def test_business_scenario(self):
         self.wish_creating()
