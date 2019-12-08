@@ -28,13 +28,13 @@ class PrimaryBusinessScenario(TestCase):
         actions = set(action.get_action_name() for action in response.context['actions'])
         self.assertEqual(actions, set(expected_action_names))
 
-    def refresh(self, wish=None):
+    def refresh(self):
         self.customer.refresh_from_db()
         self.wizard.refresh_from_db()
         self.student.refresh_from_db()
         self.spirit.refresh_from_db()
-        if wish is not None:
-            wish.refresh_from_db()
+        if self.wish is not None:
+            self.wish.refresh_from_db()
 
     def test_db_state(self):
         self.assertEqual(Wish.objects.count(), 0)
@@ -56,7 +56,7 @@ class PrimaryBusinessScenario(TestCase):
         self.assertEqual(Wish.objects.count(), 1)
 
         # check wish created
-        wish = Wish.objects.first()
+        self.wish = wish = Wish.objects.first()
         self.assertEqual(wish.creator, self.customer)
         self.assertEqual(wish.price, WISH_PRICE)
         self.assertEqual(wish.description, WISH_DESC)
@@ -67,12 +67,12 @@ class PrimaryBusinessScenario(TestCase):
         self.check_available_actions(wish, ['pay', 'delete'])
 
         # pay for wish
-        self.refresh(wish)
+        self.refresh()
         self.assertEqual(self.customer.balance, CUSTOMER_BALANCE)
         url = reverse('wizuber:handle-wish-action', kwargs=dict(pk=wish.pk, action='pay'))
         response = self.client.post(url)
         self.assertEqual(response.status_code, 302)
-        self.refresh(wish)
+        self.refresh()
         self.assertTrue(wish.in_status(WishStatus.ACTIVE))
         self.assertEqual(self.customer.balance, CUSTOMER_BALANCE - wish.price)
         self.check_available_actions(wish, [])
@@ -84,7 +84,7 @@ class PrimaryBusinessScenario(TestCase):
         url = reverse('wizuber:handle-wish-action', kwargs=dict(pk=wish.pk, action='own'))
         response = self.client.post(url)
         self.assertEqual(response.status_code, 302)
-        self.refresh(wish)
+        self.refresh()
         self.assertTrue(wish.in_status(WishStatus.WORK))
         self.assertTrue(wish.owner == wish.assigned_to == self.wizard)
         self.assertEqual(self.wizard.owned_wishes.count(), 1)
@@ -97,7 +97,7 @@ class PrimaryBusinessScenario(TestCase):
         url = reverse('wizuber:handle-wish-action', kwargs=dict(pk=wish.pk, action='candle-artifact'))
         response = self.client.post(url, dict(material=CandleMaterial.TALLOW.name, size=SizeChoices.SMALL.name))
         self.assertEqual(response.status_code, 302)
-        self.refresh(wish)
+        self.refresh()
         self.assertEqual(wish.candle_artifacts.count(), 1)
         candle = wish.candle_artifacts.first()
         self.assertEqual(candle.wish, wish)
@@ -108,7 +108,7 @@ class PrimaryBusinessScenario(TestCase):
         url = reverse('wizuber:handle-wish-action', kwargs=dict(pk=wish.pk, action='to-student'))
         response = self.client.post(url)
         self.assertEqual(response.status_code, 302)
-        self.refresh(wish)
+        self.refresh()
         self.assertTrue(wish.owner == self.wizard)
         self.assertTrue(wish.assigned_to == self.student)
 
@@ -119,7 +119,7 @@ class PrimaryBusinessScenario(TestCase):
         url = reverse('wizuber:handle-wish-action', kwargs=dict(pk=wish.pk, action='pentacle-artifact'))
         response = self.client.post(url, dict(name='some test pentacle', size=SizeChoices.LARGE.name))
         self.assertEqual(response.status_code, 302)
-        self.refresh(wish)
+        self.refresh()
         self.assertEqual(wish.pentacle_artifacts.count(), 1)
         pentacle = wish.pentacle_artifacts.first()
         self.assertEqual(pentacle.wish, wish)
@@ -131,7 +131,7 @@ class PrimaryBusinessScenario(TestCase):
         url = reverse('wizuber:handle-wish-action', kwargs=dict(pk=wish.pk, action='spirit-artifact'))
         response = self.client.post(url, dict(spirit=self.spirit.pk))
         self.assertEqual(response.status_code, 302)
-        self.refresh(wish)
+        self.refresh()
         self.assertTrue(wish.has_spirit_artifact())
         self.assertEqual(wish.spirit_artifact.wish, wish)
         self.assertEqual(wish.spirit_artifact.spirit, self.spirit)
@@ -141,7 +141,7 @@ class PrimaryBusinessScenario(TestCase):
         url = reverse('wizuber:handle-wish-action', kwargs=dict(pk=wish.pk, action='to-wizard'))
         response = self.client.post(url)
         self.assertEqual(response.status_code, 302)
-        self.refresh(wish)
+        self.refresh()
         self.assertTrue(wish.owner == self.wizard)
         self.assertTrue(wish.assigned_to == self.wizard)
 
@@ -154,7 +154,7 @@ class PrimaryBusinessScenario(TestCase):
         url = reverse('wizuber:handle-wish-action', kwargs=dict(pk=wish.pk, action='to-spirit'))
         response = self.client.post(url)
         self.assertEqual(response.status_code, 302)
-        self.refresh(wish)
+        self.refresh()
         self.assertTrue(wish.in_status(WishStatus.ON_SPIRIT))
         self.assertEqual(wish.owner, self.wizard)
         self.assertEqual(wish.assigned_to, self.spirit)
@@ -166,7 +166,7 @@ class PrimaryBusinessScenario(TestCase):
         url = reverse('wizuber:handle-wish-action', kwargs=dict(pk=wish.pk, action='spirit-to-wizard'))
         response = self.client.post(url)
         self.assertEqual(response.status_code, 302)
-        self.refresh(wish)
+        self.refresh()
         self.assertTrue(wish.in_status(WishStatus.READY))
         self.assertTrue(wish.owner == wish.assigned_to == self.wizard)
 
@@ -178,7 +178,7 @@ class PrimaryBusinessScenario(TestCase):
         url = reverse('wizuber:handle-wish-action', kwargs=dict(pk=wish.pk, action='close'))
         response = self.client.post(url)
         self.assertEqual(response.status_code, 302)
-        self.refresh(wish)
+        self.refresh()
         self.assertTrue(wish.in_status(WishStatus.CLOSED))
         self.assertTrue(wish.owner == self.wizard)
         self.assertTrue(wish.creator == wish.assigned_to == self.customer)
