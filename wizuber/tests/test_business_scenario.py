@@ -42,6 +42,9 @@ class PrimaryBusinessScenario(TestCase):
         kwargs = dict(pk=self.wish.pk, action=action_name)
         return reverse('wizuber:handle-wish-action', kwargs=kwargs)
 
+    def assertRedirectsToWishDetail(self, response):
+        self.assertRedirects(response, self.wish.get_absolute_url())
+
     # tests
 
     def test_db_state(self):
@@ -57,7 +60,7 @@ class PrimaryBusinessScenario(TestCase):
         self.check_created_wish_attributes()
 
         response = self.client.post(self.get_url_for_action('delete'))
-        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse('wizuber:list-wish'))
         self.assertEqual(Wish.objects.count(), 0)
 
     def test_artifact_deletion(self):
@@ -74,7 +77,7 @@ class PrimaryBusinessScenario(TestCase):
         self.assertEqual(BaseArtifact.objects.count(), 1)
         url = reverse('wizuber:delete-artifact', kwargs=dict(pk=self.wish.candle_artifacts.first().pk))
         response = self.client.post(url)
-        self.assertRedirects(response, self.wish.get_absolute_url())
+        self.assertRedirectsToWishDetail(response)
         self.assertEqual(BaseArtifact.objects.count(), 0)
         self.check_available_actions(self.wish, [
             'spirit-artifact', 'candle-artifact', 'pentacle-artifact', 'to-student'
@@ -85,7 +88,7 @@ class PrimaryBusinessScenario(TestCase):
         self.assertEqual(BaseArtifact.objects.count(), 1)
         url = reverse('wizuber:delete-artifact', kwargs=dict(pk=self.wish.pentacle_artifacts.first().pk))
         response = self.client.post(url)
-        self.assertRedirects(response, self.wish.get_absolute_url())
+        self.assertRedirectsToWishDetail(response)
         self.assertEqual(BaseArtifact.objects.count(), 0)
         self.check_available_actions(self.wish, [
             'spirit-artifact', 'candle-artifact', 'pentacle-artifact', 'to-student'
@@ -96,7 +99,7 @@ class PrimaryBusinessScenario(TestCase):
         self.assertEqual(BaseArtifact.objects.count(), 1)
         url = reverse('wizuber:delete-artifact', kwargs=dict(pk=self.wish.spirit_artifact.pk))
         response = self.client.post(url)
-        self.assertRedirects(response, self.wish.get_absolute_url())
+        self.assertRedirectsToWishDetail(response)
         self.assertEqual(BaseArtifact.objects.count(), 0)
         self.check_available_actions(self.wish, [
             'spirit-artifact', 'candle-artifact', 'pentacle-artifact', 'to-student'
@@ -111,7 +114,7 @@ class PrimaryBusinessScenario(TestCase):
 
         # check assign to student
         response = self.client.post(self.get_url_for_action('to-student'))
-        self.assertEqual(response.status_code, 302)
+        self.assertRedirectsToWishDetail(response)
         self.refresh()
         self.assertTrue(wish.owner == self.wizard)
         self.assertTrue(wish.assigned_to == self.student)
@@ -124,7 +127,7 @@ class PrimaryBusinessScenario(TestCase):
 
         # check spirit artifact creation by student
         response = self.client.post(self.get_url_for_action('spirit-artifact'), dict(spirit=self.spirit.pk))
-        self.assertEqual(response.status_code, 302)
+        self.assertRedirectsToWishDetail(response)
         self.refresh()
         self.assertTrue(wish.has_spirit_artifact())
         self.assertEqual(wish.spirit_artifact.wish, wish)
@@ -133,7 +136,7 @@ class PrimaryBusinessScenario(TestCase):
 
         # check assign to wizard
         response = self.client.post(self.get_url_for_action('to-wizard'))
-        self.assertEqual(response.status_code, 302)
+        self.assertRedirectsToWishDetail(response)
         self.refresh()
         self.assertTrue(wish.owner == self.wizard)
         self.assertTrue(wish.assigned_to == self.wizard)
@@ -145,7 +148,7 @@ class PrimaryBusinessScenario(TestCase):
         ])
 
         response = self.client.post(self.get_url_for_action('to-spirit'))
-        self.assertEqual(response.status_code, 302)
+        self.assertRedirectsToWishDetail(response)
         self.refresh()
         self.assertTrue(wish.in_status(WishStatus.ON_SPIRIT))
         self.assertEqual(wish.owner, self.wizard)
@@ -156,7 +159,7 @@ class PrimaryBusinessScenario(TestCase):
         self.check_available_actions(wish, ['spirit-to-wizard'])
 
         response = self.client.post(self.get_url_for_action('spirit-to-wizard'))
-        self.assertEqual(response.status_code, 302)
+        self.assertRedirectsToWishDetail(response)
         self.refresh()
         self.assertTrue(wish.in_status(WishStatus.READY))
         self.assertTrue(wish.owner == wish.assigned_to == self.wizard)
@@ -167,7 +170,7 @@ class PrimaryBusinessScenario(TestCase):
         self.assertEqual(self.wizard.balance, WIZARD_START_BALANCE)
 
         response = self.client.post(self.get_url_for_action('close'))
-        self.assertEqual(response.status_code, 302)
+        self.assertRedirectsToWishDetail(response)
         self.refresh()
         self.assertTrue(wish.in_status(WishStatus.CLOSED))
         self.assertTrue(wish.owner == self.wizard)
@@ -181,11 +184,12 @@ class PrimaryBusinessScenario(TestCase):
         self.client.force_login(self.customer)
         url = reverse('wizuber:create-wish')
         response = self.client.post(url, dict(description=WISH_DESC, price=WISH_PRICE))
-        self.assertEqual(response.status_code, 302)
         self.assertEqual(Wish.objects.count(), 1)
+        self.wish = Wish.objects.first()
+        self.assertRedirectsToWishDetail(response)
 
     def check_created_wish_attributes(self):
-        self.wish = wish = Wish.objects.first()
+        wish = self.wish
         self.assertEqual(wish.creator, self.customer)
         self.assertEqual(wish.price, WISH_PRICE)
         self.assertEqual(wish.description, WISH_DESC)
@@ -201,7 +205,7 @@ class PrimaryBusinessScenario(TestCase):
         self.refresh()
         self.assertEqual(self.customer.balance, CUSTOMER_BALANCE)
         response = self.client.post(self.get_url_for_action('pay'))
-        self.assertEqual(response.status_code, 302)
+        self.assertRedirectsToWishDetail(response)
         self.refresh()
         self.assertTrue(self.wish.in_status(WishStatus.ACTIVE))
         self.assertEqual(self.customer.balance, CUSTOMER_BALANCE - self.wish.price)
@@ -212,7 +216,7 @@ class PrimaryBusinessScenario(TestCase):
         self.check_available_actions(self.wish, ['own'])
 
         response = self.client.post(self.get_url_for_action('own'))
-        self.assertEqual(response.status_code, 302)
+        self.assertRedirectsToWishDetail(response)
         self.refresh()
         self.assertTrue(self.wish.in_status(WishStatus.WORK))
         self.assertTrue(self.wish.owner == self.wish.assigned_to == self.wizard)
@@ -227,7 +231,7 @@ class PrimaryBusinessScenario(TestCase):
     def candle_artifact_creation(self):
         response = self.client.post(self.get_url_for_action('candle-artifact'),
                                     dict(material=CandleMaterial.TALLOW.name, size=SizeChoices.SMALL.name))
-        self.assertEqual(response.status_code, 302)
+        self.assertRedirectsToWishDetail(response)
         self.refresh()
         self.assertEqual(self.wish.candle_artifacts.count(), 1)
         candle = self.wish.candle_artifacts.first()
@@ -238,7 +242,7 @@ class PrimaryBusinessScenario(TestCase):
     def check_pentacle_artifact_creation(self):
         response = self.client.post(self.get_url_for_action('pentacle-artifact'),
                                     dict(name='some test pentacle', size=SizeChoices.LARGE.name))
-        self.assertEqual(response.status_code, 302)
+        self.assertRedirectsToWishDetail(response)
         self.refresh()
         self.assertEqual(self.wish.pentacle_artifacts.count(), 1)
         pentacle = self.wish.pentacle_artifacts.first()
@@ -248,7 +252,7 @@ class PrimaryBusinessScenario(TestCase):
 
     def check_spirit_artifact_creation(self):
         response = self.client.post(self.get_url_for_action('spirit-artifact'), dict(spirit=self.spirit.pk))
-        self.assertEqual(response.status_code, 302)
+        self.assertRedirectsToWishDetail(response)
         self.refresh()
         self.assertTrue(self.wish.has_spirit_artifact())
         self.assertEqual(self.wish.spirit_artifact.wish, self.wish)
