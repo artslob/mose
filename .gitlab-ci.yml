@@ -50,7 +50,7 @@ tests:
     - pip install -r requirements.txt -r requirements-tests.txt
     - pip freeze
 
-    - coverage run manage.py test --no-input
+    - xvfb-run coverage run manage.py test --no-input
     - coverage report
     # run coverage export only if variable with token is set
     - '[ -z ${COVERALLS_REPO_TOKEN+x} ] || coveralls'
