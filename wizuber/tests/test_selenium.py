@@ -1,4 +1,8 @@
+import os
+
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
+from selenium import webdriver
+from selenium.webdriver import DesiredCapabilities
 from selenium.webdriver.firefox.webdriver import WebDriver
 
 from wizuber.models import Customer, Wizard, Student, Spirit, SpiritGrades
@@ -11,7 +15,13 @@ class MySeleniumTests(StaticLiveServerTestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.selenium = WebDriver()
+        if 'MOSE_TEST_SELENIUM_HOST' in os.environ:
+            cls.selenium = webdriver.Remote(
+                command_executor=os.environ['MOSE_TEST_SELENIUM_HOST'],
+                desired_capabilities=DesiredCapabilities.FIREFOX,
+            )
+        else:
+            cls.selenium = WebDriver()
         cls.selenium.implicitly_wait(10)
 
     def setUp(self) -> None:
