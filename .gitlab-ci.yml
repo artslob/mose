@@ -41,6 +41,9 @@ tests:
     MOSE_DATABASE_HOST: 'db'
     MOSE_TEST_SELENIUM_HOST: 'http://selenium:4444/wd/hub/'
   script:
+    # install firefox
+    - upt-get update -y -q
+    - upt-get install firefox
     # install firefox driver
     - wget https://github.com/mozilla/geckodriver/releases/download/v0.26.0/geckodriver-v0.26.0-linux64.tar.gz
     - tar -xvzf geckodriver-v0.26.0-linux64.tar.gz
