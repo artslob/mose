@@ -46,8 +46,7 @@ class PrimaryBusinessScenario(TestCase):
 
     # TODO: check for artifact deletion
 
-    def test_business_scenario(self):
-        # test wish creating
+    def wish_creating(self):
         self.assertEqual(Wish.objects.count(), 0)
         self.client.force_login(self.customer)
         url = reverse('wizuber:create-wish')
@@ -55,7 +54,7 @@ class PrimaryBusinessScenario(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertEqual(Wish.objects.count(), 1)
 
-        # check wish created
+    def check_created_wish_attributes(self):
         self.wish = wish = Wish.objects.first()
         self.assertEqual(wish.creator, self.customer)
         self.assertEqual(wish.price, WISH_PRICE)
@@ -65,6 +64,21 @@ class PrimaryBusinessScenario(TestCase):
         self.assertTrue(wish.in_status(WishStatus.NEW))
 
         self.check_available_actions(wish, ['pay', 'delete'])
+
+        return wish
+
+    def test_wish_deletion(self):
+        self.wish_creating()
+        wish = self.check_created_wish_attributes()
+
+        url = reverse('wizuber:handle-wish-action', kwargs=dict(pk=wish.pk, action='delete'))
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(Wish.objects.count(), 0)
+
+    def test_business_scenario(self):
+        self.wish_creating()
+        wish = self.check_created_wish_attributes()
 
         # pay for wish
         self.refresh()
