@@ -42,8 +42,8 @@ class PrimaryBusinessScenario(TestCase):
         kwargs = dict(pk=self.wish.pk, action=action_name)
         return reverse('wizuber:handle-wish-action', kwargs=kwargs)
 
-    def assertRedirectsToWishDetail(self, response):
-        self.assertRedirects(response, self.wish.get_absolute_url())
+    def assertRedirectsToWishDetail(self, response, target_status_code=200):
+        self.assertRedirects(response, self.wish.get_absolute_url(), target_status_code=target_status_code)
 
     # tests
 
@@ -159,7 +159,7 @@ class PrimaryBusinessScenario(TestCase):
         self.check_available_actions(wish, ['spirit-to-wizard'])
 
         response = self.client.post(self.get_url_for_action('spirit-to-wizard'))
-        self.assertRedirectsToWishDetail(response)
+        self.assertRedirectsToWishDetail(response, target_status_code=403)
         self.refresh()
         self.assertTrue(wish.in_status(WishStatus.READY))
         self.assertTrue(wish.owner == wish.assigned_to == self.wizard)
