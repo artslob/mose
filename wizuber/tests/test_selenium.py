@@ -1,6 +1,7 @@
 import os
 
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
+from django.test import tag
 from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.firefox.webdriver import WebDriver
 
@@ -10,7 +11,8 @@ WIZARD_START_BALANCE = 13
 PASSWORD = '123'
 
 
-class MySeleniumTests(StaticLiveServerTestCase):
+@tag('selenium')
+class SeleniumBusinessCaseTest(StaticLiveServerTestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
