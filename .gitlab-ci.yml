@@ -38,9 +38,11 @@ tests:
     MOSE_DATABASE_PASSWORD: "$POSTGRES_PASSWORD"
     MOSE_DATABASE_HOST: 'db'
   script:
+    # install firefox and X virtual framebuffer
     - apt-get update -qq
     - apt-get install -qq -y firefox-esr xvfb
     - firefox --version
+
     # install firefox driver
     - wget https://github.com/mozilla/geckodriver/releases/download/v0.26.0/geckodriver-v0.26.0-linux64.tar.gz
     - tar -xvzf geckodriver-v0.26.0-linux64.tar.gz
@@ -50,7 +52,7 @@ tests:
     - pip install -r requirements.txt -r requirements-tests.txt
     - pip freeze
 
-    - xvfb-run coverage run manage.py test --no-input
+    - coverage run manage.py test --no-input
     - coverage report
     # run coverage export only if variable with token is set
     - '[ -z ${COVERALLS_REPO_TOKEN+x} ] || coveralls'

@@ -61,6 +61,7 @@ Now you can access these endpoints:
 3. [How to create groups and assign permission during project setup](https://stackoverflow.com/questions/42743825/how-to-create-groups-and-assign-permission-during-project-setup-in-django).
 4. [How to create custom permissions without binding to specific model](https://stackoverflow.com/questions/13932774).
 5. [Using Django auth UserAdmin for a custom user model](https://stackoverflow.com/questions/15012235/using-django-auth-useradmin-for-a-custom-user-model).
+6. [Run Firefox Headless Browser tests on GitLab CI](https://grauwoelfchen.at/posts/run-firefox-headless-browser-tests-on-gitlab-ci/)
 
 ## Conventions
 `Model` is name of a model as singular, e.g. `Wish` or `Wizard`.
