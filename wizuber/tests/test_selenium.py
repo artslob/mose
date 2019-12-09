@@ -1,11 +1,14 @@
 import os
+from contextlib import contextmanager
 
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from django.test import tag
 from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.firefox.webdriver import WebDriver
+from selenium.webdriver.support.expected_conditions import staleness_of
+from selenium.webdriver.support.wait import WebDriverWait
 
-from wizuber.models import Customer, Wizard, Student, Spirit, SpiritGrades
+from wizuber.models import Customer, Wizard, Student, Spirit, SpiritGrades, Wish
 
 WIZARD_START_BALANCE = 13
 PASSWORD = '123'
@@ -38,7 +41,14 @@ class SeleniumBusinessCaseTest(StaticLiveServerTestCase):
         cls.selenium.close()
         super().tearDownClass()
 
-    def test_login(self):
+    @contextmanager
+    def wait_for_page_load(self, timeout=10):
+        """ http://www.obeythetestinggoat.com/how-to-get-selenium-to-wait-for-page-load-after-a-click.html """
+        old_page = self.selenium.find_element_by_tag_name('html')
+        yield
+        WebDriverWait(self.selenium, timeout).until(staleness_of(old_page))
+
+    def test_business_scenario_selenium(self):
         self.selenium.get('%s%s' % (self.live_server_url, '/wizuber/account/login/'))
         username_input = self.selenium.find_element_by_name("username")
         username_input.send_keys(self.customer.username)
@@ -47,3 +57,23 @@ class SeleniumBusinessCaseTest(StaticLiveServerTestCase):
         self.selenium.find_element_by_xpath("//button[@type='submit']").click()
         create_wish_btn = self.selenium.find_element_by_css_selector('.btn-outline-success')
         self.assertEqual(create_wish_btn.text, 'Create New Wish!')
+
+        with self.wait_for_page_load():
+            create_wish_btn.click()
+
+        self.assertEqual(Wish.objects.count(), 0)
+
+        wish_description = self.selenium.find_element_by_name('description')
+        wish_description.send_keys('test description\nwith linebreak')
+
+        wish_price = self.selenium.find_element_by_name('price')
+        wish_price.clear()
+        wish_price.send_keys('42')
+
+        with self.wait_for_page_load():
+            wish_price.submit()
+
+        self.assertEqual(Wish.objects.count(), 1)
+        wish = Wish.objects.first()
+        self.assertEqual(wish.description, 'test description\r\nwith linebreak')
+        self.assertEqual(wish.price, 42)
