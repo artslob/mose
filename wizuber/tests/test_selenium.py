@@ -1,3 +1,5 @@
+import os
+
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.firefox.webdriver import WebDriver
@@ -12,8 +14,11 @@ class MySeleniumTests(StaticLiveServerTestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        options = Options()
-        options.headless = True
+        if 'MOSE_TEST_SELENIUM_HEADLESS' in os.environ:
+            options = Options()
+            options.headless = True
+        else:
+            options = None
         cls.selenium = WebDriver(options=options)
         cls.selenium.implicitly_wait(10)
 
