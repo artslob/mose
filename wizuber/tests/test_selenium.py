@@ -105,6 +105,10 @@ class SeleniumBusinessCaseTest(StaticLiveServerTestCase):
         wish_detail = reverse('wizuber:detail-wish', kwargs=dict(pk=self.wish.pk))
         self.selenium.get(self.url(wish_detail))
 
+    def submit(self, form):
+        with self.wait_for_page_load():
+            form.submit()
+
     def test_business_scenario_selenium(self):
         self.login_as(self.customer)
 
@@ -123,8 +127,7 @@ class SeleniumBusinessCaseTest(StaticLiveServerTestCase):
         wish_price.clear()
         wish_price.send_keys('42')
 
-        with self.wait_for_page_load():
-            wish_price.submit()
+        self.submit(wish_price)
 
         self.assertEqual(Wish.objects.count(), 1)
         self.wish = Wish.objects.first()
@@ -137,8 +140,7 @@ class SeleniumBusinessCaseTest(StaticLiveServerTestCase):
         pay_form = self.find_form_by_name('pay')
         pay_btn = pay_form.find_element_by_css_selector('button[type="submit"]')
         self.assertEqual(pay_btn.text, 'Pay for wish')
-        with self.wait_for_page_load():
-            pay_btn.submit()
+        self.submit(pay_btn)
 
         self.refresh()
         self.assertTrue(self.wish.in_status(WishStatus.ACTIVE))
@@ -193,8 +195,7 @@ class SeleniumBusinessCaseTest(StaticLiveServerTestCase):
         own_form = self.find_form_by_name('own')
         own_btn = own_form.find_element_by_css_selector('button[type="submit"]')
         self.assertEqual(own_btn.text, 'Take ownership')
-        with self.wait_for_page_load():
-            own_btn.submit()
+        self.submit(own_btn)
 
         self.refresh()
         self.assertTrue(self.wish.in_status(WishStatus.WORK))
@@ -214,8 +215,7 @@ class SeleniumBusinessCaseTest(StaticLiveServerTestCase):
         material_select = Select(candle_artifact_form.find_element_by_name('material'))
         material_select.select_by_value(CandleMaterial.TALLOW.name)
 
-        with self.wait_for_page_load():
-            candle_artifact_form.submit()
+        self.submit(candle_artifact_form)
 
         self.refresh()
         self.assertEqual(self.wish.candle_artifacts.count(), 1)
@@ -226,8 +226,7 @@ class SeleniumBusinessCaseTest(StaticLiveServerTestCase):
 
     def assign_to_student(self):
         to_student_form = self.find_form_by_name('to-student')
-        with self.wait_for_page_load():
-            to_student_form.submit()
+        self.submit(to_student_form)
 
         self.refresh()
         self.assertTrue(self.wish.owner == self.wizard)
@@ -242,8 +241,7 @@ class SeleniumBusinessCaseTest(StaticLiveServerTestCase):
         size_select = Select(pentacle_artifact_form.find_element_by_name('size'))
         size_select.select_by_value(SizeChoices.LARGE.name)
 
-        with self.wait_for_page_load():
-            pentacle_artifact_form.submit()
+        self.submit(pentacle_artifact_form)
 
         self.refresh()
         self.assertEqual(self.wish.pentacle_artifacts.count(), 1)
@@ -258,8 +256,7 @@ class SeleniumBusinessCaseTest(StaticLiveServerTestCase):
         spirit_select = Select(spirit_artifact_form.find_element_by_name('spirit'))
         spirit_select.select_by_value(str(self.spirit.pk))
 
-        with self.wait_for_page_load():
-            spirit_artifact_form.submit()
+        self.submit(spirit_artifact_form)
 
         self.refresh()
         self.assertTrue(self.wish.has_spirit_artifact())
@@ -268,9 +265,7 @@ class SeleniumBusinessCaseTest(StaticLiveServerTestCase):
 
     def check_assign_to_wizard(self):
         to_wizard_form = self.find_form_by_name('to-wizard')
-
-        with self.wait_for_page_load():
-            to_wizard_form.submit()
+        self.submit(to_wizard_form)
 
         self.refresh()
         self.assertTrue(self.wish.owner == self.wizard)
@@ -278,9 +273,7 @@ class SeleniumBusinessCaseTest(StaticLiveServerTestCase):
 
     def check_assign_to_spirit(self):
         to_spirit_form = self.find_form_by_name('to-spirit')
-
-        with self.wait_for_page_load():
-            to_spirit_form.submit()
+        self.submit(to_spirit_form)
 
         self.refresh()
         self.assertTrue(self.wish.in_status(WishStatus.ON_SPIRIT))
@@ -289,9 +282,7 @@ class SeleniumBusinessCaseTest(StaticLiveServerTestCase):
 
     def check_assign_from_spirit_to_wizard(self):
         spirit_to_wizard_form = self.find_form_by_name('spirit-to-wizard')
-
-        with self.wait_for_page_load():
-            spirit_to_wizard_form.submit()
+        self.submit(spirit_to_wizard_form)
 
         self.refresh()
         self.assertTrue(self.wish.in_status(WishStatus.READY))
@@ -299,9 +290,7 @@ class SeleniumBusinessCaseTest(StaticLiveServerTestCase):
 
     def check_close_action(self):
         close_form = self.find_form_by_name('close')
-
-        with self.wait_for_page_load():
-            close_form.submit()
+        self.submit(close_form)
 
         self.refresh()
         self.assertTrue(self.wish.in_status(WishStatus.CLOSED))
