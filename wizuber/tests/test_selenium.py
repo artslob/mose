@@ -9,9 +9,11 @@ from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.firefox.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.expected_conditions import staleness_of
+from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.wait import WebDriverWait
 
-from wizuber.models import Customer, Wizard, Student, Spirit, SpiritGrades, Wish, WishStatus
+from wizuber.models import Customer, Wizard, Student, Spirit, SpiritGrades, Wish, WishStatus, CandleMaterial, \
+    SizeChoices
 
 WIZARD_START_BALANCE = 13
 CUSTOMER_START_BALANCE = 322
@@ -140,6 +142,8 @@ class SeleniumBusinessCaseTest(StaticLiveServerTestCase):
 
         self.wizard_own_wish()
 
+        self.candle_artifact_creation()
+
     def wizard_own_wish(self):
         self.login_as(self.wizard)
         self.go_to_wish_page()
@@ -161,3 +165,22 @@ class SeleniumBusinessCaseTest(StaticLiveServerTestCase):
         self.check_form_actions(self.find_all_forms(), [
             'spirit-artifact', 'candle-artifact', 'pentacle-artifact', 'to-student'
         ])
+
+    def candle_artifact_creation(self):
+        candle_artifact_form = self.find_form_by_name('candle-artifact')
+
+        size_select = Select(candle_artifact_form.find_element_by_name('size'))
+        size_select.select_by_value(SizeChoices.SMALL.name)
+
+        material_select = Select(candle_artifact_form.find_element_by_name('material'))
+        material_select.select_by_value(CandleMaterial.TALLOW.name)
+
+        with self.wait_for_page_load():
+            candle_artifact_form.submit()
+
+        self.refresh()
+        self.assertEqual(self.wish.candle_artifacts.count(), 1)
+        candle = self.wish.candle_artifacts.first()
+        self.assertEqual(candle.wish, self.wish)
+        self.assertEqual(candle.material, CandleMaterial.TALLOW.name)
+        self.assertEqual(candle.size, SizeChoices.SMALL.name)
