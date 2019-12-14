@@ -14,6 +14,7 @@ from selenium.webdriver.support.wait import WebDriverWait
 from wizuber.models import Customer, Wizard, Student, Spirit, SpiritGrades, Wish, WishStatus
 
 WIZARD_START_BALANCE = 13
+CUSTOMER_START_BALANCE = 322
 PASSWORD = '123'
 
 
@@ -32,7 +33,8 @@ class SeleniumBusinessCaseTest(StaticLiveServerTestCase):
 
     def setUp(self) -> None:
         super().setUp()
-        self.customer = Customer.objects.create_user('test_customer', 'customer@test.com', PASSWORD)
+        self.customer = Customer.objects.create_user('test_customer', 'customer@test.com', PASSWORD,
+                                                     balance=CUSTOMER_START_BALANCE)
         self.wizard = Wizard.objects.create_user('test_wizard', 'wizard@test.com', PASSWORD,
                                                  balance=WIZARD_START_BALANCE)
         self.student = Student.objects.create_user('test_student', 'student@test.com', PASSWORD, teacher=self.wizard)
@@ -43,6 +45,14 @@ class SeleniumBusinessCaseTest(StaticLiveServerTestCase):
     def tearDownClass(cls):
         cls.selenium.close()
         super().tearDownClass()
+
+    def refresh(self):
+        self.customer.refresh_from_db()
+        self.wizard.refresh_from_db()
+        self.student.refresh_from_db()
+        self.spirit.refresh_from_db()
+        if self.wish is not None:
+            self.wish.refresh_from_db()
 
     @contextmanager
     def wait_for_page_load(self, timeout=10):
@@ -71,6 +81,9 @@ class SeleniumBusinessCaseTest(StaticLiveServerTestCase):
     def find_form_by_name(self, action_name: str) -> WebElement:
         action = self.reverse_for_action(action_name)
         return self.selenium.find_element_by_css_selector(f"form[action='{action}']")
+
+    def find_all_forms(self) -> List[WebElement]:
+        return self.selenium.find_elements_by_tag_name('form')
 
     def test_business_scenario_selenium(self):
         self.selenium.get(self.url(reverse('wizuber:login')))
@@ -105,9 +118,15 @@ class SeleniumBusinessCaseTest(StaticLiveServerTestCase):
         self.assertEqual(self.wish.price, 42)
         self.assertEqual(self.wish.status, WishStatus.NEW.name)
 
-        forms = self.selenium.find_elements_by_tag_name('form')
-        self.check_form_actions(forms, ['delete', 'pay'])
+        self.check_form_actions(self.find_all_forms(), ['delete', 'pay'])
 
         pay_form = self.find_form_by_name('pay')
         pay_btn = pay_form.find_element_by_css_selector('button[type="submit"]')
         self.assertEqual(pay_btn.text, 'Pay for wish')
+        with self.wait_for_page_load():
+            pay_btn.submit()
+
+        self.refresh()
+        self.assertTrue(self.wish.in_status(WishStatus.ACTIVE))
+        self.assertEqual(self.customer.balance, CUSTOMER_START_BALANCE - self.wish.price)
+        self.check_form_actions(self.find_all_forms(), [])
