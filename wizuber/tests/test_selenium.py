@@ -49,6 +49,8 @@ class SeleniumBusinessCaseTest(StaticLiveServerTestCase):
         cls.selenium.close()
         super().tearDownClass()
 
+    # helper methods
+
     def refresh(self):
         self.customer.refresh_from_db()
         self.wizard.refresh_from_db()
@@ -72,7 +74,7 @@ class SeleniumBusinessCaseTest(StaticLiveServerTestCase):
         kwargs = dict(pk=self.wish.pk, action=action_name)
         return reverse('wizuber:handle-wish-action', kwargs=kwargs)
 
-    def check_form_actions(self, action_names: Iterable[str]) -> None:
+    def check_available_actions(self, action_names: Iterable[str]) -> None:
         action_forms = [
             form
             for form in self.find_all_forms()
@@ -109,6 +111,8 @@ class SeleniumBusinessCaseTest(StaticLiveServerTestCase):
         with self.wait_for_page_load():
             form.submit()
 
+    # test of primary business scenario
+
     def test_business_scenario_selenium(self):
         self.login_as(self.customer)
 
@@ -135,7 +139,7 @@ class SeleniumBusinessCaseTest(StaticLiveServerTestCase):
         self.assertEqual(self.wish.price, 42)
         self.assertEqual(self.wish.status, WishStatus.NEW.name)
 
-        self.check_form_actions(['delete', 'pay'])
+        self.check_available_actions(['delete', 'pay'])
 
         pay_form = self.find_form_by_name('pay')
         pay_btn = pay_form.find_element_by_css_selector('button[type="submit"]')
@@ -145,7 +149,7 @@ class SeleniumBusinessCaseTest(StaticLiveServerTestCase):
         self.refresh()
         self.assertTrue(self.wish.in_status(WishStatus.ACTIVE))
         self.assertEqual(self.customer.balance, CUSTOMER_START_BALANCE - self.wish.price)
-        self.check_form_actions([])
+        self.check_available_actions([])
 
         self.wizard_own_wish()
 
@@ -156,41 +160,44 @@ class SeleniumBusinessCaseTest(StaticLiveServerTestCase):
         self.login_as(self.student)
         self.go_to_wish_page()
 
-        self.check_form_actions(['to-wizard', 'spirit-artifact', 'candle-artifact', 'pentacle-artifact'])
+        self.check_available_actions(['to-wizard', 'spirit-artifact', 'candle-artifact', 'pentacle-artifact'])
         self.check_pentacle_artifact_creation()
-        self.check_form_actions(['to-wizard', 'spirit-artifact', 'candle-artifact', 'pentacle-artifact'])
+        self.check_available_actions(['to-wizard', 'spirit-artifact', 'candle-artifact', 'pentacle-artifact'])
 
         self.check_spirit_artifact_creation()
-        self.check_form_actions(['to-wizard', 'spirit-artifact', 'candle-artifact', 'pentacle-artifact'])
+        self.check_available_actions(['to-wizard', 'spirit-artifact', 'candle-artifact', 'pentacle-artifact'])
 
         self.check_assign_to_wizard()
-        self.check_form_actions([])
+        self.check_available_actions([])
 
         self.login_as(self.wizard)
         self.go_to_wish_page()
-        self.check_form_actions(['spirit-artifact', 'candle-artifact', 'pentacle-artifact', 'to-student', 'to-spirit'])
+        self.check_available_actions(
+            ['spirit-artifact', 'candle-artifact', 'pentacle-artifact', 'to-student', 'to-spirit'])
 
         self.check_assign_to_spirit()
-        self.check_form_actions([])
+        self.check_available_actions([])
 
         self.login_as(self.spirit)
         self.go_to_wish_page()
-        self.check_form_actions(['spirit-to-wizard'])
+        self.check_available_actions(['spirit-to-wizard'])
 
         self.check_assign_from_spirit_to_wizard()
 
         self.login_as(self.wizard)
         self.go_to_wish_page()
-        self.check_form_actions(['close'])
+        self.check_available_actions(['close'])
         self.assertEqual(self.wizard.balance, WIZARD_START_BALANCE)
 
         self.check_close_action()
-        self.check_form_actions([])
+        self.check_available_actions([])
+
+    # tests component parts
 
     def wizard_own_wish(self):
         self.login_as(self.wizard)
         self.go_to_wish_page()
-        self.check_form_actions(['own'])
+        self.check_available_actions(['own'])
 
         own_form = self.find_form_by_name('own')
         own_btn = own_form.find_element_by_css_selector('button[type="submit"]')
@@ -204,7 +211,7 @@ class SeleniumBusinessCaseTest(StaticLiveServerTestCase):
         self.assertEqual(self.wish.pentacle_artifacts.count(), 0)
         self.assertEqual(self.wish.candle_artifacts.count(), 0)
         self.assertFalse(self.wish.has_spirit_artifact())
-        self.check_form_actions(['spirit-artifact', 'candle-artifact', 'pentacle-artifact', 'to-student'])
+        self.check_available_actions(['spirit-artifact', 'candle-artifact', 'pentacle-artifact', 'to-student'])
 
     def candle_artifact_creation(self):
         candle_artifact_form = self.find_form_by_name('candle-artifact')
