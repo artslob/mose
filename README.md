@@ -1,5 +1,6 @@
 ## METHODOLOGY OF SOFTWARE ENGINEERING (mose)
 
+[![pipeline status](https://gitlab.com/artslob/mose/badges/master/pipeline.svg)](https://gitlab.com/artslob/mose/commits/master)
 [![Coverage Status](https://coveralls.io/repos/gitlab/artslob/mose/badge.svg?branch=HEAD)](https://coveralls.io/gitlab/artslob/mose?branch=HEAD)
 
 Проект по предмету "Методология программной инженерии".
