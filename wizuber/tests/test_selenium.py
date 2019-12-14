@@ -1,14 +1,17 @@
 import os
 from contextlib import contextmanager
+from typing import List, Collection
 
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from django.test import tag
+from django.urls import reverse
 from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.firefox.webdriver import WebDriver
+from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.expected_conditions import staleness_of
 from selenium.webdriver.support.wait import WebDriverWait
 
-from wizuber.models import Customer, Wizard, Student, Spirit, SpiritGrades, Wish
+from wizuber.models import Customer, Wizard, Student, Spirit, SpiritGrades, Wish, WishStatus
 
 WIZARD_START_BALANCE = 13
 PASSWORD = '123'
@@ -48,6 +51,27 @@ class SeleniumBusinessCaseTest(StaticLiveServerTestCase):
         yield
         WebDriverWait(self.selenium, timeout).until(staleness_of(old_page))
 
+    def url(self, postfix: str) -> str:
+        """ Usage: self.url(reverse('wizuber:list-with')) """
+        return f'{self.live_server_url}{postfix}'
+
+    def reverse_for_action(self, action_name: str) -> str:
+        kwargs = dict(pk=self.wish.pk, action=action_name)
+        return reverse('wizuber:handle-wish-action', kwargs=kwargs)
+
+    def check_form_actions(self, forms: List[WebElement], action_names: Collection[str]) -> None:
+        self.assertEqual(len(forms), len(action_names))
+        expected_actions = set(
+            self.url(self.reverse_for_action(name))
+            for name in action_names
+        )
+        form_actions = set(form.get_attribute('action') for form in forms)
+        self.assertEqual(expected_actions, form_actions)
+
+    def find_form_by_name(self, action_name: str) -> WebElement:
+        action = self.reverse_for_action(action_name)
+        return self.selenium.find_element_by_css_selector(f"form[action='{action}']")
+
     def test_business_scenario_selenium(self):
         self.selenium.get('%s%s' % (self.live_server_url, '/wizuber/account/login/'))
         username_input = self.selenium.find_element_by_name("username")
@@ -74,6 +98,14 @@ class SeleniumBusinessCaseTest(StaticLiveServerTestCase):
             wish_price.submit()
 
         self.assertEqual(Wish.objects.count(), 1)
-        wish = Wish.objects.first()
-        self.assertEqual(wish.description, 'test description\r\nwith linebreak')
-        self.assertEqual(wish.price, 42)
+        self.wish = Wish.objects.first()
+        self.assertEqual(self.wish.description, 'test description\r\nwith linebreak')
+        self.assertEqual(self.wish.price, 42)
+        self.assertEqual(self.wish.status, WishStatus.NEW.name)
+
+        forms = self.selenium.find_elements_by_tag_name('form')
+        self.check_form_actions(forms, ['delete', 'pay'])
+
+        pay_form = self.find_form_by_name('pay')
+        pay_btn = pay_form.find_element_by_css_selector('button[type="submit"]')
+        self.assertEqual(pay_btn.text, 'Pay for wish')
