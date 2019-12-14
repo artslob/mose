@@ -177,6 +177,14 @@ class SeleniumBusinessCaseTest(StaticLiveServerTestCase):
 
         self.check_assign_from_spirit_to_wizard()
 
+        self.login_as(self.wizard)
+        self.go_to_wish_page()
+        self.check_form_actions(['close'])
+        self.assertEqual(self.wizard.balance, WIZARD_START_BALANCE)
+
+        self.check_close_action()
+        self.check_form_actions([])
+
     def wizard_own_wish(self):
         self.login_as(self.wizard)
         self.go_to_wish_page()
@@ -288,3 +296,15 @@ class SeleniumBusinessCaseTest(StaticLiveServerTestCase):
         self.refresh()
         self.assertTrue(self.wish.in_status(WishStatus.READY))
         self.assertTrue(self.wish.owner == self.wish.assigned_to == self.wizard)
+
+    def check_close_action(self):
+        close_form = self.find_form_by_name('close')
+
+        with self.wait_for_page_load():
+            close_form.submit()
+
+        self.refresh()
+        self.assertTrue(self.wish.in_status(WishStatus.CLOSED))
+        self.assertTrue(self.wish.owner == self.wizard)
+        self.assertTrue(self.wish.creator == self.wish.assigned_to == self.customer)
+        self.assertEqual(self.wizard.balance, WIZARD_START_BALANCE + self.wish.price)
