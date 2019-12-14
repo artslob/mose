@@ -78,7 +78,9 @@ class SeleniumBusinessCaseTest(StaticLiveServerTestCase):
         username_input.send_keys(self.customer.username)
         password_input = self.selenium.find_element_by_name("password")
         password_input.send_keys(PASSWORD)
-        self.selenium.find_element_by_xpath("//button[@type='submit']").click()
+        with self.wait_for_page_load():
+            self.selenium.find_element_by_xpath("//button[@type='submit']").click()
+
         create_wish_btn = self.selenium.find_element_by_css_selector('.btn-outline-success')
         self.assertEqual(create_wish_btn.text, 'Create New Wish!')
 
