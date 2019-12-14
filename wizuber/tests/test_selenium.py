@@ -171,6 +171,12 @@ class SeleniumBusinessCaseTest(StaticLiveServerTestCase):
         self.check_assign_to_spirit()
         self.check_form_actions([])
 
+        self.login_as(self.spirit)
+        self.go_to_wish_page()
+        self.check_form_actions(['spirit-to-wizard'])
+
+        self.check_assign_from_spirit_to_wizard()
+
     def wizard_own_wish(self):
         self.login_as(self.wizard)
         self.go_to_wish_page()
@@ -272,3 +278,13 @@ class SeleniumBusinessCaseTest(StaticLiveServerTestCase):
         self.assertTrue(self.wish.in_status(WishStatus.ON_SPIRIT))
         self.assertEqual(self.wish.owner, self.wizard)
         self.assertEqual(self.wish.assigned_to, self.spirit)
+
+    def check_assign_from_spirit_to_wizard(self):
+        spirit_to_wizard_form = self.find_form_by_name('spirit-to-wizard')
+
+        with self.wait_for_page_load():
+            spirit_to_wizard_form.submit()
+
+        self.refresh()
+        self.assertTrue(self.wish.in_status(WishStatus.READY))
+        self.assertTrue(self.wish.owner == self.wish.assigned_to == self.wizard)
