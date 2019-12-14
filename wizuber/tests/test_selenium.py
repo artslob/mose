@@ -1,6 +1,6 @@
 import os
 from contextlib import contextmanager
-from typing import List, Collection
+from typing import List, Iterable
 
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from django.test import tag
@@ -72,13 +72,12 @@ class SeleniumBusinessCaseTest(StaticLiveServerTestCase):
         kwargs = dict(pk=self.wish.pk, action=action_name)
         return reverse('wizuber:handle-wish-action', kwargs=kwargs)
 
-    def check_form_actions(self, action_names: Collection[str]) -> None:
+    def check_form_actions(self, action_names: Iterable[str]) -> None:
         action_forms = [
             form
             for form in self.find_all_forms()
             if form.get_attribute('name') in possible_action_names()
         ]
-        self.assertEqual(len(action_forms), len(action_names))
         expected_actions = set(
             self.url(self.reverse_for_action(name))
             for name in action_names
@@ -163,6 +162,13 @@ class SeleniumBusinessCaseTest(StaticLiveServerTestCase):
         self.check_form_actions(['to-wizard', 'spirit-artifact', 'candle-artifact', 'pentacle-artifact'])
 
         self.check_assign_to_wizard()
+        self.check_form_actions([])
+
+        self.login_as(self.wizard)
+        self.go_to_wish_page()
+        self.check_form_actions(['spirit-artifact', 'candle-artifact', 'pentacle-artifact', 'to-student', 'to-spirit'])
+
+        self.check_assign_to_spirit()
         self.check_form_actions([])
 
     def wizard_own_wish(self):
@@ -255,3 +261,14 @@ class SeleniumBusinessCaseTest(StaticLiveServerTestCase):
         self.refresh()
         self.assertTrue(self.wish.owner == self.wizard)
         self.assertTrue(self.wish.assigned_to == self.wizard)
+
+    def check_assign_to_spirit(self):
+        to_spirit_form = self.find_form_by_name('to-spirit')
+
+        with self.wait_for_page_load():
+            to_spirit_form.submit()
+
+        self.refresh()
+        self.assertTrue(self.wish.in_status(WishStatus.ON_SPIRIT))
+        self.assertEqual(self.wish.owner, self.wizard)
+        self.assertEqual(self.wish.assigned_to, self.spirit)
