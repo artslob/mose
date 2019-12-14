@@ -73,7 +73,7 @@ class SeleniumBusinessCaseTest(StaticLiveServerTestCase):
         return self.selenium.find_element_by_css_selector(f"form[action='{action}']")
 
     def test_business_scenario_selenium(self):
-        self.selenium.get('%s%s' % (self.live_server_url, '/wizuber/account/login/'))
+        self.selenium.get(self.url(reverse('wizuber:login')))
         username_input = self.selenium.find_element_by_name("username")
         username_input.send_keys(self.customer.username)
         password_input = self.selenium.find_element_by_name("password")
