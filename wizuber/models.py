@@ -148,9 +148,6 @@ class Wish(models.Model):
     def get_absolute_url(self):
         return reverse('wizuber:detail-wish', kwargs=dict(pk=self.id))
 
-    def get_statuses(self):
-        return self.STATUSES
-
     def has_spirit_artifact(self) -> bool:
         return hasattr(self, 'spirit_artifact')
 
