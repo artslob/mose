@@ -12,6 +12,7 @@ from selenium.webdriver.support.expected_conditions import staleness_of
 from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.wait import WebDriverWait
 
+from wizuber.fsm import action_names as possible_action_names
 from wizuber.models import Customer, Wizard, Student, Spirit, SpiritGrades, Wish, WishStatus, CandleMaterial, \
     SizeChoices
 
@@ -71,13 +72,18 @@ class SeleniumBusinessCaseTest(StaticLiveServerTestCase):
         kwargs = dict(pk=self.wish.pk, action=action_name)
         return reverse('wizuber:handle-wish-action', kwargs=kwargs)
 
-    def check_form_actions(self, forms: List[WebElement], action_names: Collection[str]) -> None:
-        self.assertEqual(len(forms), len(action_names))
+    def check_form_actions(self, action_names: Collection[str]) -> None:
+        action_forms = [
+            form
+            for form in self.find_all_forms()
+            if form.get_attribute('name') in possible_action_names()
+        ]
+        self.assertEqual(len(action_forms), len(action_names))
         expected_actions = set(
             self.url(self.reverse_for_action(name))
             for name in action_names
         )
-        form_actions = set(form.get_attribute('action') for form in forms)
+        form_actions = set(form.get_attribute('action') for form in action_forms)
         self.assertEqual(expected_actions, form_actions)
 
     def find_form_by_name(self, action_name: str) -> WebElement:
@@ -127,7 +133,7 @@ class SeleniumBusinessCaseTest(StaticLiveServerTestCase):
         self.assertEqual(self.wish.price, 42)
         self.assertEqual(self.wish.status, WishStatus.NEW.name)
 
-        self.check_form_actions(self.find_all_forms(), ['delete', 'pay'])
+        self.check_form_actions(['delete', 'pay'])
 
         pay_form = self.find_form_by_name('pay')
         pay_btn = pay_form.find_element_by_css_selector('button[type="submit"]')
@@ -138,7 +144,7 @@ class SeleniumBusinessCaseTest(StaticLiveServerTestCase):
         self.refresh()
         self.assertTrue(self.wish.in_status(WishStatus.ACTIVE))
         self.assertEqual(self.customer.balance, CUSTOMER_START_BALANCE - self.wish.price)
-        self.check_form_actions(self.find_all_forms(), [])
+        self.check_form_actions([])
 
         self.wizard_own_wish()
 
@@ -146,10 +152,17 @@ class SeleniumBusinessCaseTest(StaticLiveServerTestCase):
 
         self.assign_to_student()
 
+        self.login_as(self.student)
+        self.go_to_wish_page()
+
+        self.check_form_actions(['to-wizard', 'spirit-artifact', 'candle-artifact', 'pentacle-artifact'])
+        self.check_pentacle_artifact_creation()
+        self.check_form_actions(['to-wizard', 'spirit-artifact', 'candle-artifact', 'pentacle-artifact'])
+
     def wizard_own_wish(self):
         self.login_as(self.wizard)
         self.go_to_wish_page()
-        self.check_form_actions(self.find_all_forms(), ['own'])
+        self.check_form_actions(['own'])
 
         own_form = self.find_form_by_name('own')
         own_btn = own_form.find_element_by_css_selector('button[type="submit"]')
@@ -164,9 +177,7 @@ class SeleniumBusinessCaseTest(StaticLiveServerTestCase):
         self.assertEqual(self.wish.pentacle_artifacts.count(), 0)
         self.assertEqual(self.wish.candle_artifacts.count(), 0)
         self.assertFalse(self.wish.has_spirit_artifact())
-        self.check_form_actions(self.find_all_forms(), [
-            'spirit-artifact', 'candle-artifact', 'pentacle-artifact', 'to-student'
-        ])
+        self.check_form_actions(['spirit-artifact', 'candle-artifact', 'pentacle-artifact', 'to-student'])
 
     def candle_artifact_creation(self):
         candle_artifact_form = self.find_form_by_name('candle-artifact')
@@ -195,3 +206,22 @@ class SeleniumBusinessCaseTest(StaticLiveServerTestCase):
         self.refresh()
         self.assertTrue(self.wish.owner == self.wizard)
         self.assertTrue(self.wish.assigned_to == self.student)
+
+    def check_pentacle_artifact_creation(self):
+        pentacle_artifact_form = self.find_form_by_name('pentacle-artifact')
+
+        name = pentacle_artifact_form.find_element_by_name('name')
+        name.send_keys('some test pentacle')
+
+        size_select = Select(pentacle_artifact_form.find_element_by_name('size'))
+        size_select.select_by_value(SizeChoices.LARGE.name)
+
+        with self.wait_for_page_load():
+            pentacle_artifact_form.submit()
+
+        self.refresh()
+        self.assertEqual(self.wish.pentacle_artifacts.count(), 1)
+        pentacle = self.wish.pentacle_artifacts.first()
+        self.assertEqual(pentacle.wish, self.wish)
+        self.assertEqual(pentacle.name, 'some test pentacle')
+        self.assertEqual(pentacle.size, SizeChoices.LARGE.name)

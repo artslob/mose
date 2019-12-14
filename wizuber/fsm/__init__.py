@@ -4,6 +4,10 @@ from wizuber.fsm.action import IAction
 from wizuber.fsm.exception import ActionNotFound, ActionAccessDenied
 
 
+def action_names() -> List[str]:
+    return list(IAction.defined_actions.keys())
+
+
 def action_classes() -> List[Type[IAction]]:
     return list(IAction.defined_actions.values())
 
@@ -17,7 +21,7 @@ def action_class_by_name(name: str) -> Type[IAction]:
 
 
 __all__ = [
-    action_classes, action_class_by_name,
+    action_names, action_classes, action_class_by_name,
     IAction,
     ActionNotFound, ActionAccessDenied
 ]
