@@ -85,6 +85,19 @@ class SeleniumBusinessCaseTest(StaticLiveServerTestCase):
     def find_all_forms(self) -> List[WebElement]:
         return self.selenium.find_elements_by_tag_name('form')
 
+    def login_as(self, user_model):
+        self.selenium.get(self.url(reverse('wizuber:login')))
+        username_input = self.selenium.find_element_by_name("username")
+        username_input.send_keys(user_model.username)
+        password_input = self.selenium.find_element_by_name("password")
+        password_input.send_keys(PASSWORD)
+        with self.wait_for_page_load():
+            self.selenium.find_element_by_xpath("//button[@type='submit']").click()
+
+    def go_to_wish_page(self):
+        wish_detail = reverse('wizuber:detail-wish', kwargs=dict(pk=self.wish.pk))
+        self.selenium.get(self.url(wish_detail))
+
     def test_business_scenario_selenium(self):
         self.login_as(self.customer)
 
@@ -125,19 +138,26 @@ class SeleniumBusinessCaseTest(StaticLiveServerTestCase):
         self.assertEqual(self.customer.balance, CUSTOMER_START_BALANCE - self.wish.price)
         self.check_form_actions(self.find_all_forms(), [])
 
+        self.wizard_own_wish()
+
+    def wizard_own_wish(self):
         self.login_as(self.wizard)
         self.go_to_wish_page()
         self.check_form_actions(self.find_all_forms(), ['own'])
 
-    def login_as(self, user_model):
-        self.selenium.get(self.url(reverse('wizuber:login')))
-        username_input = self.selenium.find_element_by_name("username")
-        username_input.send_keys(user_model.username)
-        password_input = self.selenium.find_element_by_name("password")
-        password_input.send_keys(PASSWORD)
+        own_form = self.find_form_by_name('own')
+        own_btn = own_form.find_element_by_css_selector('button[type="submit"]')
+        self.assertEqual(own_btn.text, 'Take ownership')
         with self.wait_for_page_load():
-            self.selenium.find_element_by_xpath("//button[@type='submit']").click()
+            own_btn.submit()
 
-    def go_to_wish_page(self):
-        wish_detail = reverse('wizuber:detail-wish', kwargs=dict(pk=self.wish.pk))
-        self.selenium.get(self.url(wish_detail))
+        self.refresh()
+        self.assertTrue(self.wish.in_status(WishStatus.WORK))
+        self.assertTrue(self.wish.owner == self.wish.assigned_to == self.wizard)
+        self.assertEqual(self.wizard.owned_wishes.count(), 1)
+        self.assertEqual(self.wish.pentacle_artifacts.count(), 0)
+        self.assertEqual(self.wish.candle_artifacts.count(), 0)
+        self.assertFalse(self.wish.has_spirit_artifact())
+        self.check_form_actions(self.find_all_forms(), [
+            'spirit-artifact', 'candle-artifact', 'pentacle-artifact', 'to-student'
+        ])
