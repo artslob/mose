@@ -159,6 +159,9 @@ class SeleniumBusinessCaseTest(StaticLiveServerTestCase):
         self.check_pentacle_artifact_creation()
         self.check_form_actions(['to-wizard', 'spirit-artifact', 'candle-artifact', 'pentacle-artifact'])
 
+        self.check_spirit_artifact_creation()
+        self.check_form_actions(['to-wizard', 'spirit-artifact', 'candle-artifact', 'pentacle-artifact'])
+
     def wizard_own_wish(self):
         self.login_as(self.wizard)
         self.go_to_wish_page()
@@ -225,3 +228,17 @@ class SeleniumBusinessCaseTest(StaticLiveServerTestCase):
         self.assertEqual(pentacle.wish, self.wish)
         self.assertEqual(pentacle.name, 'some test pentacle')
         self.assertEqual(pentacle.size, SizeChoices.LARGE.name)
+
+    def check_spirit_artifact_creation(self):
+        spirit_artifact_form = self.find_form_by_name('spirit-artifact')
+
+        spirit_select = Select(spirit_artifact_form.find_element_by_name('spirit'))
+        spirit_select.select_by_value(str(self.spirit.pk))
+
+        with self.wait_for_page_load():
+            spirit_artifact_form.submit()
+
+        self.refresh()
+        self.assertTrue(self.wish.has_spirit_artifact())
+        self.assertEqual(self.wish.spirit_artifact.wish, self.wish)
+        self.assertEqual(self.wish.spirit_artifact.spirit, self.spirit)
