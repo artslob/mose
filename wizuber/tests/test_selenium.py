@@ -86,13 +86,7 @@ class SeleniumBusinessCaseTest(StaticLiveServerTestCase):
         return self.selenium.find_elements_by_tag_name('form')
 
     def test_business_scenario_selenium(self):
-        self.selenium.get(self.url(reverse('wizuber:login')))
-        username_input = self.selenium.find_element_by_name("username")
-        username_input.send_keys(self.customer.username)
-        password_input = self.selenium.find_element_by_name("password")
-        password_input.send_keys(PASSWORD)
-        with self.wait_for_page_load():
-            self.selenium.find_element_by_xpath("//button[@type='submit']").click()
+        self.login_as(self.customer)
 
         create_wish_btn = self.selenium.find_element_by_css_selector('.btn-outline-success')
         self.assertEqual(create_wish_btn.text, 'Create New Wish!')
@@ -130,3 +124,20 @@ class SeleniumBusinessCaseTest(StaticLiveServerTestCase):
         self.assertTrue(self.wish.in_status(WishStatus.ACTIVE))
         self.assertEqual(self.customer.balance, CUSTOMER_START_BALANCE - self.wish.price)
         self.check_form_actions(self.find_all_forms(), [])
+
+        self.login_as(self.wizard)
+        self.go_to_wish_page()
+        self.check_form_actions(self.find_all_forms(), ['own'])
+
+    def login_as(self, user_model):
+        self.selenium.get(self.url(reverse('wizuber:login')))
+        username_input = self.selenium.find_element_by_name("username")
+        username_input.send_keys(user_model.username)
+        password_input = self.selenium.find_element_by_name("password")
+        password_input.send_keys(PASSWORD)
+        with self.wait_for_page_load():
+            self.selenium.find_element_by_xpath("//button[@type='submit']").click()
+
+    def go_to_wish_page(self):
+        wish_detail = reverse('wizuber:detail-wish', kwargs=dict(pk=self.wish.pk))
+        self.selenium.get(self.url(wish_detail))
