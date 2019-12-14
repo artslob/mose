@@ -144,6 +144,8 @@ class SeleniumBusinessCaseTest(StaticLiveServerTestCase):
 
         self.candle_artifact_creation()
 
+        self.assign_to_student()
+
     def wizard_own_wish(self):
         self.login_as(self.wizard)
         self.go_to_wish_page()
@@ -184,3 +186,12 @@ class SeleniumBusinessCaseTest(StaticLiveServerTestCase):
         self.assertEqual(candle.wish, self.wish)
         self.assertEqual(candle.material, CandleMaterial.TALLOW.name)
         self.assertEqual(candle.size, SizeChoices.SMALL.name)
+
+    def assign_to_student(self):
+        to_student_form = self.find_form_by_name('to-student')
+        with self.wait_for_page_load():
+            to_student_form.submit()
+
+        self.refresh()
+        self.assertTrue(self.wish.owner == self.wizard)
+        self.assertTrue(self.wish.assigned_to == self.student)
