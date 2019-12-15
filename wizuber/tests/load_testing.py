@@ -5,19 +5,21 @@ def wizuber_url(postfix: str = '') -> str:
     return f'/wizuber/{postfix}'
 
 
+def get_csrf_token(task_set: TaskSet, url: str):
+    response = task_set.client.get(url)
+    csrf_token = response.cookies['csrftoken']
+    return csrf_token, {
+        'X-CSRFToken': csrf_token,
+        'Referer': task_set.parent.host + url
+    }
+
+
 class CustomerTask(TaskSet):
     def on_start(self):
         login_url = wizuber_url('account/login/')
-        response = self.client.get(login_url)
-        csrf_token = response.cookies['csrftoken']
-        self.client.post(
-            login_url,
-            {'username': 'c1', 'password': '123', 'csrfmiddlewaretoken': csrf_token},
-            headers={
-                'X-CSRFToken': csrf_token,
-                'Referer': self.parent.host + login_url
-            }
-        )
+        csrf_token, headers = get_csrf_token(self, login_url)
+        data = dict(username='c1', password='123', csrfmiddlewaretoken=csrf_token)
+        self.client.post(login_url, data, headers=headers)
 
     def on_stop(self):
         self.client.get(wizuber_url('account/logout/'))
@@ -53,16 +55,9 @@ class CustomerTask(TaskSet):
     @task
     def create_wish(self):
         create_wish_url = wizuber_url('wish/create/')
-        response = self.client.get(create_wish_url)
-        csrf_token = response.cookies['csrftoken']
-        self.client.post(
-            create_wish_url,
-            dict(description='load testing wish', price=322),
-            headers={
-                'X-CSRFToken': csrf_token,
-                'Referer': self.parent.host + create_wish_url
-            }
-        )
+        csrf_token, headers = get_csrf_token(self, create_wish_url)
+        data = dict(description='load testing wish', price=322)
+        self.client.post(create_wish_url, data, headers=headers)
 
 
 class CustomerUser(HttpLocust):
