@@ -55,6 +55,7 @@ Now you can access these endpoints:
 
 ## Links to docs:
 1. [django-polymorphic](https://django-polymorphic.readthedocs.io)
+2. [locust.io](https://docs.locust.io/)
 
 ## Useful links:
 1. [How to add permission to user on his creation](https://stackoverflow.com/questions/31334332/giving-default-permissions-or-a-default-group-to-new-users).
