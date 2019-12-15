@@ -53,6 +53,27 @@ Now you can access these endpoints:
 - [x] 14\. Закрытие желания
 - [x] 15\. Обработка желания
 
+## Testing
+Start database and install requirements for python >= 3.6:
+```bash
+docker-compose -f docker/docker-compose.yml up --build -d db
+python3 -m pip install -r requirements.txt -r requirements-tests.txt
+```
+Run **unit** tests with coverage report:
+```bash
+coverage run manage.py test --exclude-tag=selenium && coverage report
+```
+Run **functional** tests with selenium (`firefox` and `geckodriver` in `$PATH` are required):
+```bash
+python3 manage.py test --tag=selenium
+```
+Run **load** tests on _populated_ database (go to http://127.0.0.1:8089/ after `locust` launch):
+```bash
+docker-compose -f docker/docker-compose.yml run --rm web bash -c "./manage.py migrate && ./manage.py populate_db"
+python3 manage.py runserver 8000
+locust -f wizuber/tests/load_testing.py --host="http://127.0.0.1:8000"
+```
+
 ## Links to docs:
 1. [django-polymorphic](https://django-polymorphic.readthedocs.io)
 2. [locust.io](https://docs.locust.io/)
