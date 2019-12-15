@@ -25,7 +25,11 @@ class CreateAndDeleteForWish(TaskSequence):
         self.created_wish_url = response.url
 
     @seq_task(2)
-    def pay_for_wish(self):
+    def post_action(self):
+        self._post_action()
+
+    def _post_action(self):
+        """ delete this wish after creation """
         csrf_token, headers = get_csrf_token(self, self.created_wish_url, name=wizuber_url('wish/[id]/'))
         pay_url = self.created_wish_url + 'handle/delete'
         self.client.post(pay_url, headers=headers, name=wizuber_url('wish/[id]/handle/delete'))
@@ -35,8 +39,13 @@ class CreateAndDeleteForWish(TaskSequence):
         self.interrupt()
 
 
+class CreateWish(CreateAndDeleteForWish):
+    def _post_action(self):
+        """ Do not delete created wish """
+
+
 class CustomerTask(TaskSet):
-    tasks = [CreateAndDeleteForWish]
+    tasks = [CreateAndDeleteForWish, CreateWish]
 
     def on_start(self):
         login_url = wizuber_url('account/login/')
