@@ -49,6 +49,10 @@ class CustomerTask(TaskSet):
         self.client.get(wizuber_url('wish/list/'))
 
     @task
+    def wish_list_last_page(self):
+        self.client.get(wizuber_url('wish/list/') + '?page=last')
+
+    @task
     def wish_list_closed(self):
         self.client.get(wizuber_url('wish/list/closed/'))
 
