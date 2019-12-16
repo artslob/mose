@@ -1,15 +1,30 @@
 {% extends 'wizuber/base.html' %}
 
 {% block content %}
-    {% if wizards %}
-        <ul>
-            {% for wizard in wizards %}
-                <li><a href="{{ wizard.get_absolute_url }}">{{ wizard }}</a></li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>No wizards are available</p>
-    {% endif %}
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Wizard</th>
+            <th scope="col">Student</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for wizard in wizards %}
+            <tr>
+                <th scope="row">{{ forloop.counter0|add:page_obj.start_index }}</th>
+                <td><a href="{{ wizard.get_absolute_url }}">{{ wizard.username }}</a></td>
+                <td>
+                    {% if wizard.has_student %}
+                        {{ wizard.student.username }}
+                    {% else %}
+                        ----
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 
     {% if is_paginated %}
         {% include 'wizuber/include/pagination.html' %}
