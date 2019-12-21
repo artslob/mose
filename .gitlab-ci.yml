@@ -57,3 +57,26 @@ tests:
     - coverage report
     # run coverage export only if variable with token is set
     - '[ -z ${COVERALLS_REPO_TOKEN+x} ] || coveralls'
+
+deploy-to-vps:
+  stage: deploy
+  environment:
+    name: vps
+  only:
+    - deploy/vps
+  when: manual
+  variables:
+    VPS: "artslob@${MOSE_DEPLOY_VPS_IP}"
+    PORT: "$MOSE_DEPLOY_VPS_PORT"
+    MOSE_PROJECT: "/home/artslob/mose-project"
+  before_script:
+    - apt-get update -qq
+    - apt-get install -qq rsync
+    - eval "$(ssh-agent -s)"
+    - ssh-add <(echo "$MOSE_DEPLOY_SSH_PRIVATE_KEY")
+    - ssh-add -l
+    - ssh-add -L
+  script:
+    - 'ssh -o StrictHostKeyChecking=no "$VPS" :'
+    - ssh "$VPS" -p "$PORT" mkdir -p "$MOSE_PROJECT"
+    - rsync -e "ssh -o StrictHostKeyChecking=no" -chaz --stats --port "${PORT}" "$(pwd)/" "$VPS":"$MOSE_PROJECT/mose"
