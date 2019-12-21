@@ -77,6 +77,7 @@ deploy-to-vps:
     - ssh-add -l
     - ssh-add -L
   script:
-    - 'ssh -o StrictHostKeyChecking=no "$VPS" :'
+    - mkdir -p ~/.ssh/
+    - ssh-keyscan "$MOSE_DEPLOY_VPS_IP" >> ~/.ssh/known_hosts
     - ssh "$VPS" -p "$PORT" mkdir -p "$MOSE_PROJECT"
-    - rsync -e "ssh -o StrictHostKeyChecking=no" -chaz --stats --port "${PORT}" "$(pwd)/" "$VPS":"$MOSE_PROJECT/mose"
+    - rsync -chaz --stats --port "${PORT}" "$(pwd)/" "$VPS":"$MOSE_PROJECT/mose"
