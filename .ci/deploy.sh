@@ -3,7 +3,9 @@
 set -e
 set -o xtrace
 
-if [[ -z $MOSE_PROJECT ]]; then
+: ${MOSE_PROJECT:=}
+
+if [[ -z ${MOSE_PROJECT} ]]; then
     echo "MOSE_PROJECT var is empty"
     exit 1
 fi
@@ -106,3 +108,15 @@ fi
 if [[ -f "${MOSE_PROJECT}/mose/requirements.txt" ]]; then
     "${PYTHON_VENV}/bin/python3" -m pip install -r "${MOSE_PROJECT}/mose/requirements.txt"
 fi
+
+SOURCE_ME="${MOSE_PROJECT}/source-me.sh"
+cat > "$SOURCE_ME" << EOF
+#!/usr/bin/env bash
+
+source "${PYTHON_VENV}/bin/activate"
+export PATH="${PG_DB_TARGET}/bin/:\$PATH"
+export LD_LIBRARY_PATH="${PG_DB_TARGET}/lib"
+export PGDATA="${PG_DB_DATA}"
+alias pg_ctl="pg_ctl -l "${PG_DB_LOG}""
+echo 'run: "pg_ctl start"'
+EOF
