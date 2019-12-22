@@ -10,7 +10,7 @@ fi
 
 SOURCES="${MOSE_PROJECT}/sources"
 
-PG_DB_VERSION="11.5"
+: ${PG_DB_VERSION:=11.5}
 PG_DB="postgresql-${PG_DB_VERSION}"
 PG_DB_SOURCE="${SOURCES}/${PG_DB}"
 PG_DB_TAR="${PG_DB_SOURCE}.tar.gz"
@@ -56,7 +56,7 @@ sed -i '/port = \d*/c\port = 57122' "${PG_DB_DATA}/postgresql.conf"
 egrep 'port = \d*' "${PG_DB_DATA}/postgresql.conf"
 mkdir -p "$PG_DB_LOG_DIR"
 
-PYTHON_VERSION="3.6.8"
+: ${PYTHON_VERSION:=3.6.8}
 PYTHON="Python-${PYTHON_VERSION}"
 PYTHON_SOURCE="${SOURCES}/${PYTHON}"
 PYTHON_TAR="${PYTHON_SOURCE}.tar.gz"
