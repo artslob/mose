@@ -63,7 +63,8 @@ deploy-to-vps:
   environment:
     name: vps
   only:
-    - deploy/vps
+    - master
+    - deploy
   when: manual
   variables:
     HOST: "artslob@${MOSE_DEPLOY_VPS_IP}"
@@ -88,7 +89,8 @@ deploy-to-helios:
   environment:
     name: helios
   only:
-    - deploy/helios
+    - master
+    - deploy
   when: manual
   variables:
     HOST: "s191951@${MOSE_DEPLOY_HELIOS_IP}"
