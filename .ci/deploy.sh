@@ -32,7 +32,8 @@ if [[ ! -f "$PG_DB_TAR" ]]; then
 fi
 
 if [[ ! -d "$PG_DB_SOURCE" ]]; then
-    gzip -dc "$PG_DB_TAR" | tar -C "$SOURCES" -xf -
+    cd "$SOURCES"
+    gzip -dc "$PG_DB_TAR" | tar -xf -
 fi
 
 mkdir -p "$PG_DB_TARGET"
@@ -54,7 +55,7 @@ if [[ ! -d "$PG_DB_DATA" ]]; then
     "${PG_DB_TARGET}/bin/initdb" -D "$PG_DB_DATA" -U postgres
 fi
 
-sed -i '/port = \d*/c\port = 57122' "${PG_DB_DATA}/postgresql.conf"
+perl -pi -e 's/.*port = \d*.*/port = 57122/g' "${PG_DB_DATA}/postgresql.conf"
 egrep 'port = \d*' "${PG_DB_DATA}/postgresql.conf"
 mkdir -p "$PG_DB_LOG_DIR"
 
@@ -77,22 +78,23 @@ if [[ ! -f "$PYTHON_TAR" ]]; then
 fi
 
 if [[ ! -d "$PYTHON_SOURCE" ]]; then
-    gzip -dc "$PYTHON_TAR" | tar -C "$SOURCES" -xf -
+    cd "$SOURCES"
+    gzip -dc "$PYTHON_TAR" | tar -xf -
 fi
 
 mkdir -p "$PYTHON_TARGET"
 
 cd "$PYTHON_SOURCE"
 if [[ ! -f "$PYTHON_CONFIGURED" ]]; then
-    "${PYTHON_SOURCE}/configure" --prefix="$PYTHON_TARGET" > /dev/null
+    "./configure" --prefix="$PYTHON_TARGET" > /dev/null 2>&1
     touch "$PYTHON_CONFIGURED"
 fi
 if [[ ! -f "$PYTHON_MADE" ]]; then
-    make --directory "$PYTHON_SOURCE" > /dev/null
+    make > /dev/null 2>&1
     touch "$PYTHON_MADE"
 fi
 if [[ ! -f "$PYTHON_MADE_INSTALLED" ]]; then
-    make --directory "$PYTHON_SOURCE" install > /dev/null
+    make install > /dev/null 2>&1
     touch "$PYTHON_MADE_INSTALLED"
 fi
 
