@@ -72,6 +72,33 @@ python3 manage.py runserver 8000
 locust -f wizuber/tests/load_testing.py --host="http://127.0.0.1:8000"
 ```
 
+## Deployment
+Generate ssh keys and copy to server to allow access from CI to deployment server:
+```bash
+mkdir "${HOME}/mose-deploy/"
+ssh-keygen -t rsa -b 4096 -C "key for deployment" -f "${HOME}/mose-deploy/id_rsa"
+ssh-copy-id -i "${HOME}/mose-deploy/id_rsa.pub" user@target
+```
+Now you can use gitlab interface to deploy code or run deploy with local `gitlab-runner`:
+```bash
+gitlab-runner exec docker deploy-to-helios \
+    --env MOSE_DEPLOY_SSH_PRIVATE_KEY="$(cat $HOME/mose-deploy/id_rsa)" \
+    --env MOSE_DEPLOY_HELIOS_PORT="..." \
+    --env MOSE_DEPLOY_HELIOS_IP="..."
+```
+To start server run commands below on `helios` (university server under 32-bit `SunOS helios 5.10`):
+```bash
+source "source-me.sh"
+python mose/manage.py migrate
+python mose/manage.py populate_db
+python mose/manage.py runserver 55671
+```
+Create [ssh-tunnel](https://unix.stackexchange.com/a/115906/309121) on local machine
+and then go to http://localhost:8001/wizuber/:
+```bash
+ssh -L 8001:localhost:55671 helios
+```
+
 ## Links to docs:
 1. [django-polymorphic](https://django-polymorphic.readthedocs.io)
 2. [locust.io](https://docs.locust.io/)
@@ -83,6 +110,9 @@ locust -f wizuber/tests/load_testing.py --host="http://127.0.0.1:8000"
 4. [How to create custom permissions without binding to specific model](https://stackoverflow.com/questions/13932774).
 5. [Using Django auth UserAdmin for a custom user model](https://stackoverflow.com/questions/15012235/using-django-auth-useradmin-for-a-custom-user-model).
 6. [Run Firefox Headless Browser tests on GitLab CI](https://grauwoelfchen.at/posts/run-firefox-headless-browser-tests-on-gitlab-ci/)
+6. [How to Install PostgreSQL 10 Using Source Code in Linux](https://www.tecmint.com/install-postgresql-from-source-code-in-linux/)
+7. [Error while loading shared libraries: libpq.so.5](https://stackoverflow.com/a/12781602)
+8. [Psycopg runtime requirements](http://initd.org/psycopg/docs/install.html#runtime-requirements)
 
 ## Conventions
 `Model` is name of a model as singular, e.g. `Wish` or `Wizard`.
