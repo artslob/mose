@@ -3,7 +3,11 @@
 set -e
 set -o xtrace
 
-MOSE_PROJECT="/home/artslob/mose-project"
+if [[ -z $MOSE_PROJECT ]]; then
+    echo "MOSE_PROJECT var is empty"
+    exit 1
+fi
+
 SOURCES="${MOSE_PROJECT}/sources"
 
 PG_DB_VERSION="11.5"
