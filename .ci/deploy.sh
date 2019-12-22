@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 set -e
+set -o xtrace
 
 MOSE_PROJECT="/home/artslob/mose-project"
 SOURCES="${MOSE_PROJECT}/sources"
@@ -50,3 +51,54 @@ fi
 sed -i '/port = \d*/c\port = 57122' "${PG_DB_DATA}/postgresql.conf"
 egrep 'port = \d*' "${PG_DB_DATA}/postgresql.conf"
 mkdir -p "$PG_DB_LOG_DIR"
+
+PYTHON_VERSION="3.6.8"
+PYTHON="Python-${PYTHON_VERSION}"
+PYTHON_SOURCE="${SOURCES}/${PYTHON}"
+PYTHON_TAR="${PYTHON_SOURCE}.tar.gz"
+PYTHON_TARGET="${MOSE_PROJECT}/${PYTHON}"
+PYTHON_VENV="${MOSE_PROJECT}/venv"
+
+PYTHON_CONFIGURED="${PYTHON_SOURCE}-configured"
+PYTHON_MADE="${PYTHON_SOURCE}-made"
+PYTHON_MADE_INSTALLED="${PYTHON_SOURCE}-made-installed"
+PYTHON_VENV_CREATED="${PYTHON_SOURCE}-venv-created"
+
+mkdir -p "$SOURCES"
+
+if [[ ! -f "$PYTHON_TAR" ]]; then
+    wget -nv "https://www.python.org/ftp/python/${PYTHON_VERSION}/${PYTHON}.tgz" --no-check-certificate -O "$PYTHON_TAR"
+fi
+
+if [[ ! -d "$PYTHON_SOURCE" ]]; then
+    gzip -dc "$PYTHON_TAR" | tar -C "$SOURCES" -xf -
+fi
+
+mkdir -p "$PYTHON_TARGET"
+
+cd "$PYTHON_SOURCE"
+if [[ ! -f "$PYTHON_CONFIGURED" ]]; then
+    "${PYTHON_SOURCE}/configure" --prefix="$PYTHON_TARGET" > /dev/null
+    touch "$PYTHON_CONFIGURED"
+fi
+if [[ ! -f "$PYTHON_MADE" ]]; then
+    make --directory "$PYTHON_SOURCE" > /dev/null
+    touch "$PYTHON_MADE"
+fi
+if [[ ! -f "$PYTHON_MADE_INSTALLED" ]]; then
+    make --directory "$PYTHON_SOURCE" install > /dev/null
+    touch "$PYTHON_MADE_INSTALLED"
+fi
+
+"${PYTHON_TARGET}/bin/python3" --version
+
+if [[ ! -f "$PYTHON_VENV_CREATED" ]]; then
+    "${PYTHON_TARGET}/bin/python3" -m venv "$PYTHON_VENV"
+    touch "$PYTHON_VENV_CREATED"
+fi
+
+"${PYTHON_VENV}/bin/python3" -m pip install --upgrade pip setuptools
+
+if [[ -f "${MOSE_PROJECT}/mose/requirements.txt" ]]; then
+    "${PYTHON_VENV}/bin/python3" -m pip install -r "${MOSE_PROJECT}/mose/requirements.txt"
+fi
