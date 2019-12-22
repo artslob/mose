@@ -81,3 +81,4 @@ deploy-to-vps:
     - ssh-keyscan "$MOSE_DEPLOY_VPS_IP" >> ~/.ssh/known_hosts
     - ssh "$VPS" -p "$PORT" mkdir -p "$MOSE_PROJECT"
     - rsync -chaz --stats --port "${PORT}" "$(pwd)/" "$VPS":"$MOSE_PROJECT/mose"
+    - ssh "$VPS" -p "$PORT" 'bash -s' < ./.ci/deploy.sh
