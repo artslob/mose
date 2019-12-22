@@ -107,6 +107,8 @@ fi
 
 "${PYTHON_VENV}/bin/python3" -m pip install --upgrade pip setuptools
 
+export LD_LIBRARY_PATH="${PG_DB_TARGET}/lib"
+
 if [[ -f "${MOSE_PROJECT}/mose/requirements.txt" ]]; then
     "${PYTHON_VENV}/bin/python3" -m pip install -r "${MOSE_PROJECT}/mose/requirements.txt"
 fi
@@ -121,4 +123,10 @@ export LD_LIBRARY_PATH="${PG_DB_TARGET}/lib"
 export PGDATA="${PG_DB_DATA}"
 alias pg_ctl="pg_ctl -l "${PG_DB_LOG}""
 echo 'run: "pg_ctl start"'
+
+export MOSE_DATABASE_NAME="postgres"
+export MOSE_DATABASE_USER="postgres"
+export MOSE_DATABASE_PASSWORD=""
+export MOSE_DATABASE_HOST="localhost"
+export MOSE_DATABASE_PORT="57122"
 EOF
