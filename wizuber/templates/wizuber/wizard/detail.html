@@ -1,6 +1,9 @@
 {% extends 'wizuber/base.html' %}
 
 {% block content %}
-    <p>This is wizard detail page:</p>
-    <p>{{ wizard }}</p>
+    <p>Wizard username: {{ wizard.username }}</p>
+    <p>First name: {{ wizard.first_name }}</p>
+    <p>Last name: {{ wizard.last_name }}</p>
+    <p>Email: {{ wizard.email }}</p>
+    <p>Wizard`s student: {{ wizard.student|default:"----" }}</p>
 {% endblock %}
