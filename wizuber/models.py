@@ -37,6 +37,7 @@ class WizuberUser(PolymorphicModel, AbstractUser):
     is_customer = False
     is_student = False
     is_spirit = False
+    type_name = 'admin'
 
 
 class Wizard(WizuberUser):
@@ -46,6 +47,7 @@ class Wizard(WizuberUser):
         ordering = ['id']
 
     is_wizard = True
+    type_name = 'wizard'
 
     def has_student(self) -> bool:
         return hasattr(self, 'student')
@@ -67,6 +69,7 @@ class Customer(WizuberUser):
         ordering = ['id']
 
     is_customer = True
+    type_name = 'customer'
 
     def get_queryset_for_wish_list(self):
         return self.created_wishes.exclude(status=Wish.STATUSES.CLOSED.name)
@@ -82,6 +85,7 @@ class Student(WizuberUser):
         ordering = ['id']
 
     is_student = True
+    type_name = 'student'
 
     def get_queryset_for_wish_list(self):
         return self.assigned_wishes.all()
@@ -111,6 +115,7 @@ class Spirit(WizuberUser):
         ordering = ['id']
 
     is_spirit = True
+    type_name = 'spirit'
 
     def get_queryset_for_wish_list(self):
         return self.assigned_wishes.all()

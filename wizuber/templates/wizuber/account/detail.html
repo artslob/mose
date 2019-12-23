@@ -1,6 +1,21 @@
 {% extends 'wizuber/base.html' %}
 
 {% block content %}
-    <p>Hello, {{ user.username }}!</p>
-    <p>It`s your account.</p>
+    <p>You are logged as {{ user.type_name|title }}</p>
+    <p>Username: {{ user.username }}</p>
+    <p>First name: {{ user.first_name }}</p>
+    <p>Last name: {{ user.last_name }}</p>
+    <p>Email: {{ user.email }}</p>
+    {% if user.is_wizard or user.is_customer %}
+        <p>Balance: {{ user.balance }}</p>
+    {% endif %}
+    {% if user.is_wizard %}
+        <p>Yours student: {{ user.student|default:"----" }}</p>
+    {% endif %}
+    {% if user.is_student %}
+        <p>Yours wizard: {{ user.teacher }}</p>
+    {% endif %}
+    {% if user.is_spirit %}
+        <p>Grade: {{ user.grade|title }}</p>
+    {% endif %}
 {% endblock %}
