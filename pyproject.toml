@@ -1,0 +1,7 @@
+[tool.black]
+line-length = 88
+target-version = ['py36']
+exclude = '''
+/(\.eggs|\.git|\.hg|\.mypy|_cache|\.nox|\.tox|\.venv|\.svn|_build|buck-out|build|dist)/
+| /wizuber/migrations/
+'''
