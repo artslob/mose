@@ -5,9 +5,9 @@ from wizuber.views.helpers import PageTitleMixin
 
 
 class ListWizard(PageTitleMixin, generic.ListView):
-    template_name = 'wizuber/wizard/list.html'
-    context_object_name = 'wizards'
-    page_title = 'Wizard List'
+    template_name = "wizuber/wizard/list.html"
+    context_object_name = "wizards"
+    page_title = "Wizard List"
     paginate_by = 10
 
     def get_queryset(self):
@@ -16,5 +16,5 @@ class ListWizard(PageTitleMixin, generic.ListView):
 
 class DetailWizard(PageTitleMixin, generic.DetailView):
     model = Wizard
-    template_name = 'wizuber/wizard/detail.html'
-    page_title = 'Wizard Details'
+    template_name = "wizuber/wizard/detail.html"
+    page_title = "Wizard Details"

@@ -7,7 +7,7 @@ from wizuber.models import BaseArtifact
 class DeleteArtifact(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = BaseArtifact
 
-    http_method_names = ['post', 'delete', 'head', 'options', 'trace']
+    http_method_names = ["post", "delete", "head", "options", "trace"]
 
     def test_func(self):
         user, wish = self.request.user, self.get_object().wish
@@ -16,7 +16,12 @@ class DeleteArtifact(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         if is_work_status and user.is_wizard and user == wish.owner == wish.assigned_to:
             return True
 
-        if is_work_status and user.is_student and wish.owner == user.teacher and user == wish.assigned_to:
+        if (
+            is_work_status
+            and user.is_student
+            and wish.owner == user.teacher
+            and user == wish.assigned_to
+        ):
             return True
 
         return False

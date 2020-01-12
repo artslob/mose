@@ -6,16 +6,16 @@ from wizuber.models import CandleArtifact, PentacleArtifact, SpiritArtifact
 class CandleArtifactForm(ModelForm):
     class Meta:
         model = CandleArtifact
-        exclude = ['wish']
+        exclude = ["wish"]
 
 
 class PentacleArtifactForm(ModelForm):
     class Meta:
         model = PentacleArtifact
-        exclude = ['wish']
+        exclude = ["wish"]
 
 
 class SpiritArtifactForm(ModelForm):
     class Meta:
         model = SpiritArtifact
-        exclude = ['wish']
+        exclude = ["wish"]

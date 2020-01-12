@@ -5,7 +5,7 @@ from wizuber.const import WIZARD_PERM, CUSTOMER_PERM, CUSTOMER_GROUP, WIZARD_GRO
 
 
 class WizuberConfig(AppConfig):
-    name = 'wizuber'
+    name = "wizuber"
 
     def ready(self):
         """
@@ -24,7 +24,7 @@ class WizuberConfig(AppConfig):
 
 
 def add_to_default_group(sender, **kwargs):
-    if not kwargs['created']:
+    if not kwargs["created"]:
         return
 
     from django.contrib.auth.models import Group
@@ -44,22 +44,22 @@ def add_to_default_group(sender, **kwargs):
 def populate_models(sender, **kwargs):
     from django.contrib.auth.models import Group, Permission
 
-    app = dict(content_type__app_label='wizuber')
+    app = dict(content_type__app_label="wizuber")
     # models
-    rights = dict(content_type__model='rightssupport')
-    wishes = dict(content_type__model='wish')
+    rights = dict(content_type__model="rightssupport")
+    wishes = dict(content_type__model="wish")
 
     customer_group, created = Group.objects.get_or_create(name=CUSTOMER_GROUP)
     customer_group.permissions.add(
         Permission.objects.get(codename=CUSTOMER_PERM, **app, **rights),
-        Permission.objects.get(codename='add_wish', **app, **wishes),
-        Permission.objects.get(codename='view_wish', **app, **wishes),
-        Permission.objects.get(codename='change_wish', **app, **wishes),
+        Permission.objects.get(codename="add_wish", **app, **wishes),
+        Permission.objects.get(codename="view_wish", **app, **wishes),
+        Permission.objects.get(codename="change_wish", **app, **wishes),
     )
 
     wizard_group, created = Group.objects.get_or_create(name=WIZARD_GROUP)
     wizard_group.permissions.add(
         Permission.objects.get(codename=WIZARD_PERM, **app, **rights),
-        Permission.objects.get(codename='view_wish', **app, **wishes),
-        Permission.objects.get(codename='change_wish', **app, **wishes),
+        Permission.objects.get(codename="view_wish", **app, **wishes),
+        Permission.objects.get(codename="change_wish", **app, **wishes),
     )

@@ -8,7 +8,11 @@ from django.http import HttpRequest
 from django.urls import reverse
 
 from wizuber.fsm.exception import ActionAccessDenied
-from wizuber.fsm.form import CandleArtifactForm, PentacleArtifactForm, SpiritArtifactForm
+from wizuber.fsm.form import (
+    CandleArtifactForm,
+    PentacleArtifactForm,
+    SpiritArtifactForm,
+)
 from wizuber.models import Wish, WizuberUser
 
 
@@ -28,14 +32,16 @@ class IAction(metaclass=ABCMeta):
     @classmethod
     def validate_subclass_action_name(cls, action_name: str):
         if action_name in cls.defined_actions:
-            raise RuntimeError(f'action name {action_name!r} is not unique!')  # pragma: no cover
+            raise RuntimeError(
+                f"action name {action_name!r} is not unique!"
+            )  # pragma: no cover
         if not isinstance(action_name, str):
             raise RuntimeError(
-                f'action name {action_name!r} should be string, got: {type(action_name)}'
+                f"action name {action_name!r} should be string, got: {type(action_name)}"
             )  # pragma: no cover
-        if action_name != action_name.lower() or action_name.count(' ') > 0:
+        if action_name != action_name.lower() or action_name.count(" ") > 0:
             raise RuntimeError(
-                f'action name should be in lowercase and without spaces: {action_name!r}'
+                f"action name should be in lowercase and without spaces: {action_name!r}"
             )  # pragma: no cover
 
     def __init__(self, wish: Wish, user: WizuberUser):
@@ -61,7 +67,7 @@ class IAction(metaclass=ABCMeta):
 
     @classmethod
     def get_full_template_name(cls) -> str:
-        return f'wizuber/action/{cls.template_name()}.html'
+        return f"wizuber/action/{cls.template_name()}.html"
 
     @classmethod
     @abstractmethod
@@ -103,39 +109,44 @@ class IAction(metaclass=ABCMeta):
 class DeleteAction(IAction):
     @classmethod
     def get_action_name(cls) -> str:
-        return 'delete'
+        return "delete"
 
     @classmethod
     def get_action_description(cls) -> str:
-        return 'You can delete this wish'
+        return "You can delete this wish"
 
     def is_available(self) -> bool:
-        return self.wish.creator == self.user and self.wish.in_status(self.wish.STATUSES.NEW)
+        return self.wish.creator == self.user and self.wish.in_status(
+            self.wish.STATUSES.NEW
+        )
 
     def _execute(self, request: HttpRequest):
         self.wish.delete()
 
     def get_success_url(self):
-        return reverse('wizuber:list-wish')
+        return reverse("wizuber:list-wish")
 
 
 class PayAction(IAction):
     @classmethod
     def get_action_name(cls) -> str:
-        return 'pay'
+        return "pay"
 
     @classmethod
     def get_action_description(cls) -> str:
-        return 'Pay for this with to make it visible for wizard'
+        return "Pay for this with to make it visible for wizard"
 
     def is_available(self) -> bool:
-        return self.wish.creator == self.user and self.wish.status == self.wish.STATUSES.NEW.name
+        return (
+            self.wish.creator == self.user
+            and self.wish.status == self.wish.STATUSES.NEW.name
+        )
 
     def _is_processing_available(self) -> bool:
         return self.user.balance >= self.wish.price
 
     def _execute(self, request: HttpRequest):
-        self.user.balance = F('balance') - self.wish.price
+        self.user.balance = F("balance") - self.wish.price
         self.user.save()
         self.user.refresh_from_db()
         self.wish.status = self.wish.STATUSES.ACTIVE.name
@@ -145,11 +156,11 @@ class PayAction(IAction):
 class OwnAction(IAction):
     @classmethod
     def get_action_name(cls) -> str:
-        return 'own'
+        return "own"
 
     @classmethod
     def get_action_description(cls) -> str:
-        return 'You can accept order for this wish'
+        return "You can accept order for this wish"
 
     def is_available(self) -> bool:
         without_owner = self.wish.owner is None
@@ -173,7 +184,12 @@ class ArtifactAction(IAction, ABC):
         if is_work_status and user.is_wizard and user == wish.owner == wish.assigned_to:
             return True
 
-        if is_work_status and user.is_student and wish.owner == user.teacher and user == wish.assigned_to:
+        if (
+            is_work_status
+            and user.is_student
+            and wish.owner == user.teacher
+            and user == wish.assigned_to
+        ):
             return True
 
         return False
@@ -185,11 +201,11 @@ class ArtifactAction(IAction, ABC):
 
     @classmethod
     def get_action_name(cls) -> str:
-        return f'{cls.get_artifact_name()}-artifact'
+        return f"{cls.get_artifact_name()}-artifact"
 
     @classmethod
     def get_action_description(cls) -> str:
-        return f'Add {cls.get_artifact_name()} artifact for this wish'
+        return f"Add {cls.get_artifact_name()} artifact for this wish"
 
     @classmethod
     @abstractmethod
@@ -211,7 +227,7 @@ class ArtifactAction(IAction, ABC):
 class CandleArtifactAction(ArtifactAction):
     @classmethod
     def get_artifact_name(cls) -> str:
-        return 'candle'
+        return "candle"
 
     @classmethod
     def get_form_class(cls) -> Type[ModelForm]:
@@ -221,7 +237,7 @@ class CandleArtifactAction(ArtifactAction):
 class PentacleArtifactAction(ArtifactAction):
     @classmethod
     def get_artifact_name(cls) -> str:
-        return 'pentacle'
+        return "pentacle"
 
     @classmethod
     def get_form_class(cls) -> Type[ModelForm]:
@@ -231,7 +247,7 @@ class PentacleArtifactAction(ArtifactAction):
 class SpiritArtifactAction(ArtifactAction):
     @classmethod
     def get_artifact_name(cls) -> str:
-        return 'spirit'
+        return "spirit"
 
     @classmethod
     def get_form_class(cls) -> Type[ModelForm]:
@@ -241,17 +257,22 @@ class SpiritArtifactAction(ArtifactAction):
 class AssignToStudentAction(IAction):
     @classmethod
     def get_action_name(cls) -> str:
-        return 'to-student'
+        return "to-student"
 
     @classmethod
     def get_action_description(cls) -> str:
-        return 'You can assign this wish to your student'
+        return "You can assign this wish to your student"
 
     def is_available(self) -> bool:
         user, wish = self.user, self.wish
         is_work_status = wish.status == wish.STATUSES.WORK.name
 
-        return is_work_status and user.is_wizard and user == wish.owner == wish.assigned_to and user.has_student()
+        return (
+            is_work_status
+            and user.is_wizard
+            and user == wish.owner == wish.assigned_to
+            and user.has_student()
+        )
 
     def _execute(self, request: HttpRequest):
         self.wish.assigned_to = self.user.student
@@ -261,17 +282,22 @@ class AssignToStudentAction(IAction):
 class AssignToWizardAction(IAction):
     @classmethod
     def get_action_name(cls) -> str:
-        return 'to-wizard'
+        return "to-wizard"
 
     @classmethod
     def get_action_description(cls) -> str:
-        return 'You should assign this wish back to your teacher'
+        return "You should assign this wish back to your teacher"
 
     def is_available(self) -> bool:
         user, wish = self.user, self.wish
         is_work_status = wish.status == wish.STATUSES.WORK.name
 
-        return is_work_status and user.is_student and wish.owner == user.teacher and user == wish.assigned_to
+        return (
+            is_work_status
+            and user.is_student
+            and wish.owner == user.teacher
+            and user == wish.assigned_to
+        )
 
     def _execute(self, request: HttpRequest):
         self.wish.assigned_to = self.user.teacher
@@ -281,18 +307,23 @@ class AssignToWizardAction(IAction):
 class AssignToSpiritAction(IAction):
     @classmethod
     def get_action_name(cls) -> str:
-        return 'to-spirit'
+        return "to-spirit"
 
     @classmethod
     def get_action_description(cls) -> str:
-        return 'You can assign wish to spirit'
+        return "You can assign wish to spirit"
 
     def is_available(self) -> bool:
         user, wish = self.user, self.wish
         is_work_status = wish.status == wish.STATUSES.WORK.name
 
-        return (is_work_status and user.is_wizard and user == wish.owner == wish.assigned_to
-                and wish.has_spirit_artifact() and wish.pentacle_artifacts.exists())
+        return (
+            is_work_status
+            and user.is_wizard
+            and user == wish.owner == wish.assigned_to
+            and wish.has_spirit_artifact()
+            and wish.pentacle_artifacts.exists()
+        )
 
     def _execute(self, request: HttpRequest):
         self.wish.assigned_to = self.wish.spirit_artifact.spirit
@@ -303,11 +334,11 @@ class AssignToSpiritAction(IAction):
 class AssignFromSpiritToWizardAction(IAction):
     @classmethod
     def get_action_name(cls) -> str:
-        return 'spirit-to-wizard'
+        return "spirit-to-wizard"
 
     @classmethod
     def get_action_description(cls) -> str:
-        return 'You can assign wish back to wizard'
+        return "You can assign wish back to wizard"
 
     def is_available(self) -> bool:
         user, wish = self.user, self.wish
@@ -324,11 +355,11 @@ class AssignFromSpiritToWizardAction(IAction):
 class CloseAction(IAction):
     @classmethod
     def get_action_name(cls) -> str:
-        return 'close'
+        return "close"
 
     @classmethod
     def get_action_description(cls) -> str:
-        return 'You can close this wish'
+        return "You can close this wish"
 
     def is_available(self) -> bool:
         user, wish = self.user, self.wish
@@ -340,6 +371,6 @@ class CloseAction(IAction):
         self.wish.assigned_to = self.wish.creator
         self.wish.status = self.wish.STATUSES.CLOSED.name
         self.wish.save()
-        self.user.balance = F('balance') + self.wish.price
+        self.user.balance = F("balance") + self.wish.price
         self.user.save()
         self.user.refresh_from_db()
