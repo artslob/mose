@@ -2,7 +2,7 @@ image: 'python:3.6.9-buster'
 
 flake8:
   script:
-    - pip install flake8==3.7.9
+    - pip install -r requirements-dev.txt
     - flake8
 
 migrations:
