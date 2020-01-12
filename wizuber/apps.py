@@ -9,10 +9,11 @@ class WizuberConfig(AppConfig):
 
     def ready(self):
         """
-        This code creates default groups for some types of users and assigns these groups to specific types of users
-        when they are created.
-        This idea using Django permission framework for access control Wizuber was abandoned because of superusers
-        have all permissions, so its requires extra check to distinguish superuser from customer or wizard for example.
+        This code creates default groups for some types of users and assigns these groups
+        to specific types of users when they are created.
+        This idea using Django permission framework for access control Wizuber was
+        abandoned because superusers have all permissions, so its requires extra
+        check to distinguish superuser from customer or wizard for example.
         Code is left for future reference.
         """
         post_migrate.connect(populate_models, sender=self)

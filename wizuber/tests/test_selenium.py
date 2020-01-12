@@ -78,7 +78,7 @@ class SeleniumBusinessCaseTest(StaticLiveServerTestCase):
 
     @contextmanager
     def wait_for_page_load(self, timeout=10):
-        """ http://www.obeythetestinggoat.com/how-to-get-selenium-to-wait-for-page-load-after-a-click.html """
+        """ http://www.obeythetestinggoat.com/how-to-get-selenium-to-wait-for-page-load-after-a-click.html """  # noqa: E501
         old_page = self.selenium.find_element_by_tag_name("html")
         yield
         WebDriverWait(self.selenium, timeout).until(staleness_of(old_page))

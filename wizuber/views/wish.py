@@ -38,7 +38,10 @@ class ListWish(LoginRequiredMixin, PageTitleMixin, generic.ListView):
 
 
 class ListWishActive(UserPassesTestMixin, ListWish):
-    """ Returns wish list for wizard (only with "active" status). Represents "new orders" page. """
+    """
+    Returns wish list for wizard (only with "active" status).
+    Represents "new orders" page.
+    """
 
     page_title = "Available Wishes For Order"
 

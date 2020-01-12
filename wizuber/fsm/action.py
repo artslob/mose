@@ -17,7 +17,10 @@ from wizuber.models import Wish, WizuberUser
 
 
 class IAction(metaclass=ABCMeta):
-    """ Abstract class for all wish actions. New action classes are registered in `defined_actions`. """
+    """
+    Abstract class for all wish actions.
+    New action classes are registered in `defined_actions` dict.
+    """
 
     defined_actions = {}
 
@@ -76,13 +79,17 @@ class IAction(metaclass=ABCMeta):
 
     @abstractmethod
     def is_available(self) -> bool:
-        """ Check if user can potentially make this action. If true, user can see this action on html template. """
+        """
+        Check if user can potentially make this action.
+        If true, user can see this action on html template.
+        """
 
     def is_processing_available(self) -> bool:
         """
         Check that user can see action and also execute it.
-        e.g.: customer-creator of the wish can always see button for 'pay' action, but if user has not enough money
-        to pay for wish button will be disabled and this method returns False.
+        e.g.: customer-creator of the wish can always see button for 'pay' action,
+        but if user has not enough money to pay for wish button will be disabled
+        and this method returns False.
         """
         return self.is_available() and self._is_processing_available()
 

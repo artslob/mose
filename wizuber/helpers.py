@@ -20,7 +20,9 @@ class ChoicesEnum(Enum, metaclass=ChoicesEnumMeta):
 
     class SomeModel(models.Model):
         field = models.CharField(
-            max_length=MyCustomEnum.max_length(), choices=MyCustomEnum.choices(), default=MyCustomEnum.default()
+            max_length=MyCustomEnum.max_length(),
+            choices=MyCustomEnum.choices(),
+            default=MyCustomEnum.default(),
         )
     """
 

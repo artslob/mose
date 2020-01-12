@@ -255,7 +255,8 @@ class SpiritArtifact(BaseArtifact):
 
 class RightsSupport(models.Model):
     class Meta:
-        # No database table creation or deletion operations will be performed for this model.
+        # No database table creation or deletion operations
+        # will be performed on this model.
         managed = False
         permissions = (
             (CUSTOMER_PERM, "Global customer rights"),
