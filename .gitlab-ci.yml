@@ -12,7 +12,7 @@ black:
 
 isort:
   script:
-    - pip install -r requirements-dev.txt
+    - pip install -r requirements-dev.txt -r requirements.txt -r requirements-tests.txt
     - isort -rc --check-only .
 
 migrations:
