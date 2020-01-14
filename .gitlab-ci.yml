@@ -1,10 +1,19 @@
 image: 'python:3.6.9-buster'
 
-code-style:
+flake8:
+  script:
+    - pip install -r requirements-dev.txt
+    - flake8
+
+black:
   script:
     - pip install -r requirements-dev.txt
     - black --check .
-    - flake8
+
+isort:
+  script:
+    - pip install -r requirements-dev.txt
+    - isort -rc --check-only .
 
 migrations:
   services:
@@ -112,6 +121,6 @@ deploy-to-helios:
     - ssh-keyscan "$MOSE_DEPLOY_HELIOS_IP" >> ~/.ssh/known_hosts
     - cat ~/.ssh/known_hosts
     - ssh "$HOST" -p "$PORT" mkdir -p "$MOSE_PROJECT"
-#    - rsync -chaz --stats -e "ssh -p ${PORT}" "$(pwd)/" "$HOST":"$MOSE_PROJECT/mose"
+    #    - rsync -chaz --stats -e "ssh -p ${PORT}" "$(pwd)/" "$HOST":"$MOSE_PROJECT/mose"
     - scp -q -r -P "$PORT" "$(pwd)/." "$HOST":"$MOSE_PROJECT/mose"
     - echo "source .profile; $(cat .ci/deploy.sh)" | ssh "$HOST" -p "$PORT" 'MOSE_PROJECT=/home/s191951/mose-project bash -s'
