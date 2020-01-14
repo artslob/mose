@@ -6,7 +6,7 @@ from django.utils.translation import gettext_lazy as _
 from polymorphic.managers import PolymorphicManager
 from polymorphic.models import PolymorphicModel
 
-from wizuber.const import CUSTOMER_PERM, WIZARD_PERM, STUDENT_PERM, SPIRIT_PERM
+from wizuber.const import CUSTOMER_PERM, SPIRIT_PERM, STUDENT_PERM, WIZARD_PERM
 from wizuber.helpers import ChoicesEnum
 
 

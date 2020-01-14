@@ -1,4 +1,4 @@
-from locust import HttpLocust, TaskSet, constant, task, seq_task, TaskSequence
+from locust import HttpLocust, TaskSequence, TaskSet, constant, seq_task, task
 
 
 def wizuber_url(postfix: str = "") -> str:

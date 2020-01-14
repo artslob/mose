@@ -3,7 +3,7 @@ from pathlib import Path
 from django.test import SimpleTestCase
 from django.urls import reverse
 
-from wizuber.fsm import IAction, action_classes, action_class_by_name, ActionNotFound
+from wizuber.fsm import ActionNotFound, IAction, action_class_by_name, action_classes
 
 
 class FsmAvailableActions(SimpleTestCase):

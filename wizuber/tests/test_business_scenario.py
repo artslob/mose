@@ -4,17 +4,17 @@ from django.test import TestCase
 from django.urls import reverse
 
 from wizuber.models import (
-    Wish,
-    Customer,
-    WishStatus,
-    Wizard,
+    BaseArtifact,
     CandleMaterial,
+    Customer,
     SizeChoices,
-    Student,
     Spirit,
     SpiritGrades,
+    Student,
+    Wish,
+    WishStatus,
+    Wizard,
     WizuberUser,
-    BaseArtifact,
 )
 
 # constants

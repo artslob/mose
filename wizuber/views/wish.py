@@ -1,16 +1,16 @@
 import logging
 
-from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.core.exceptions import PermissionDenied
 from django.http import Http404, HttpRequest
 from django.shortcuts import redirect
 from django.views import generic
 
 from wizuber.fsm import (
-    action_classes,
-    action_class_by_name,
-    ActionNotFound,
     ActionAccessDenied,
+    ActionNotFound,
+    action_class_by_name,
+    action_classes,
 )
 from wizuber.models import Wish
 from wizuber.views.helpers import PageTitleMixin

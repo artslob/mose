@@ -2,17 +2,17 @@ from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
 
 from wizuber.models import (
-    Customer,
-    Wizard,
-    Wish,
-    Student,
-    Spirit,
-    SpiritGrades,
     CandleArtifact,
-    SizeChoices,
     CandleMaterial,
+    Customer,
     PentacleArtifact,
+    SizeChoices,
+    Spirit,
     SpiritArtifact,
+    SpiritGrades,
+    Student,
+    Wish,
+    Wizard,
 )
 
 

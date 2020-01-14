@@ -1,7 +1,7 @@
 from django.apps import AppConfig
 from django.db.models.signals import post_migrate, post_save
 
-from wizuber.const import WIZARD_PERM, CUSTOMER_PERM, CUSTOMER_GROUP, WIZARD_GROUP
+from wizuber.const import CUSTOMER_GROUP, CUSTOMER_PERM, WIZARD_GROUP, WIZARD_PERM
 
 
 class WizuberConfig(AppConfig):

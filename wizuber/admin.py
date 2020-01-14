@@ -1,8 +1,8 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from django.contrib.auth.forms import UserCreationForm, UserChangeForm
+from django.contrib.auth.forms import UserChangeForm, UserCreationForm
 
-from wizuber.models import WizuberUser, Wizard, Student, Spirit
+from wizuber.models import Spirit, Student, Wizard, WizuberUser
 
 
 def create_user_admin_form(form_model, base_class, model_fields="__all__"):

@@ -1,7 +1,7 @@
-from typing import Type, List
+from typing import List, Type
 
 from wizuber.fsm.action import IAction
-from wizuber.fsm.exception import ActionNotFound, ActionAccessDenied
+from wizuber.fsm.exception import ActionAccessDenied, ActionNotFound
 
 
 def action_names() -> List[str]:

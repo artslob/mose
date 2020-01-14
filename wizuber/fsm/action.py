@@ -1,5 +1,5 @@
 import inspect
-from abc import ABCMeta, abstractmethod, ABC
+from abc import ABC, ABCMeta, abstractmethod
 from typing import Type
 
 from django.db.models import F

@@ -1,6 +1,6 @@
 import os
 from contextlib import contextmanager
-from typing import List, Iterable
+from typing import Iterable, List
 
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from django.test import tag
@@ -14,15 +14,15 @@ from selenium.webdriver.support.wait import WebDriverWait
 
 from wizuber.fsm import action_names as possible_action_names
 from wizuber.models import (
+    CandleMaterial,
     Customer,
-    Wizard,
-    Student,
+    SizeChoices,
     Spirit,
     SpiritGrades,
+    Student,
     Wish,
     WishStatus,
-    CandleMaterial,
-    SizeChoices,
+    Wizard,
 )
 
 WIZARD_START_BALANCE = 13
