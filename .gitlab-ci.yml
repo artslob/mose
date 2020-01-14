@@ -13,6 +13,7 @@ black:
 isort:
   script:
     - pip install -r requirements-dev.txt
+    - ls -la
     - isort -rc --check-only .
 
 migrations:
