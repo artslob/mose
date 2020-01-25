@@ -42,7 +42,7 @@ class IAction(metaclass=ABCMeta):
             raise RuntimeError(
                 f"action name {action_name!r} should be string, got: {type(action_name)}"
             )  # pragma: no cover
-        if action_name != action_name.lower() or action_name.count(" ") > 0:
+        if action_name != action_name.lower() or " " in action_name:
             raise RuntimeError(
                 f"action name should be in lowercase and without spaces: {action_name!r}"
             )  # pragma: no cover
