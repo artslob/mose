@@ -2,6 +2,7 @@
 
 [![pipeline status](https://gitlab.com/artslob/mose/badges/master/pipeline.svg)](https://gitlab.com/artslob/mose/commits/master)
 [![Coverage Status](https://coveralls.io/repos/gitlab/artslob/mose/badge.svg?branch=HEAD)](https://coveralls.io/gitlab/artslob/mose?branch=HEAD)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 Проект по предмету "Методология программной инженерии", Университет ИТМО,
 2-3 семестр магистратуры, 2019 год.
